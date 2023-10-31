@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss'
-
+import assets from './assets.json'
 const config: Config = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -8,6 +8,7 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      colors:assets.colors,
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
