@@ -2,8 +2,8 @@
 import Image from "next/image";
 import { twMerge } from "tailwind-merge";
 import styled from "./side.module.css";
-import { Input } from "@/components/forms/Input/Input";
-import { Button } from "@/components/buttons/Button";
+import { Input } from "@/components/ui/forms/Input";
+import { Button } from "@/components/ui/buttons/Button";
 import { useAuth } from "@/hooks/useAuth";
 import { FormEvent, useCallback } from "react";
 

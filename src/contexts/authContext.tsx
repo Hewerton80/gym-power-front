@@ -63,8 +63,9 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
   );
 
   const login = useCallback(() => {
-    router.push("/app/studant/home");
-  }, [router]);
+    handleSetUser({ name: "Hewerton Adão" });
+    router.push(`/app/student/home`);
+  }, [handleSetUser, router]);
 
   const {
     isPending: isLoging,

@@ -8,7 +8,7 @@ import {
 } from "react";
 import { twMerge } from "tailwind-merge";
 import { Slot } from "@radix-ui/react-slot";
-import spinnerStyle from "@/components/helpers/spinner.module.css";
+import spinnerStyle from "./spinner.module.css";
 
 interface ButtonStyle {
   bg: string;
@@ -79,7 +79,6 @@ export const buttonVariants = {
       activeRing: "active:ring-info/40",
       spinnerBorderT: "[&>.spinner]:border-t-white",
     }),
-
     warning: generateButtonStyles({
       bg: "bg-warning",
       border: "border-warning",
@@ -149,12 +148,12 @@ export function Button({
   return (
     <Comp
       className={twMerge(
-        "inline-flex items-center justify-center leading-none ease-linear duration-200 relative",
-        "h-fit leading-none px-4 py-2.5 cursor-pointer border-2 rounded-lg outline-none font-medium",
-        "text-sm",
+        "inline-flex items-center justify-center h-fit w-fit px-4 py-2.5  relative",
+        "cursor-pointer ease-linear duration-200 border-2 rounded-lg outline-none",
+        "text-sm font-medium leading-none",
         "disabled:pointer-events-none disabled:opacity-50",
         "focus:ring-4 active:ring-4",
-        fullWidth ? "w-full" : "w-fit",
+        fullWidth && "w-full",
         buttonVariants.style[variantStyle],
         isLoading && twMerge("text-transparent", spinnerStyle.root),
         className
