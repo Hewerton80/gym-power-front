@@ -4,22 +4,16 @@ import { Slot } from "@radix-ui/react-slot";
 
 export interface CardProps extends ComponentPropsWithRef<"div"> {
   asChild?: boolean;
-  variantStyle?: "default";
 }
 
 export interface CardHeaderProps extends ComponentPropsWithRef<"div"> {}
+export interface CardActionsProps extends ComponentPropsWithRef<"div"> {}
 export interface CardBodyProps extends ComponentPropsWithRef<"div"> {}
 export interface CardFooterProps extends ComponentPropsWithRef<"div"> {
   orientation?: "start" | "end" | "center";
 }
 
-function Card({
-  children,
-  className,
-  asChild,
-  variantStyle = "default",
-  ...restProps
-}: CardProps) {
+function Card({ children, className, asChild, ...restProps }: CardProps) {
   const Comp = asChild ? Slot : "div";
   return (
     <Comp
@@ -48,9 +42,17 @@ function Header({ children, className, ...restProps }: CardHeaderProps) {
   );
 }
 
+function Actions({ children, className, ...restProps }: CardActionsProps) {
+  return (
+    <div className={twMerge("flex items-center", className)} {...restProps}>
+      {children}
+    </div>
+  );
+}
+
 function Title({ children, className, ...rest }: CardProps) {
   return (
-    <div className={twMerge("flex ", className)} {...rest}>
+    <div className={twMerge("flex items-center", className)} {...rest}>
       <h4 className="text-xl text-black font-medium">{children}</h4>
     </div>
   );
@@ -88,6 +90,7 @@ function Footer({
 
 Card.Header = Header;
 Card.Title = Title;
+Card.Actions = Actions;
 Card.Body = Body;
 Card.Footer = Footer;
 

@@ -76,7 +76,6 @@
     "focus-ring-opacity": "0.25",
     "focus-ring": "rgba(30,63,180,.25)",
     "form-valid": "#2bc155",
-    "form-valid-border": "#2bc155",
     "form-invalid": "#f94687"
   },
   "screens": {
