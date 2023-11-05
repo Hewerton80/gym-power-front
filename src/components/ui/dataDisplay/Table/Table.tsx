@@ -71,10 +71,7 @@ function Tr({ children, className, ...restProps }: TrProps) {
 
 function Tbody({ children, className, ...restProps }: TbodyProps) {
   return (
-    <tbody
-      className={twMerge("text-sm text-body-text font-normal", className)}
-      {...restProps}
-    >
+    <tbody className={twMerge("text-sm font-normal", className)} {...restProps}>
       {children}
     </tbody>
   );

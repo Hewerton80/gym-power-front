@@ -1,4 +1,5 @@
 import { Card, CardProps } from "@/components/ui/cards/Card";
+import { isStrig } from "@/utils/isType";
 import { twMerge } from "tailwind-merge";
 
 const variants = {
@@ -19,14 +20,14 @@ const variants = {
   },
 };
 
-interface DashboadCardProps extends CardProps {
-  title: string;
-  description: string;
+interface WidgetCardProps extends Omit<CardProps, "title"> {
+  title: string | JSX.Element;
+  description: string | JSX.Element;
   icon: JSX.Element;
   variant?: keyof typeof variants;
 }
 
-export function DashboadCard({
+export function WidgetCard({
   title,
   description,
   icon,
@@ -34,24 +35,30 @@ export function DashboadCard({
   className,
   children,
   ...restProps
-}: DashboadCardProps) {
+}: WidgetCardProps) {
   return (
     <Card className={twMerge("relative", className)} {...restProps}>
       <Card.Body className="flex-row items-center gap-6">
         <span
           className={twMerge(
-            "flex items-center justify-center rounded-full w-20 h-20 text-4xl",
+            "flex items-center justify-center rounded-full  text-4xl",
+            "min-w-[5rem] min-h-[5rem] max-w-[5rem] max-h-[5rem]",
             variants[variant].bgTransparent,
             variants[variant].text
           )}
         >
           {icon}
         </span>
-        <div className="flex flex-col gap-3">
-          <p className="text-sm text-body-text">{title}</p>
-          <b className="text-black text-[1.75rem] font-semibold">
-            {description}
-          </b>
+        <div className="flex flex-col w-full gap-3">
+          {isStrig(title) ? <p className="text-sm">{title}</p> : title}
+
+          {isStrig(description) ? (
+            <b className="text-black text-[1.75rem] font-semibold">
+              {description}
+            </b>
+          ) : (
+            description
+          )}
         </div>
       </Card.Body>
       <div

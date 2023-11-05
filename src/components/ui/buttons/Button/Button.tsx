@@ -53,7 +53,7 @@ const generateButtonStyles = (baseStyles: ButtonStyle) => {
   return twMerge(...commonClasses);
 };
 
-export const buttonVariants = {
+const buttonVariants = {
   style: {
     primary: generateButtonStyles({
       bg: "bg-primary",
@@ -98,9 +98,9 @@ export const buttonVariants = {
   },
 };
 
-export type ButtonVariantStyle = keyof typeof buttonVariants.style;
+type ButtonVariantStyle = keyof typeof buttonVariants.style;
 
-interface ButtonProps extends ComponentPropsWithRef<"button"> {
+export interface ButtonProps extends ComponentPropsWithRef<"button"> {
   variantStyle?: ButtonVariantStyle;
   isLoading?: boolean;
   leftIcon?: JSX.Element;

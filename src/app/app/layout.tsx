@@ -1,4 +1,3 @@
-import { Avatar } from "@/components/ui/dataDisplay/Avatar";
 import { ProfilePopover } from "@/components/ui/overlay/ProfilePopover";
 import { navItems } from "@/utils/navItems";
 import Image from "next/image";
@@ -40,7 +39,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                   <Link
                     href="#"
                     className={twMerge(
-                      "flex items-center w-full p-5 gap-4 font-medium text-body-text relative",
+                      "flex items-center w-full p-5 gap-4 font-medium relative",
                       "hover:text-link duration-100 ease-linear rounded-[0.625rem]",
                       isActive &&
                         twMerge(
@@ -66,7 +65,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             </div>
           </div>
         </header>
-        <div className="h-full px-8 py-8">{children}</div>
+        <div className="h-full px-8 py-8 overflow-y-auto">{children}</div>
       </div>
     </div>
   );

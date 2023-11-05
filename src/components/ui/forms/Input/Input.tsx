@@ -18,7 +18,7 @@ export function Input({
   return (
     <div className={twMerge("flex flex-col w-full", formControlClassName)}>
       {label && (
-        <label className="mb-1 font-bold text-body-text" htmlFor={resProps?.id}>
+        <label className="mb-1 font-bold" htmlFor={resProps?.id}>
           {label}
         </label>
       )}
