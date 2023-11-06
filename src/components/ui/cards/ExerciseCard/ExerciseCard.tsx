@@ -29,7 +29,7 @@ export function ExerciseCard({ exercise, workoutStatus }: ExerciseCardProps) {
       <div className="flex flex-col ">
         <h3 className="font-semibold text-heading  mb-2">Supino reto</h3>
 
-        <p className="line-clamp-3 text-sm">
+        <p className="line-clamp-3 text-sm mb-1">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
           minim veniam, quis nostrud exercitation ullamco laboris nisi ut
