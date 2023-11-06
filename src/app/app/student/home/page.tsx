@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dataDisplay/DataTable";
 import { useMemo } from "react";
 import Link from "next/link";
+import { Badge } from "@/components/ui/dataDisplay/Badge";
 
 export default function StudentPage() {
   const cols = useMemo<IColmunDataTable[]>(
@@ -35,7 +36,10 @@ export default function StudentPage() {
           "seg, 01 Fev",
           "A - Peito, Tríceps, ombro",
           "2h 15m",
-          "Completo",
+          <Badge variant="primary" key="hh">
+            {" "}
+            Completo
+          </Badge>,
           <IconButton
             key="0 - 1"
             asChild
@@ -54,7 +58,10 @@ export default function StudentPage() {
           "ter, 02 Mar",
           "B - Dorsal, Bíceps",
           "1h 0m",
-          "Imcompleto",
+          <Badge variant="primary" key="hgh">
+            {" "}
+            Imcompleto
+          </Badge>,
           <IconButton
             key="0 - 2"
             icon={
@@ -71,7 +78,10 @@ export default function StudentPage() {
           "Qui, 03 Abr",
           "C - Perna",
           "59m",
-          "Completo",
+          <Badge variant="primary" key="dsd">
+            {" "}
+            Completo
+          </Badge>,
           <IconButton
             key="0 - 3"
             icon={

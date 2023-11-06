@@ -9,10 +9,10 @@ import { twMerge } from "tailwind-merge";
 // };
 
 const variants /*: Omit<BadgeVariatnsType, "Todos">*/ = {
-  primary: "",
-  success: "",
-  danger: "",
-  warning: "",
+  primary: "bg-primary/20 text-primary",
+  success: "bg-success/20 text-success",
+  danger: "bg-danger/20 text-danger",
+  warning: "bg-warning/20 text-warningprimary",
 };
 interface BadgeProps extends ComponentPropsWithRef<"span"> {
   variant: keyof typeof variants;
@@ -26,8 +26,8 @@ export const Badge = ({
   return (
     <span
       className={twMerge(
-        "flex items-center justify-center py-1 px-2 w-fit",
-        "text-xs font-bold rounded-2xl text-white",
+        "inline-flex items-center justify-center py-1 px-2.5 w-fit",
+        "text-sm font-semibold rounded-[0.625rem] ",
         variants[variant],
         className
       )}
