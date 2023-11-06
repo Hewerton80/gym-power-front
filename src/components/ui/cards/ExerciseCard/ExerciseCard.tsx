@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { BsFillPlayFill, BsPause } from "react-icons/bs";
+import { BsFillPlayFill, BsStopCircle } from "react-icons/bs";
 import { IconButton } from "../../buttons/IconButton";
 import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/buttons/Button";
@@ -50,15 +50,14 @@ export function ExerciseCard({ exercise, workoutStatus }: ExerciseCardProps) {
             //     <BsFillPlayFill size={20} onClick={handleChanExerciciStatus} />
             //   )
             // }
+            variantStyle={isRunning ? "danger" : "primary"}
             onClick={handleChanExerciciStatus}
           >
             <span className="inline-flex">
-              {!isRunning && (
-                <span className="mr-2">
-                  <BsFillPlayFill />
-                </span>
-              )}
-              {isRunning ? "Pausar" : "Iniciar"} exercício
+              <span className="mr-2">
+                {isRunning ? <BsStopCircle /> : <BsFillPlayFill />}
+              </span>
+              {isRunning ? "Finalizar" : "Iniciar"} exercício
             </span>
           </Button>
         </div>
