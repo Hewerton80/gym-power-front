@@ -7,5 +7,5 @@ export enum ExerciseStatus {
 export interface Exercise {
   id?: string;
   name?: string;
-  status?: ExerciseStatus;
+  status?: keyof typeof ExerciseStatus;
 }

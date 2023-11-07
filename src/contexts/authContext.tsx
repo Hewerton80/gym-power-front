@@ -1,11 +1,12 @@
 "use client";
-import { IUser } from "@/types/User";
+import { IUser, UserRole } from "@/types/User";
 import { useRouter, useSelectedLayoutSegment } from "next/navigation";
 import {
   createContext,
   ReactNode,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -16,8 +17,8 @@ import { removeAllCookies } from "@/lib/removeAllCookies";
 // import { BASE_PATHS } from "@/utils/navItems";
 
 interface IResponseLogin {
-  access_token: string;
-  user: IUser;
+  token: string;
+  rules: UserRole[];
 }
 interface IAuthContextProviderProps {
   children: ReactNode;
@@ -52,29 +53,50 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
     }
   }, []);
 
+  const onFetchUserSuccess = useCallback(
+    ({ token }: IResponseLogin) => {
+      console.log({ token });
+      // Cookies.set(CONSTANTS.COOKIES_KEYS.TOKEN, access_token);
+      // handleSetUser(user);
+      // router.push("/app/hoWme");
+    },
+    [router, handleSetUser]
+  );
+  const {
+    isPending: isPendingStudant,
+    error: fetchUserError,
+    mutate: fetchUser,
+  } = useMutation({
+    mutationFn: (loginCrentials: ILoginCrentials) =>
+      apiBase
+        .post<IResponseLogin>("/me/studants", loginCrentials)
+        .then((res) => res.data),
+    onSuccess: onFetchUserSuccess,
+  });
+
   const onLoginSuccess = useCallback(
-    ({ access_token, user }: IResponseLogin) => {
-      console.log({ user });
-      Cookies.set(CONSTANTS.COOKIES_KEYS.TOKEN, access_token);
-      handleSetUser(user);
-      router.push("/admin/home");
+    ({ token }: IResponseLogin) => {
+      console.log({ token });
+      // Cookies.set(CONSTANTS.COOKIES_KEYS.TOKEN, access_token);
+      // handleSetUser(user);
+      // router.push("/app/home");
     },
     [router, handleSetUser]
   );
 
-  const login = useCallback(() => {
-    handleSetUser({ name: "Hewerton Adão" });
-    router.push(`/app/student/home`);
-  }, [handleSetUser, router]);
+  // const login = useCallback(() => {
+  //   handleSetUser({ name: "Hewerton Adão" });
+  //   router.push(`/app/student/home`);
+  // }, [handleSetUser, router]);
 
   const {
-    isPending: isLoging,
+    isPending: isPendingLogin,
     error: loginError,
-    // mutate: login,
+    mutate: login,
   } = useMutation({
     mutationFn: (loginCrentials: ILoginCrentials) =>
       apiBase
-        .post<IResponseLogin>("/auth/panel/login", loginCrentials)
+        .post<IResponseLogin>("/auth/login", loginCrentials)
         .then((res) => res.data),
     onSuccess: onLoginSuccess,
   });
@@ -102,6 +124,7 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
   //       logout();
   //     }
   //   }, [selectedLayoutSegment, logout]);
+  const isLoging = useMemo(() => isPendingLogin, [isPendingLogin]);
 
   return (
     <AuthContext.Provider

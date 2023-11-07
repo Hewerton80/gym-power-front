@@ -15,6 +15,7 @@ import {
 import { useMemo } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/dataDisplay/Badge";
+import { statusWorkoutBadge } from "@/utils/statusWorkoutBadge";
 
 export default function StudentPage() {
   const cols = useMemo<IColmunDataTable[]>(
@@ -36,10 +37,7 @@ export default function StudentPage() {
           "seg, 01 Fev",
           "A - Peito, Tríceps, ombro",
           "2h 15m",
-          <Badge variant="primary" key="hh">
-            {" "}
-            Completo
-          </Badge>,
+          statusWorkoutBadge["incomplete"],
           <IconButton
             key="0 - 1"
             asChild
@@ -58,10 +56,7 @@ export default function StudentPage() {
           "ter, 02 Mar",
           "B - Dorsal, Bíceps",
           "1h 0m",
-          <Badge variant="primary" key="hgh">
-            {" "}
-            Imcompleto
-          </Badge>,
+          statusWorkoutBadge["finished"],
           <IconButton
             key="0 - 2"
             icon={
@@ -78,10 +73,7 @@ export default function StudentPage() {
           "Qui, 03 Abr",
           "C - Perna",
           "59m",
-          <Badge variant="primary" key="dsd">
-            {" "}
-            Completo
-          </Badge>,
+          statusWorkoutBadge["inProgress"],
           <IconButton
             key="0 - 3"
             icon={

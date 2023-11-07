@@ -5,18 +5,52 @@ import styled from "./side.module.css";
 import { Input } from "@/components/ui/forms/Input";
 import { Button } from "@/components/ui/buttons/Button";
 import { useAuth } from "@/hooks/useAuth";
-import { FormEvent, useCallback } from "react";
+import { useCallback, useEffect } from "react";
+import { z } from "zod";
+import { ILoginCrentials } from "@/contexts/authContext";
+import { ToZodObjectSchema } from "@/lib/zodHelpers";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const loginFormSchema = z.object<ToZodObjectSchema<ILoginCrentials>>({
+  email: z.string().min(1, { message: "Um email deve ser informado" }),
+  password: z.string().min(1, { message: "Uma senha deve ser informada" }),
+});
 
 export default function LoginPage() {
-  const { login, isLoging } = useAuth();
+  const { login, loginError, isLoging } = useAuth();
+  const { control, handleSubmit, setError, clearErrors } =
+    useForm<ILoginCrentials>({
+      defaultValues: { email: "", password: "" },
+      resolver: zodResolver(loginFormSchema),
+      mode: "onSubmit",
+    });
 
-  const handleSubmit = useCallback(
-    (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      login({ email: "asd", password: "sad" });
+  useEffect(() => {
+    if (!loginError) return;
+    console.log({
+      status: loginError?.response?.status,
+      message: loginError?.response?.data?.message,
+    });
+    if (loginError?.response?.status === 401) {
+      setError("email", { message: " " });
+      setError("password", { message: "Email ou senha incorretos" });
+    }
+    // else if (loginError) {
+    //   setError("email", { message: " " });
+    //   setError("password", { message: loginError?.message });
+    // }
+    // console.log({ loginError: loginError?.response?.status });
+  }, [loginError, setError]);
+
+  const handleLogin = useCallback(
+    (loginCrentials: ILoginCrentials) => {
+      login(loginCrentials);
+      clearErrors();
     },
-    [login]
+    [login, clearErrors]
   );
+
   return (
     <div className="flex flex-col lg:flex-row min-h-screen items-center">
       <div
@@ -66,18 +100,37 @@ export default function LoginPage() {
       </div>
       <div className="flex items-center justify-center w-full px-8">
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(handleLogin)}
           className={twMerge("flex flex-col max-w-md 2xl:max-w-lg w-full")}
         >
           <h2 className="text-black text-2xl text-center mb-6">
             Sign in your account
           </h2>
           <div className="flex flex-col gap-4 mb-6">
-            <Input placeholder="user@email.com" label="Email" />
-            <Input
-              placeholder="type tour password"
-              label="Password"
-              type="password"
+            <Controller
+              control={control}
+              name="email"
+              render={({ field, fieldState }) => (
+                <Input
+                  placeholder="user@email.com"
+                  label="Email"
+                  error={fieldState.error?.message}
+                  {...field}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="password"
+              render={({ field, fieldState }) => (
+                <Input
+                  placeholder="type tour password"
+                  label="Password"
+                  type="password"
+                  error={fieldState.error?.message}
+                  {...field}
+                />
+              )}
             />
           </div>
           <Button isLoading={isLoging} fullWidth type="submit">

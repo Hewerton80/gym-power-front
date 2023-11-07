@@ -1,4 +1,4 @@
-import { ComponentPropsWithRef } from "react";
+import { ComponentPropsWithRef, forwardRef } from "react";
 import { twMerge } from "tailwind-merge";
 
 interface InputProps extends Omit<ComponentPropsWithRef<"input">, "className"> {
@@ -8,35 +8,41 @@ interface InputProps extends Omit<ComponentPropsWithRef<"input">, "className"> {
   error?: string;
 }
 
-export function Input({
-  formControlClassName,
-  inputClassName,
-  label,
-  error,
-  ...resProps
-}: InputProps) {
-  return (
-    <div className={twMerge("flex flex-col w-full", formControlClassName)}>
-      {label && (
-        <label className="mb-1 font-bold" htmlFor={resProps?.id}>
-          {label}
-        </label>
-      )}
-      <input
-        className={twMerge(
-          "px-3 py-1.5 h-11 2xl:h-14 w-full rounded-md bg-white text-dark text-sm shadow-sm",
-          "outline-none border border-border focus:border-primary",
-          "duration-150 ease-linear",
-          error && "border-danger/60 focus:border-danger",
-          inputClassName
+export const Input = forwardRef(
+  (
+    {
+      formControlClassName,
+      inputClassName,
+      label,
+      error,
+      ...resProps
+    }: InputProps,
+    ref?: any
+  ) => {
+    return (
+      <div className={twMerge("flex flex-col w-full", formControlClassName)}>
+        {label && (
+          <label className="mb-1 font-bold" htmlFor={resProps?.id}>
+            {label}
+          </label>
         )}
-        {...resProps}
-      />
-      {error && (
-        <span className="text-danger text-xs whitespace-nowrap mt-1">
-          {error}
-        </span>
-      )}
-    </div>
-  );
-}
+        <input
+          ref={ref}
+          className={twMerge(
+            "px-3 py-1.5 h-11 2xl:h-14 w-full rounded-md bg-white text-body-text text-sm shadow-sm",
+            "outline-none border border-border focus:border-primary",
+            "duration-150 ease-linear",
+            error && "border-danger/60 focus:border-danger",
+            inputClassName
+          )}
+          {...resProps}
+        />
+        {error && (
+          <span className="text-danger text-xs font-bold whitespace-nowrap mt-1">
+            {error}
+          </span>
+        )}
+      </div>
+    );
+  }
+);
