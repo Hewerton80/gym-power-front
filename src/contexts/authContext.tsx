@@ -84,15 +84,15 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
     [router, handleSetUser]
   );
 
-  // const login = useCallback(() => {
-  //   handleSetUser({ name: "Hewerton Adão" });
-  //   router.push(`/app/student/home`);
-  // }, [handleSetUser, router]);
+  const login = useCallback(() => {
+    handleSetUser({ name: "Hewerton Adão" });
+    router.push(`/app/student/home`);
+  }, [handleSetUser, router]);
 
   const {
     isPending: isPendingLogin,
     error: loginError,
-    mutate: login,
+    // mutate: login,
   } = useMutation({
     mutationFn: (loginCrentials: ILoginCrentials) =>
       apiBase

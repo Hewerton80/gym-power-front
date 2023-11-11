@@ -100,7 +100,11 @@ export default function LoginPage() {
       </div>
       <div className="flex items-center justify-center w-full px-8">
         <form
-          onSubmit={handleSubmit(handleLogin)}
+          onSubmit={(e) => {
+            e.preventDefault();
+            login({ email: "", password: "" });
+          }}
+          // onSubmit={handleSubmit(handleLogin)}
           className={twMerge("flex flex-col max-w-md 2xl:max-w-lg w-full")}
         >
           <h2 className="text-black text-2xl text-center mb-6">

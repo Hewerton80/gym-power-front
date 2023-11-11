@@ -1,11 +1,15 @@
+"use client";
 import { ProfilePopover } from "@/components/ui/overlay/ProfilePopover";
 import { navItems } from "@/utils/navItems";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
+  const pathName = usePathname();
+
   return (
     <div className="flex h-screen overflow-y-hidden">
       <aside
@@ -32,12 +36,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         </div>
         <nav className="flex w-full">
           <ul className="flex flex-col w-full pt-4 pl-6 space-y-2.5">
-            {navItems.map(({ title, icon }, i) => {
-              const isActive = i === 1;
+            {navItems.map(({ title, icon, path }, i) => {
+              const isActive = path === pathName;
               return (
                 <li key={`${title}-${i}`} className="flex w-full">
                   <Link
-                    href="#"
+                    href={path}
                     className={twMerge(
                       "flex items-center w-full p-5 gap-4 font-medium relative",
                       "hover:text-link duration-100 ease-linear rounded-[0.625rem]",
