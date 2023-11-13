@@ -79,7 +79,13 @@ function Tbody({ children, className, ...restProps }: TbodyProps) {
 
 function Td({ children, className, ...restProps }: TdProps) {
   return (
-    <td className={twMerge("py-3 px-5", className)} {...restProps}>
+    <td
+      className={twMerge(
+        "[&:not(:first-child)]:pl-5 [&:not(:last-child)]:pr-5 py-3",
+        className
+      )}
+      {...restProps}
+    >
       {children}
     </td>
   );

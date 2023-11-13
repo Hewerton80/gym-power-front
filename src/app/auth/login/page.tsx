@@ -28,19 +28,25 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!loginError) return;
+    const statusCode = loginError?.response?.status;
+    const message = loginError?.response?.data?.messages;
     console.log({
-      status: loginError?.response?.status,
-      message: loginError?.response?.data?.message,
+      status: statusCode,
+      message: message,
     });
-    if (loginError?.response?.status === 401) {
+    console.log(Object.getOwnPropertyDescriptors(loginError));
+    if (statusCode === 401 && message === "invalid email or password") {
       setError("email", { message: " " });
       setError("password", { message: "Email ou senha incorretos" });
+    } else {
+      setError("email", { message: " " });
+      setError("password", { message: message || "Falha ao fazer login" });
     }
     // else if (loginError) {
     //   setError("email", { message: " " });
     //   setError("password", { message: loginError?.message });
     // }
-    // console.log({ loginError: loginError?.response?.status });
+    // console.log({ loginError: statusCode });
   }, [loginError, setError]);
 
   const handleLogin = useCallback(
@@ -100,11 +106,11 @@ export default function LoginPage() {
       </div>
       <div className="flex items-center justify-center w-full px-8">
         <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            login({ email: "", password: "" });
-          }}
-          // onSubmit={handleSubmit(handleLogin)}
+          // onSubmit={(e) => {
+          //   e.preventDefault();
+          //   login({ email: "", password: "" });
+          // }}
+          onSubmit={handleSubmit(handleLogin)}
           className={twMerge("flex flex-col max-w-md 2xl:max-w-lg w-full")}
         >
           <h2 className="text-black text-2xl text-center mb-6">

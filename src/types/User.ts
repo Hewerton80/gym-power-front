@@ -1,8 +1,10 @@
 export enum UserRole {
   ADMIN = "Administrador",
   TEACHER = "Professor",
-  STUDENT = "estudante",
+  STUDENT = "Estudante",
 }
+
+export type UserRolesNamesType = keyof typeof UserRole;
 
 export interface IUser {
   id?: string;
@@ -15,6 +17,6 @@ export interface IUser {
   heightInMt?: number;
   weightInKg?: number;
   createdAt?: string;
-  roles?: UserRole[];
+  userRoles?: { role: UserRole }[];
   trainingPlans?: any[];
 }

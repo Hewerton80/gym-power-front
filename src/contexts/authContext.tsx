@@ -1,5 +1,5 @@
 "use client";
-import { IUser, UserRole } from "@/types/User";
+import { IUser, UserRole, UserRolesNamesType } from "@/types/User";
 import { useRouter, useSelectedLayoutSegment } from "next/navigation";
 import {
   createContext,
@@ -9,16 +9,16 @@ import {
   useMemo,
   useState,
 } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiBase } from "@/lib/apiBase";
 import Cookies from "js-cookie";
 import { CONSTANTS } from "@/utils/constants";
 import { removeAllCookies } from "@/lib/removeAllCookies";
 // import { BASE_PATHS } from "@/utils/navItems";
-
+import { AxiosRequestConfig } from "axios";
 interface IResponseLogin {
   token: string;
-  rules: UserRole[];
+  roles: UserRolesNamesType[];
 }
 interface IAuthContextProviderProps {
   children: ReactNode;
@@ -43,6 +43,8 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
   const router = useRouter();
   const selectedLayoutSegment = useSelectedLayoutSegment();
   const [loggedUser, setLoggedUser] = useState<IUser | null>(null);
+  const [isFetchingUser, setIsFetchingUser] = useState(false);
+  const [userError, setUserError] = useState<any>(null);
 
   const handleSetUser = useCallback((user: IUser | null) => {
     setLoggedUser(user);
@@ -53,46 +55,70 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
     }
   }, []);
 
-  const onFetchUserSuccess = useCallback(
-    ({ token }: IResponseLogin) => {
-      console.log({ token });
-      // Cookies.set(CONSTANTS.COOKIES_KEYS.TOKEN, access_token);
-      // handleSetUser(user);
-      // router.push("/app/hoWme");
+  // const onFetchStudantSuccess = useCallback(
+  //   ({ token }: IResponseLogin) => {
+  //     console.log({ token });
+  //     // Cookies.set(CONSTANTS.COOKIES_KEYS.TOKEN, access_token);
+  //     // handleSetUser(user);
+  //     // router.push("/app/hoWme");
+  //   },
+  //   [router]
+  // );
+
+  // const {
+  //   isPending: isPendingStudant,
+  //   error: fetchStudantError,
+  //   refetch: fetchStudant,
+  // } = useQuery({
+  //   queryFn: () => apiBase.get<IUser>("/me/studants").then((res) => res.data),
+  //   // onSuccess: onFetchStudantSuccess,
+  //   queryKey: [""],
+  // });
+
+  const geStudant = useCallback(
+    async (requestConfig: AxiosRequestConfig) => {
+      try {
+        const { data } = await apiBase.get<IUser>(
+          "/me/students",
+          requestConfig
+        );
+        handleSetUser(data);
+        router.push("/app/student/home");
+      } catch (error) {
+        setUserError(error);
+      }
     },
-    [router, handleSetUser]
+    [handleSetUser, router]
   );
-  const {
-    isPending: isPendingStudant,
-    error: fetchUserError,
-    mutate: fetchUser,
-  } = useMutation({
-    mutationFn: (loginCrentials: ILoginCrentials) =>
-      apiBase
-        .post<IResponseLogin>("/me/studants", loginCrentials)
-        .then((res) => res.data),
-    onSuccess: onFetchUserSuccess,
-  });
 
   const onLoginSuccess = useCallback(
-    ({ token }: IResponseLogin) => {
-      console.log({ token });
-      // Cookies.set(CONSTANTS.COOKIES_KEYS.TOKEN, access_token);
-      // handleSetUser(user);
-      // router.push("/app/home");
+    ({ roles, token }: IResponseLogin) => {
+      setIsFetchingUser(true);
+      console.log({ roles, token });
+      Cookies.set(CONSTANTS.COOKIES_KEYS.TOKEN, token);
+      setUserError(null);
+      // const requestConfig = { headers: { Authorization: `Bearer ${token}` } };
+      const requestConfig = {
+        headers: { Authorization: `Bearer ${token}` },
+      };
+
+      if (roles.includes("STUDENT")) {
+        geStudant(requestConfig);
+      }
+      setIsFetchingUser(false);
     },
-    [router, handleSetUser]
+    [geStudant]
   );
 
-  const login = useCallback(() => {
-    handleSetUser({ name: "Hewerton Adão" });
-    router.push(`/app/student/home`);
-  }, [handleSetUser, router]);
+  // const login = useCallback(() => {
+  //   handleSetUser({ name: "Hewerton Adão" });
+  //   router.push(`/app/student/home`);
+  // }, [handleSetUser, router]);
 
   const {
     isPending: isPendingLogin,
     error: loginError,
-    // mutate: login,
+    mutate: login,
   } = useMutation({
     mutationFn: (loginCrentials: ILoginCrentials) =>
       apiBase
@@ -124,7 +150,10 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
   //       logout();
   //     }
   //   }, [selectedLayoutSegment, logout]);
-  const isLoging = useMemo(() => isPendingLogin, [isPendingLogin]);
+  const isLoging = useMemo(
+    () => isPendingLogin || isFetchingUser,
+    [isPendingLogin, isFetchingUser]
+  );
 
   return (
     <AuthContext.Provider
@@ -134,7 +163,7 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
         // handleSetUser,
         loggedUser,
         isLoging,
-        loginError,
+        loginError: loginError || userError,
       }}
     >
       {children}
