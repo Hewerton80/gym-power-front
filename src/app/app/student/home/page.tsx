@@ -38,15 +38,16 @@ export default function StudentPage() {
           "A - Peito, Tríceps, ombro",
           "2h 15m",
           statusWorkoutBadge["incomplete"],
-          <IconButton
-            key="0 - 1"
-            asChild
-            icon={
-              <Link href="#">
-                <AiOutlineEye />
-              </Link>
-            }
-          />,
+          <div key={`action-3`} className="flex justify-end">
+            <IconButton
+              key="0 - 3"
+              icon={
+                <Link href="#">
+                  <AiOutlineEye />
+                </Link>
+              }
+            />
+          </div>,
           ,
         ],
       },
@@ -57,14 +58,16 @@ export default function StudentPage() {
           "B - Dorsal, Bíceps",
           "1h 0m",
           statusWorkoutBadge["finished"],
-          <IconButton
-            key="0 - 2"
-            icon={
-              <Link href="#">
-                <AiOutlineEye />
-              </Link>
-            }
-          />,
+          <div key={`action-3`} className="flex justify-end">
+            <IconButton
+              key="0 - 3"
+              icon={
+                <Link href="#">
+                  <AiOutlineEye />
+                </Link>
+              }
+            />
+          </div>,
         ],
       },
       {
@@ -74,14 +77,16 @@ export default function StudentPage() {
           "C - Perna",
           "59m",
           statusWorkoutBadge["inProgress"],
-          <IconButton
-            key="0 - 3"
-            icon={
-              <Link href="#">
-                <AiOutlineEye />
-              </Link>
-            }
-          />,
+          <div key={`action-3`} className="flex justify-end">
+            <IconButton
+              key="0 - 3"
+              icon={
+                <Link href="#">
+                  <AiOutlineEye />
+                </Link>
+              }
+            />
+          </div>,
         ],
       },
     ],
@@ -115,7 +120,7 @@ export default function StudentPage() {
               </Button>
             </Card.Actions>
           </Card.Header>
-          <Card.Body className="px-0 pb-0">
+          <Card.Body>
             <DataTable columns={cols} rows={rows} />
           </Card.Body>
         </Card>

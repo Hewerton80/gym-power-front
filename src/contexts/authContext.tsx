@@ -76,14 +76,41 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
   // });
 
   const geStudant = useCallback(
-    async (requestConfig: AxiosRequestConfig) => {
+    async ({
+      roles,
+      requestConfig,
+    }: {
+      roles: UserRolesNamesType[];
+      requestConfig: AxiosRequestConfig;
+    }) => {
       try {
         const { data } = await apiBase.get<IUser>(
           "/me/students",
           requestConfig
         );
-        handleSetUser(data);
+        handleSetUser({ ...data, roles });
         router.push("/app/student/home");
+      } catch (error) {
+        setUserError(error);
+      }
+    },
+    [handleSetUser, router]
+  );
+
+  const geAdminOrTeacher = useCallback(
+    async ({
+      roles,
+      requestConfig,
+    }: {
+      roles: UserRolesNamesType[];
+      requestConfig: AxiosRequestConfig;
+    }) => {
+      try {
+        const { data } = await apiBase.get<IUser>("/me/users", requestConfig);
+        handleSetUser({ ...data, roles });
+        router.push(
+          `/app/${roles.includes("ADMIN") ? "admin/users" : "teacher/workouts"}`
+        );
       } catch (error) {
         setUserError(error);
       }
@@ -93,21 +120,19 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
 
   const onLoginSuccess = useCallback(
     ({ roles, token }: IResponseLogin) => {
-      setIsFetchingUser(true);
-      console.log({ roles, token });
-      Cookies.set(CONSTANTS.COOKIES_KEYS.TOKEN, token);
       setUserError(null);
-      // const requestConfig = { headers: { Authorization: `Bearer ${token}` } };
+      setIsFetchingUser(true);
       const requestConfig = {
         headers: { Authorization: `Bearer ${token}` },
       };
-
-      if (roles.includes("STUDENT")) {
-        geStudant(requestConfig);
+      if (roles.includes("ADMIN") || roles.includes("TEACHER")) {
+        geAdminOrTeacher({ roles, requestConfig });
+      } else if (roles.includes("STUDENT")) {
+        geStudant({ roles, requestConfig });
       }
       setIsFetchingUser(false);
     },
-    [geStudant]
+    [geStudant, geAdminOrTeacher]
   );
 
   // const login = useCallback(() => {
@@ -133,12 +158,12 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
     router.replace("/auth/login");
   }, [router, handleSetUser]);
 
-  //   useEffect(() => {
-  //     const loggedUserInCache = Cookies.get(CONSTANTS.COOKIES_KEYS.USER);
-  //     if (loggedUserInCache) {
-  //       handleSetUser(JSON.parse(loggedUserInCache) as IUser);
-  //     }
-  //   }, [handleSetUser]);
+  useEffect(() => {
+    const loggedUserInCache = Cookies.get(CONSTANTS.COOKIES_KEYS.USER);
+    if (loggedUserInCache) {
+      handleSetUser(JSON.parse(loggedUserInCache) as IUser);
+    }
+  }, [handleSetUser]);
 
   //   useEffect(() => {
   //     const isInSomeLoggedPage =

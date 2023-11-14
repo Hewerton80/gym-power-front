@@ -18,5 +18,6 @@ export interface IUser {
   weightInKg?: number;
   createdAt?: string;
   userRoles?: { role: UserRole }[];
+  roles: UserRolesNamesType[];
   trainingPlans?: any[];
 }

@@ -50,7 +50,10 @@ function Thead({ children, className, ...restProps }: TheadProps) {
 function Th({ children, className, ...restProps }: ThProps) {
   return (
     <th
-      className={twMerge("p-5 align-top text-left", className)}
+      className={twMerge(
+        "[&:not(:first-child)]:pl-5 pr-5 py-5 align-top text-left",
+        className
+      )}
       {...restProps}
     >
       {children}
