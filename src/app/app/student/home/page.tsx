@@ -14,10 +14,12 @@ import {
 } from "@/components/ui/dataDisplay/DataTable";
 import { useMemo } from "react";
 import Link from "next/link";
-import { Badge } from "@/components/ui/dataDisplay/Badge";
 import { statusWorkoutBadge } from "@/utils/statusWorkoutBadge";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function StudentPage() {
+  const { loggedUser } = useAuth();
+
   const cols = useMemo<IColmunDataTable[]>(
     () => [
       { field: "date", content: "Data" },
@@ -99,7 +101,7 @@ export default function StudentPage() {
         <WidgetCard
           className="col-span-3"
           title="Altura"
-          description="1,80"
+          description={`${loggedUser?.heightInMt}m`}
           icon={<VscSymbolRuler />}
         />
         <WidgetCard
