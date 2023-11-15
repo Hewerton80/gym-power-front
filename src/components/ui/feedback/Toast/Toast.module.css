@@ -1,0 +1,12 @@
+.root:global(.Toastify__toast-container) :global(.Toastify__toast) {
+  @apply rounded-2.5xl bg-success px-8 py-0;
+}
+.root:global(.Toastify__toast-container) :global(.Toastify__toast-body) {
+  @apply flex-row-reverse rounded-2.5xl text-white font-bold text-base p-0 m-0;
+}
+.root:global(.Toastify__toast-container) :global(.Toastify__close-button) {
+  @apply hidden;
+}
+.root:global(.Toastify__toast-container) :global(.Toastify__progress-bar) {
+  background: theme("colors.white");
+}

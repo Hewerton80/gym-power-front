@@ -5,7 +5,7 @@ export const WorkoutStatus = {
   incomplete: "Imcompleto",
 };
 
-export interface Workout {
+export interface IWorkout {
   id?: string;
   name?: string;
   status?: keyof typeof WorkoutStatus;

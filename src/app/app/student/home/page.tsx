@@ -12,13 +12,19 @@ import {
   IColmunDataTable,
   IRowDataTable,
 } from "@/components/ui/dataDisplay/DataTable";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import { statusWorkoutBadge } from "@/utils/statusWorkoutBadge";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/api/useAuth";
+import { useGetMyWorkouts } from "@/hooks/useWorkout";
+import { TableSkeleton } from "@/components/ui/feedback/TableSkeleton";
+import { isUndefined } from "@/utils/isType";
+import { FeedBackError } from "@/components/ui/feedback/FeedBackError";
 
 export default function StudentPage() {
   const { loggedUser } = useAuth();
+  const { workouts, isloadingWorkouts, workoutsError, refetchWorkouts } =
+    useGetMyWorkouts();
 
   const cols = useMemo<IColmunDataTable[]>(
     () => [
@@ -95,6 +101,20 @@ export default function StudentPage() {
     []
   );
 
+  const handleTableContent = useMemo(() => {
+    if (workoutsError) {
+      return <FeedBackError onTryAgain={refetchWorkouts} />;
+    }
+    if (isloadingWorkouts || isUndefined(workouts)) {
+      return <TableSkeleton columns={cols} numRows={3} />;
+    }
+    return <DataTable columns={cols} rows={rows} />;
+  }, [cols, workouts, isloadingWorkouts, rows, workoutsError, refetchWorkouts]);
+
+  useEffect(() => {
+    console.log({ workouts });
+  }, [workouts]);
+
   return (
     <div className="grid grid-cols-12 gap-7">
       <div className="grid grid-col-1 gap-7 col-span-12 lg:col-span-4">
@@ -108,7 +128,7 @@ export default function StudentPage() {
           className="col-span-3"
           variant="info"
           title="Peso"
-          description="75kg"
+          description={`${loggedUser?.weightInKg}kg`}
           icon={<FaWeight />}
         />
       </div>
@@ -117,13 +137,17 @@ export default function StudentPage() {
           <Card.Header>
             <Card.Title>Últimos treinos</Card.Title>
             <Card.Actions>
-              <Button asChild>
+              <Button
+                asChild={Boolean(workouts?.length)}
+                disabled={!workouts?.length}
+              >
                 <Link href="#">Ver mais</Link>
               </Button>
             </Card.Actions>
           </Card.Header>
           <Card.Body>
-            <DataTable columns={cols} rows={rows} />
+            {/* <DataTable columns={cols} rows={rows} /> */}
+            {handleTableContent}
           </Card.Body>
         </Card>
       </div>

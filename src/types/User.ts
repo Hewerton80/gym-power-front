@@ -20,4 +20,5 @@ export interface IUser {
   userRoles?: { role: UserRole }[];
   roles: UserRolesNamesType[];
   trainingPlans?: any[];
+  avatarBgColor?: string;
 }

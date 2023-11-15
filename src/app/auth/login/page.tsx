@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 import styled from "./side.module.css";
 import { Input } from "@/components/ui/forms/Input";
 import { Button } from "@/components/ui/buttons/Button";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/api/useAuth";
 import { useCallback, useEffect } from "react";
 import { z } from "zod";
 import { ILoginCrentials } from "@/contexts/authContext";
@@ -30,10 +30,7 @@ export default function LoginPage() {
     if (!loginError) return;
     const statusCode = loginError?.response?.status;
     const message = loginError?.response?.data?.messages;
-    console.log({
-      status: statusCode,
-      message: message,
-    });
+    console.log({ status: statusCode, message: message });
     console.log(Object.getOwnPropertyDescriptors(loginError));
     if (statusCode === 401 && message === "invalid email or password") {
       setError("email", { message: " " });

@@ -1,6 +1,6 @@
 "use client";
 import { ProfilePopover } from "@/components/ui/overlay/ProfilePopover";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/api/useAuth";
 import { UserRolesNamesType } from "@/types/User";
 import { INavItem, navItems } from "@/utils/navItems";
 import Image from "next/image";
@@ -14,7 +14,6 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   const { loggedUser } = useAuth();
 
   const avaliableNavItems = useMemo<INavItem[]>(() => {
-    console.log({ roles: loggedUser?.roles });
     return navItems.filter(({ avaliablesRoles }) =>
       loggedUser?.roles?.some(
         (role) => avaliablesRoles[role as unknown as UserRolesNamesType]

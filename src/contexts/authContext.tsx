@@ -16,6 +16,7 @@ import { CONSTANTS } from "@/utils/constants";
 import { removeAllCookies } from "@/lib/removeAllCookies";
 // import { BASE_PATHS } from "@/utils/navItems";
 import { AxiosRequestConfig } from "axios";
+import { getRandomRGBColor } from "@/utils/getRandomColor";
 interface IResponseLogin {
   token: string;
   roles: UserRolesNamesType[];
@@ -88,7 +89,7 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
           "/me/students",
           requestConfig
         );
-        handleSetUser({ ...data, roles });
+        handleSetUser({ ...data, roles, avatarBgColor: getRandomRGBColor() });
         router.push("/app/student/home");
       } catch (error) {
         setUserError(error);
@@ -107,7 +108,7 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
     }) => {
       try {
         const { data } = await apiBase.get<IUser>("/me/users", requestConfig);
-        handleSetUser({ ...data, roles });
+        handleSetUser({ ...data, roles, avatarBgColor: getRandomRGBColor() });
         router.push(
           `/app/${roles.includes("ADMIN") ? "admin/users" : "teacher/workouts"}`
         );
@@ -134,11 +135,6 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
     },
     [geStudant, geAdminOrTeacher]
   );
-
-  // const login = useCallback(() => {
-  //   handleSetUser({ name: "Hewerton Adão" });
-  //   router.push(`/app/student/home`);
-  // }, [handleSetUser, router]);
 
   const {
     isPending: isPendingLogin,

@@ -32,7 +32,7 @@ function Header({ children, className, ...restProps }: CardHeaderProps) {
   return (
     <div
       className={twMerge(
-        "flex items-center justify-between px-[1.875rem] pt-6",
+        "flex items-center justify-between px-4 sm:px-[1.875rem] pt-5 sm:pt-6",
         className
       )}
       {...restProps}
@@ -53,14 +53,19 @@ function Actions({ children, className, ...restProps }: CardActionsProps) {
 function Title({ children, className, ...rest }: CardProps) {
   return (
     <div className={twMerge("flex items-center", className)} {...rest}>
-      <h4 className="text-xl text-black font-medium">{children}</h4>
+      <h4 className="text-base sm:text-xl text-black font-medium">
+        {children}
+      </h4>
     </div>
   );
 }
 
 function Body({ children, className, ...rest }: CardBodyProps) {
   return (
-    <div className={twMerge("flex flex-col p-[1.875rem]", className)} {...rest}>
+    <div
+      className={twMerge("flex flex-col p-4 sm:p-[1.875rem]", className)}
+      {...rest}
+    >
       {children}
     </div>
   );
@@ -75,7 +80,7 @@ function Footer({
   return (
     <div
       className={twMerge(
-        "flex items-center mt-auto px-[1.875rem] pb-5",
+        "flex items-center mt-auto px-4 sm:px-[1.875rem] pb-5",
         orientation === "start" && "justify-start",
         orientation === "center" && "justify-center",
         orientation === "end" && "justify-end",
