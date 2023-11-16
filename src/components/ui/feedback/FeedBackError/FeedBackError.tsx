@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { ComponentProps } from "react";
 import { twMerge } from "tailwind-merge";
 import { Button } from "@/components/ui/buttons/Button";
 import { IoReload } from "react-icons/io5";
@@ -12,18 +11,22 @@ export function FeedBackError({ onTryAgain }: FeedBackErrorProps) {
   return (
     <div
       className={twMerge(
-        "flex flex-col items-end justify-center w-full space-y-4"
+        "flex flex-col items-end justify-center w-full space-y-2"
       )}
     >
       <Image
-        className="mx-auto w-40 h-40 sm:w-60 sm:h-60"
+        className="mx-auto w-40 h-40 sm:w-48 sm:h-48"
         src="/images/feedback-error.svg"
         alt="logo"
         width={240}
         height={240}
         priority
       />
-      <Button className="mx-auto" rightIcon={<IoReload />} onClick={onTryAgain}>
+      <Button
+        className="mx-auto !px-2 !py-1 !text-xs"
+        rightIcon={<IoReload />}
+        onClick={onTryAgain}
+      >
         Tentar novamente
       </Button>
     </div>

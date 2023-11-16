@@ -42,7 +42,6 @@ export const AuthContext = createContext({} as ILoginContext);
 
 export function AuthContextProvider({ children }: IAuthContextProviderProps) {
   const router = useRouter();
-  const selectedLayoutSegment = useSelectedLayoutSegment();
   const [loggedUser, setLoggedUser] = useState<IUser | null>(null);
   const [isFetchingUser, setIsFetchingUser] = useState(false);
   const [userError, setUserError] = useState<any>(null);
@@ -92,6 +91,7 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
         handleSetUser({ ...data, roles, avatarBgColor: getRandomRGBColor() });
         router.push("/app/student/home");
       } catch (error) {
+        removeAllCookies();
         setUserError(error);
       }
     },
@@ -113,6 +113,7 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
           `/app/${roles.includes("ADMIN") ? "admin/users" : "teacher/workouts"}`
         );
       } catch (error) {
+        removeAllCookies();
         setUserError(error);
       }
     },
@@ -120,17 +121,20 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
   );
 
   const onLoginSuccess = useCallback(
-    ({ roles, token }: IResponseLogin) => {
+    async ({ roles, token }: IResponseLogin) => {
       setUserError(null);
       setIsFetchingUser(true);
       const requestConfig = {
         headers: { Authorization: `Bearer ${token}` },
       };
+      Cookies.set(CONSTANTS.COOKIES_KEYS.TOKEN, token);
+
       if (roles.includes("ADMIN") || roles.includes("TEACHER")) {
-        geAdminOrTeacher({ roles, requestConfig });
+        await geAdminOrTeacher({ roles, requestConfig });
       } else if (roles.includes("STUDENT")) {
-        geStudant({ roles, requestConfig });
+        await geStudant({ roles, requestConfig });
       }
+
       setIsFetchingUser(false);
     },
     [geStudant, geAdminOrTeacher]

@@ -17,7 +17,7 @@ export interface IUser {
   heightInMt?: number;
   weightInKg?: number;
   createdAt?: string;
-  userRoles?: { role: UserRole }[];
+  userRoles?: { role: UserRolesNamesType }[];
   roles: UserRolesNamesType[];
   trainingPlans?: any[];
   avatarBgColor?: string;

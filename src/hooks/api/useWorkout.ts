@@ -10,7 +10,7 @@ export function useGetMyWorkouts() {
     refetch: refetchWorkouts,
   } = useQuery({
     queryFn: () =>
-      apiBase.get<IWorkout[]>("/me/workout").then((res) => res.data || []),
+      apiBase.get<IWorkout[]>("/me/training").then((res) => res.data || []),
     queryKey: [],
     retry: 0,
   });

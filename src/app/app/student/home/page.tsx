@@ -16,7 +16,7 @@ import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import { statusWorkoutBadge } from "@/utils/statusWorkoutBadge";
 import { useAuth } from "@/hooks/api/useAuth";
-import { useGetMyWorkouts } from "@/hooks/useWorkout";
+import { useGetMyWorkouts } from "@/hooks/api/useWorkout";
 import { TableSkeleton } from "@/components/ui/feedback/TableSkeleton";
 import { isUndefined } from "@/utils/isType";
 import { FeedBackError } from "@/components/ui/feedback/FeedBackError";
@@ -39,64 +39,64 @@ export default function StudentPage() {
 
   const rows = useMemo<IRowDataTable[]>(
     () => [
-      {
-        value: "0",
-        contents: [
-          "seg, 01 Fev",
-          "A - Peito, Tríceps, ombro",
-          "2h 15m",
-          statusWorkoutBadge["incomplete"],
-          <div key={`action-3`} className="flex justify-end">
-            <IconButton
-              key="0 - 3"
-              icon={
-                <Link href="#">
-                  <AiOutlineEye />
-                </Link>
-              }
-            />
-          </div>,
-          ,
-        ],
-      },
-      {
-        value: "1",
-        contents: [
-          "ter, 02 Mar",
-          "B - Dorsal, Bíceps",
-          "1h 0m",
-          statusWorkoutBadge["finished"],
-          <div key={`action-3`} className="flex justify-end">
-            <IconButton
-              key="0 - 3"
-              icon={
-                <Link href="#">
-                  <AiOutlineEye />
-                </Link>
-              }
-            />
-          </div>,
-        ],
-      },
-      {
-        value: "2",
-        contents: [
-          "Qui, 03 Abr",
-          "C - Perna",
-          "59m",
-          statusWorkoutBadge["inProgress"],
-          <div key={`action-3`} className="flex justify-end">
-            <IconButton
-              key="0 - 3"
-              icon={
-                <Link href="#">
-                  <AiOutlineEye />
-                </Link>
-              }
-            />
-          </div>,
-        ],
-      },
+      // {
+      //   value: "0",
+      //   contents: [
+      //     "seg, 01 Fev",
+      //     "A - Peito, Tríceps, ombro",
+      //     "2h 15m",
+      //     statusWorkoutBadge["incomplete"],
+      //     <div key={`action-3`} className="flex justify-end">
+      //       <IconButton
+      //         key="0 - 3"
+      //         icon={
+      //           <Link href="#">
+      //             <AiOutlineEye />
+      //           </Link>
+      //         }
+      //       />
+      //     </div>,
+      //     ,
+      //   ],
+      // },
+      // {
+      //   value: "1",
+      //   contents: [
+      //     "ter, 02 Mar",
+      //     "B - Dorsal, Bíceps",
+      //     "1h 0m",
+      //     statusWorkoutBadge["finished"],
+      //     <div key={`action-3`} className="flex justify-end">
+      //       <IconButton
+      //         key="0 - 3"
+      //         icon={
+      //           <Link href="#">
+      //             <AiOutlineEye />
+      //           </Link>
+      //         }
+      //       />
+      //     </div>,
+      //   ],
+      // },
+      // {
+      //   value: "2",
+      //   contents: [
+      //     "Qui, 03 Abr",
+      //     "C - Perna",
+      //     "59m",
+      //     statusWorkoutBadge["inProgress"],
+      //     <div key={`action-3`} className="flex justify-end">
+      //       <IconButton
+      //         key="0 - 3"
+      //         icon={
+      //           <Link href="#">
+      //             <AiOutlineEye />
+      //           </Link>
+      //         }
+      //       />
+      //     </div>,
+      //   ],
+      // },
     ],
     []
   );
