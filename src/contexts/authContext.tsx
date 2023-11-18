@@ -1,6 +1,6 @@
 "use client";
-import { IUser, UserRole, UserRolesNamesType } from "@/types/User";
-import { useRouter, useSelectedLayoutSegment } from "next/navigation";
+import { IUser, UserRolesNamesType } from "@/types/User";
+import { useRouter } from "next/navigation";
 import {
   createContext,
   ReactNode,
@@ -9,7 +9,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { apiBase } from "@/lib/apiBase";
 import Cookies from "js-cookie";
 import { CONSTANTS } from "@/utils/constants";
@@ -124,11 +124,10 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
     async ({ roles, token }: IResponseLogin) => {
       setUserError(null);
       setIsFetchingUser(true);
+      Cookies.set(CONSTANTS.COOKIES_KEYS.TOKEN, token);
       const requestConfig = {
         headers: { Authorization: `Bearer ${token}` },
       };
-      Cookies.set(CONSTANTS.COOKIES_KEYS.TOKEN, token);
-
       if (roles.includes("ADMIN") || roles.includes("TEACHER")) {
         await geAdminOrTeacher({ roles, requestConfig });
       } else if (roles.includes("STUDENT")) {

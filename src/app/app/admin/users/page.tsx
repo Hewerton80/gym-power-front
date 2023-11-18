@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/buttons/Button";
 import { IconButton } from "@/components/ui/buttons/IconButton";
 import { Card } from "@/components/ui/cards/Card";
 import {
@@ -67,6 +68,11 @@ export default function UsersPage() {
     <Card>
       <Card.Header>
         <Card.Title>Usuários</Card.Title>
+        <Card.Actions>
+          <Button asChild>
+            <Link href="/app/admin/users/create">Adicionar usuário</Link>
+          </Button>
+        </Card.Actions>
       </Card.Header>
       <Card.Body>{handleTableContent}</Card.Body>
     </Card>
