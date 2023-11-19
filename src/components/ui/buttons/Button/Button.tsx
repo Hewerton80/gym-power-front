@@ -98,7 +98,7 @@ const buttonVariants = {
   },
 };
 
-type ButtonVariantStyle = keyof typeof buttonVariants.style;
+export type ButtonVariantStyle = keyof typeof buttonVariants.style;
 
 export interface ButtonProps extends ComponentPropsWithRef<"button"> {
   variantStyle?: ButtonVariantStyle;

@@ -1,5 +1,5 @@
 import { Card, CardProps } from "@/components/ui/cards/Card";
-import { isStrig } from "@/utils/isType";
+import { isString } from "@/utils/isType";
 import { twMerge } from "tailwind-merge";
 
 const variants = {
@@ -51,13 +51,13 @@ export function WidgetCard({
           {icon}
         </span>
         <div className="flex flex-col w-full gap-1 sm:gap-3">
-          {isStrig(title) ? (
+          {isString(title) ? (
             <p className="text-xs sm:text-sm">{title}</p>
           ) : (
             title
           )}
 
-          {isStrig(description) ? (
+          {isString(description) ? (
             <b className="text-black text-xl sm:text-[1.75rem] font-semibold">
               {description}
             </b>

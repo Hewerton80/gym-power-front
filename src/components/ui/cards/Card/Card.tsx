@@ -8,9 +8,12 @@ export interface CardProps extends ComponentPropsWithRef<"div"> {
 
 export interface CardHeaderProps extends ComponentPropsWithRef<"div"> {}
 export interface CardActionsProps extends ComponentPropsWithRef<"div"> {}
-export interface CardBodyProps extends ComponentPropsWithRef<"div"> {}
+export interface CardBodyProps extends ComponentPropsWithRef<"div"> {
+  asChild?: boolean;
+}
 export interface CardFooterProps extends ComponentPropsWithRef<"div"> {
   orientation?: "start" | "end" | "center";
+  asChild?: boolean;
 }
 
 function Card({ children, className, asChild, ...restProps }: CardProps) {
@@ -50,24 +53,28 @@ function Actions({ children, className, ...restProps }: CardActionsProps) {
   );
 }
 
-function Title({ children, className, ...rest }: CardProps) {
+function Title({ children, className, asChild, ...rest }: CardProps) {
+  const Comp = asChild ? Slot : "div";
+
   return (
-    <div className={twMerge("flex items-center", className)} {...rest}>
+    <Comp className={twMerge("flex items-center", className)} {...rest}>
       <h4 className="text-base sm:text-xl text-black font-medium">
         {children}
       </h4>
-    </div>
+    </Comp>
   );
 }
 
-function Body({ children, className, ...rest }: CardBodyProps) {
+function Body({ children, className, asChild, ...rest }: CardBodyProps) {
+  const Comp = asChild ? Slot : "div";
+
   return (
-    <div
+    <Comp
       className={twMerge("flex flex-col p-4 sm:p-[1.875rem]", className)}
       {...rest}
     >
       {children}
-    </div>
+    </Comp>
   );
 }
 

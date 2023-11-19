@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dataDisplay/DataTable";
 import { FeedBackError } from "@/components/ui/feedback/FeedBackError";
 import { TableSkeleton } from "@/components/ui/feedback/TableSkeleton";
-import { useGetUsers } from "@/hooks/useUser";
+import { useGetUsers } from "@/hooks/api/useUser";
 import { UserRole } from "@/types/User";
 import { isUndefined } from "@/utils/isType";
 import Link from "next/link";
