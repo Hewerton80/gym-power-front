@@ -15,14 +15,14 @@ export const Input = forwardRef(
       inputClassName,
       label,
       error,
-      ...resProps
+      ...restProps
     }: InputProps,
     ref?: any
   ) => {
     return (
       <div className={twMerge("flex flex-col w-full", formControlClassName)}>
         {label && (
-          <label className="mb-1 font-bold" htmlFor={resProps?.id}>
+          <label className="mb-1 font-bold" htmlFor={restProps?.id}>
             {label}
           </label>
         )}
@@ -35,7 +35,7 @@ export const Input = forwardRef(
             error && "border-danger/60 focus:border-danger",
             inputClassName
           )}
-          {...resProps}
+          {...restProps}
         />
         {error && (
           <span className="text-danger text-xs font-bold whitespace-nowrap mt-1">

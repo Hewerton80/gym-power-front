@@ -10,13 +10,13 @@ import {
   useState,
 } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { apiBase } from "@/lib/apiBase";
 import Cookies from "js-cookie";
 import { CONSTANTS } from "@/utils/constants";
-import { removeAllCookies } from "@/lib/removeAllCookies";
+import { removeAllCookies } from "@/lib/cookie";
 // import { BASE_PATHS } from "@/utils/navItems";
 import { AxiosRequestConfig } from "axios";
 import { getRandomRGBColor } from "@/utils/getRandomColor";
+import { useAxios } from "@/hooks/utils/useAxios";
 interface IResponseLogin {
   token: string;
   roles: UserRolesNamesType[];
@@ -42,6 +42,8 @@ export const AuthContext = createContext({} as ILoginContext);
 
 export function AuthContextProvider({ children }: IAuthContextProviderProps) {
   const router = useRouter();
+  const { apiBase } = useAxios();
+
   const [loggedUser, setLoggedUser] = useState<IUser | null>(null);
   const [isFetchingUser, setIsFetchingUser] = useState(false);
   const [userError, setUserError] = useState<any>(null);
@@ -54,26 +56,6 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
       Cookies.remove(CONSTANTS.COOKIES_KEYS.USER);
     }
   }, []);
-
-  // const onFetchStudantSuccess = useCallback(
-  //   ({ token }: IResponseLogin) => {
-  //     console.log({ token });
-  //     // Cookies.set(CONSTANTS.COOKIES_KEYS.TOKEN, access_token);
-  //     // handleSetUser(user);
-  //     // router.push("/app/hoWme");
-  //   },
-  //   [router]
-  // );
-
-  // const {
-  //   isPending: isPendingStudant,
-  //   error: fetchStudantError,
-  //   refetch: fetchStudant,
-  // } = useQuery({
-  //   queryFn: () => apiBase.get<IUser>("/me/studants").then((res) => res.data),
-  //   // onSuccess: onFetchStudantSuccess,
-  //   queryKey: [""],
-  // });
 
   const geStudant = useCallback(
     async ({

@@ -43,7 +43,7 @@ export default function UsersPage() {
               key="0 - 1"
               asChild
               icon={
-                <Link href="#">
+                <Link href={`/app/admin/users/${user?.id}/edit`}>
                   <MdEdit />
                 </Link>
               }

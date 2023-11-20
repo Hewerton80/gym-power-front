@@ -1,8 +1,10 @@
-import { apiBase } from "@/lib/apiBase";
 import { IWorkout } from "@/types/Workout";
 import { useQuery } from "@tanstack/react-query";
+import { useAxios } from "../utils/useAxios";
 
 export function useGetMyWorkouts() {
+  const { apiBase } = useAxios();
+
   const {
     data: workouts,
     isPending: isloadingWorkouts,
