@@ -1,12 +1,12 @@
 import { ExerciseStatus } from "@/types/Exercise";
 
-export const WorkoutStatus = {
+export const TrainingStatus = {
   ...ExerciseStatus,
   incomplete: "Imcompleto",
 };
 
-export interface IWorkout {
+export interface ITraining {
   id?: string;
   name?: string;
-  status?: keyof typeof WorkoutStatus;
+  status?: keyof typeof TrainingStatus;
 }

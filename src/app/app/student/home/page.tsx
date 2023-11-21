@@ -14,22 +14,22 @@ import {
 } from "@/components/ui/dataDisplay/DataTable";
 import { useEffect, useMemo } from "react";
 import Link from "next/link";
-import { statusWorkoutBadge } from "@/utils/statusWorkoutBadge";
+import { statusTrainingBadge } from "@/utils/statusTrainingBadge";
 import { useAuth } from "@/hooks/api/useAuth";
-import { useGetMyWorkouts } from "@/hooks/api/useWorkout";
+import { useGetMyTrainings } from "@/hooks/api/useTraining";
 import { TableSkeleton } from "@/components/ui/feedback/TableSkeleton";
 import { isUndefined } from "@/utils/isType";
 import { FeedBackError } from "@/components/ui/feedback/FeedBackError";
 
 export default function StudentPage() {
   const { loggedUser } = useAuth();
-  const { workouts, isloadingWorkouts, workoutsError, refetchWorkouts } =
-    useGetMyWorkouts();
+  const { trainings, isloadingTrainings, trainingsError, refetchTrainings } =
+    useGetMyTrainings();
 
   const cols = useMemo<IColmunDataTable[]>(
     () => [
       { field: "date", content: "Data" },
-      { field: "workout", content: "Treino" },
+      { field: "training", content: "Treino" },
       { field: "time", content: "Duração" },
       { field: "status", content: "Starus" },
       { field: "actions", content: "" },
@@ -45,7 +45,7 @@ export default function StudentPage() {
           "seg, 01 Fev",
           "A - Peito, Tríceps, ombro",
           "2h 15m",
-          statusWorkoutBadge["incomplete"],
+          statusTrainingBadge["incomplete"],
           <div key={`action-3`} className="flex justify-end">
             <IconButton
               key="0 - 3"
@@ -65,7 +65,7 @@ export default function StudentPage() {
           "ter, 02 Mar",
           "B - Dorsal, Bíceps",
           "1h 0m",
-          statusWorkoutBadge["finished"],
+          statusTrainingBadge["finished"],
           <div key={`action-3`} className="flex justify-end">
             <IconButton
               key="0 - 3"
@@ -84,7 +84,7 @@ export default function StudentPage() {
           "Qui, 03 Abr",
           "C - Perna",
           "59m",
-          statusWorkoutBadge["inProgress"],
+          statusTrainingBadge["inProgress"],
           <div key={`action-3`} className="flex justify-end">
             <IconButton
               key="0 - 3"
@@ -102,30 +102,35 @@ export default function StudentPage() {
   );
 
   const handleTableContent = useMemo(() => {
-    if (workoutsError) {
-      return <FeedBackError onTryAgain={refetchWorkouts} />;
+    if (trainingsError) {
+      return <FeedBackError onTryAgain={refetchTrainings} />;
     }
-    if (isloadingWorkouts || isUndefined(workouts)) {
+    if (isloadingTrainings || isUndefined(trainings)) {
       return <TableSkeleton columns={cols} numRows={3} />;
     }
     return <DataTable columns={cols} rows={rows} />;
-  }, [cols, workouts, isloadingWorkouts, rows, workoutsError, refetchWorkouts]);
+  }, [
+    cols,
+    trainings,
+    isloadingTrainings,
+    rows,
+    trainingsError,
+    refetchTrainings,
+  ]);
 
   useEffect(() => {
-    console.log({ workouts });
-  }, [workouts]);
+    console.log({ trainings });
+  }, [trainings]);
 
   return (
     <div className="grid grid-cols-12 gap-7">
-      <div className="grid grid-col-1 gap-7 col-span-12 lg:col-span-4">
+      <div className="grid grid-cols-2 sm:grid-cols-1 gap-7 col-span-12 lg:col-span-4">
         <WidgetCard
-          className="col-span-3"
           title="Altura"
           description={`${loggedUser?.heightInMt}m`}
           icon={<VscSymbolRuler />}
         />
         <WidgetCard
-          className="col-span-3"
           variant="info"
           title="Peso"
           description={`${loggedUser?.weightInKg}kg`}
@@ -138,17 +143,14 @@ export default function StudentPage() {
             <Card.Title>Últimos treinos</Card.Title>
             <Card.Actions>
               <Button
-                asChild={Boolean(workouts?.length)}
-                disabled={!workouts?.length}
+                asChild={Boolean(trainings?.length)}
+                disabled={!trainings?.length}
               >
                 <Link href="#">Ver mais</Link>
               </Button>
             </Card.Actions>
           </Card.Header>
-          <Card.Body>
-            {/* <DataTable columns={cols} rows={rows} /> */}
-            {handleTableContent}
-          </Card.Body>
+          <Card.Body>{handleTableContent}</Card.Body>
         </Card>
       </div>
       <div className="col-span-12">
@@ -159,7 +161,7 @@ export default function StudentPage() {
             <div className="flex items-center justify-between w-full">
               <p className="text-sm">Treino de hoje</p>
               <Button asChild>
-                <Link href="/app/student/workout/qeor455">Ir até treino</Link>
+                <Link href="/app/student/training/qeor455">Ir até treino</Link>
               </Button>
             </div>
           }

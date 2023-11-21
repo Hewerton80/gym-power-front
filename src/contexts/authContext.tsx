@@ -92,7 +92,9 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
         const { data } = await apiBase.get<IUser>("/me/users", requestConfig);
         handleSetUser({ ...data, roles, avatarBgColor: getRandomRGBColor() });
         router.push(
-          `/app/${roles.includes("ADMIN") ? "admin/users" : "teacher/workouts"}`
+          `/app/${
+            roles.includes("ADMIN") ? "admin/users" : "teacher/trainings"
+          }`
         );
       } catch (error) {
         removeAllCookies();

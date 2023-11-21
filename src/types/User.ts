@@ -12,6 +12,7 @@ export interface IUser {
   name?: string;
   password?: string;
   userId?: string;
+  isActive?: boolean;
   dateOfBirth?: string;
   gender?: string;
   heightInMt?: number;

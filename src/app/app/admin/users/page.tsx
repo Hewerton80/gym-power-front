@@ -24,6 +24,7 @@ export default function UsersPage() {
       { content: "Nome", field: "name" },
       { content: "Email", field: "email" },
       { content: "Funções", field: "roles" },
+      { content: "Status", field: "active" },
       { content: "", field: "actions" },
     ],
     []
@@ -37,6 +38,7 @@ export default function UsersPage() {
           user?.name,
           user?.email,
           user?.userRoles?.map(({ role }) => UserRole[role])?.join(", "),
+          user?.isActive ? "Ativo" : "Inativo",
           <div className="flex" key={`${i}-action`}>
             <IconButton
               className="ml-auto"

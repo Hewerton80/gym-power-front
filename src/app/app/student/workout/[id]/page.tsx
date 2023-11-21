@@ -4,7 +4,7 @@ import { ExerciseCard } from "@/components/ui/cards/ExerciseCard";
 import { getRange } from "@/utils/getRange";
 import { BsFillPlayFill } from "react-icons/bs";
 
-export default function WorkoutPage() {
+export default function TrainingPage() {
   return (
     <Card>
       <Card.Header>

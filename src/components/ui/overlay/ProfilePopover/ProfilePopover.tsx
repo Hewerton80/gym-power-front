@@ -18,13 +18,15 @@ export function ProfilePopover() {
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
-        <div className="flex gap-4 items-center cursor-pointer">
+        <div className="flex gap-2 sm:gap-4 items-center cursor-pointer">
           <Avatar
             username={loggedUser?.name}
             bgColor={loggedUser?.avatarBgColor}
           />
           <div className="flex flex-col">
-            <strong className="text-black text-base">{loggedUser?.name}</strong>
+            <strong className="text-black text-sm sm:text-base">
+              {loggedUser?.name}
+            </strong>
             <p className="text-xs">
               {loggedUser?.roles?.map((role) => UserRole[role])?.join(", ")}
             </p>

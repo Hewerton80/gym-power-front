@@ -6,11 +6,11 @@ import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/buttons/Button";
 
 interface ExerciseCardProps {
-  workoutStatus?: string;
+  trainingStatus?: string;
   exercise?: any;
 }
 
-export function ExerciseCard({ exercise, workoutStatus }: ExerciseCardProps) {
+export function ExerciseCard({ exercise, trainingStatus }: ExerciseCardProps) {
   const [isRunning, setIsRunnig] = useState(false);
 
   const handleChanExerciciStatus = useCallback(() => {

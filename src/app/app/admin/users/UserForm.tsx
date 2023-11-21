@@ -24,16 +24,34 @@ const { ERROR_MESSAGES } = CONSTANTS;
 
 const userFormSchema = z
   .object<ToZodObjectSchema<IUserForm>>({
+    id: z.string().optional(),
     name: z.string().min(1, ERROR_MESSAGES.REQUIRED_FIELDS),
-    email: z.string().min(1, ERROR_MESSAGES.REQUIRED_FIELDS),
+    email: z.string().optional(),
     userRolesOptions: z.array(z.any()).min(1, ERROR_MESSAGES.REQUIRED_FIELDS),
-    password: z.string().min(1, ERROR_MESSAGES.REQUIRED_FIELDS),
-    confirmPassword: z.string().min(1, ERROR_MESSAGES.REQUIRED_FIELDS),
+    password: z.string().optional(),
+    confirmPassword: z.string().optional(),
+    isEditUser: z.boolean().optional(),
   })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "As senhas não coincidem",
-    path: ["confirmPassword"],
-  });
+  .refine(
+    ({ email, isEditUser }) =>
+      isEditUser ? true : Boolean(String(email)?.trim()),
+    { message: ERROR_MESSAGES.REQUIRED_FIELDS, path: ["email"] }
+  )
+  .refine(
+    ({ password, isEditUser }) =>
+      isEditUser ? true : Boolean(String(password)?.trim()),
+    { message: ERROR_MESSAGES.REQUIRED_FIELDS, path: ["password"] }
+  )
+  .refine(
+    ({ confirmPassword, isEditUser }) =>
+      isEditUser ? true : Boolean(String(confirmPassword)?.trim()),
+    { message: ERROR_MESSAGES.REQUIRED_FIELDS, path: ["confirmPassword"] }
+  )
+  .refine(
+    ({ password, confirmPassword, isEditUser }) =>
+      isEditUser ? true : password === confirmPassword,
+    { message: "As senhas não coincidem", path: ["confirmPassword"] }
+  );
 
 interface IUserFormProps {
   userId?: string;
@@ -43,7 +61,7 @@ export function UserForm({ userId }: IUserFormProps) {
   const router = useRouter();
   const { showAlert } = useAlertModal();
 
-  const { createUser, isSubmitingUser } = useMutateUser();
+  const { createUser, updateUser, isSubmitingUser } = useMutateUser();
   const {
     isLoadingUser,
     userError,
@@ -60,11 +78,13 @@ export function UserForm({ userId }: IUserFormProps) {
   const { control, formState, reset, setError, handleSubmit } =
     useForm<IUserForm>({
       defaultValues: {
+        id: "",
         name: "",
         email: "",
         password: "",
         confirmPassword: "",
         userRolesOptions: [],
+        isEditUser: false,
       },
       mode: "onTouched",
       resolver: zodResolver(userFormSchema),
@@ -73,46 +93,68 @@ export function UserForm({ userId }: IUserFormProps) {
   useEffect(() => {
     if (isEditUser && currentFormUserData) {
       reset({
+        id: currentFormUserData?.id,
         name: currentFormUserData?.name,
         email: currentFormUserData?.email,
         userRolesOptions: currentFormUserData?.userRoles?.map(({ role }) => ({
           label: UserRole[role as UserRolesNamesType],
           value: role,
         })),
+        isEditUser: true,
       });
     }
   }, [isEditUser, currentFormUserData, reset]);
 
-  const handleUserDataForm = useCallback(({ ...userDataForm }: IUserForm) => {
-    userDataForm.roles = userDataForm?.userRolesOptions?.map(
-      (role) => role.value
-    ) as UserRolesNamesType[];
-    delete userDataForm?.confirmPassword;
-    delete userDataForm?.userRolesOptions;
-    return userDataForm;
-  }, []);
+  const handleUserDataForm = useCallback(
+    ({ ...userDataForm }: IUserForm) => {
+      userDataForm.roles = userDataForm?.userRolesOptions?.map(
+        (role) => role.value
+      ) as UserRolesNamesType[];
+      if (isEditUser) {
+        delete userDataForm?.password;
+        delete userDataForm?.email;
+      }
+      delete userDataForm?.confirmPassword;
+      delete userDataForm?.userRolesOptions;
+      delete userDataForm?.isEditUser;
+      return userDataForm;
+    },
+    [isEditUser]
+  );
 
   const handleSubmitUser = useCallback(
     (userDataForm: IUserForm) => {
       const onSuccess = () => {
-        toast("Usuário criado com sucesso!");
+        toast(`Usuário ${isEditUser ? "editado" : "criado"} com sucesso!`);
         router.push("/app/admin/users");
       };
       const onError = (error: any) => {
-        console.log({ error });
         if (error?.response?.status === 409) {
           setError("email", { message: "Email já cadastrado" });
         } else {
           showAlert({
-            title: "Erro ao criar usuário",
+            title: `Erro ao ${isEditUser ? "editar" : "criar"} usuário`,
             description: error?.message,
             variant: "danger",
           });
         }
       };
-      createUser(handleUserDataForm(userDataForm), { onSuccess, onError });
+      const handledUserDataForm = handleUserDataForm(userDataForm);
+      if (isEditUser) {
+        updateUser(handledUserDataForm, { onSuccess, onError });
+      } else {
+        createUser(handledUserDataForm, { onSuccess, onError });
+      }
     },
-    [router, createUser, showAlert, handleUserDataForm, setError]
+    [
+      router,
+      isEditUser,
+      createUser,
+      updateUser,
+      showAlert,
+      handleUserDataForm,
+      setError,
+    ]
   );
 
   const handleFormContent = useMemo(() => {
@@ -145,6 +187,7 @@ export function UserForm({ userId }: IUserFormProps) {
           <Controller
             name="email"
             control={control}
+            disabled={isEditUser}
             render={({ field, fieldState }) => (
               <Input
                 label="Email"
@@ -172,32 +215,36 @@ export function UserForm({ userId }: IUserFormProps) {
               />
             )}
           />
-          <Controller
-            name="password"
-            control={control}
-            render={({ field, fieldState }) => (
-              <Input
-                label="Senha"
-                placeholder="********"
-                type="password"
-                error={fieldState?.error?.message}
-                {...field}
+          {!isEditUser && (
+            <>
+              <Controller
+                name="password"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <Input
+                    label="Senha"
+                    placeholder="********"
+                    type="password"
+                    error={fieldState?.error?.message}
+                    {...field}
+                  />
+                )}
               />
-            )}
-          />
-          <Controller
-            name="confirmPassword"
-            control={control}
-            render={({ field, fieldState }) => (
-              <Input
-                label="Confirmar senha"
-                placeholder="********"
-                type="password"
-                error={fieldState?.error?.message}
-                {...field}
+              <Controller
+                name="confirmPassword"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <Input
+                    label="Confirmar senha"
+                    placeholder="********"
+                    type="password"
+                    error={fieldState?.error?.message}
+                    {...field}
+                  />
+                )}
               />
-            )}
-          />
+            </>
+          )}
         </div>
         <Button
           type="submit"

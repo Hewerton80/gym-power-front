@@ -149,7 +149,7 @@ export function Button({
     <Comp
       className={twMerge(
         "inline-flex items-center justify-center relative",
-        "h-fit w-fit px-2 py-1 sm:px-4 sm:py-2.5",
+        "h-fit w-fit px-3 py-2 sm:px-4 sm:py-2.5",
         "cursor-pointer ease-linear duration-200 border-2 rounded-lg outline-none",
         "text-xs sm:text-sm font-medium leading-none",
         "disabled:pointer-events-none disabled:opacity-50",

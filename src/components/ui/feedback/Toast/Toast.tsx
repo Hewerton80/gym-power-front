@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 export function Toast() {
   return (
     <ToastContainer
-      icon={<IoIosCheckmarkCircleOutline width={48} height={48} />}
+      icon={<IoIosCheckmarkCircleOutline size={56} />}
       className={style.root}
     />
   );

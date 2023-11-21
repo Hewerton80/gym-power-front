@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { useAxios } from "../utils/useAxios";
 
 export interface IUserForm extends IUser {
+  isEditUser?: boolean;
   confirmPassword?: string;
   userRolesOptions?: SelectOption[] | null;
 }
@@ -20,6 +21,7 @@ export function useGetUsers() {
   } = useQuery({
     queryFn: () => apiBase.get<IUser[]>("/users").then((res) => res.data || []),
     queryKey: [],
+    initialData: undefined,
     retry: 4,
   });
 
@@ -36,7 +38,7 @@ export function useGetUser(userId?: string) {
 
   const {
     data: user,
-    isPending: isLoadingUser,
+    isLoading: isLoadingUser,
     error: userError,
     refetch: refetchUser,
   } = useQuery({
@@ -44,6 +46,7 @@ export function useGetUser(userId?: string) {
       apiBase.get<IUser>(`/users/${userId}`).then((res) => res.data),
     queryKey: ["user", userId],
     enabled: Boolean(userId),
+    initialData: undefined,
     retry: 1,
   });
 
@@ -58,12 +61,19 @@ export function useGetUser(userId?: string) {
 export function useMutateUser() {
   const { apiBase } = useAxios();
 
-  const { mutate: createUser, isPending: isMutatingUser } = useMutation({
+  const { mutate: createUser, isPending: isCreatingUser } = useMutation({
     mutationFn: (user: IUserForm) =>
       apiBase.post<IUser>("/users", user).then((res) => res.data),
   });
+  const { mutate: updateUser, isPending: isUpdataTingUser } = useMutation({
+    mutationFn: ({ id, ...user }: IUserForm) =>
+      apiBase.patch<IUser>(`/users/${id}`, user).then((res) => res.data),
+  });
 
-  const isSubmitingUser = useMemo(() => isMutatingUser, [isMutatingUser]);
+  const isSubmitingUser = useMemo(
+    () => isCreatingUser || isUpdataTingUser,
+    [isCreatingUser, isUpdataTingUser]
+  );
 
-  return { createUser, isSubmitingUser };
+  return { createUser, updateUser, isSubmitingUser };
 }

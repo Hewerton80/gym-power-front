@@ -38,7 +38,7 @@ export function WidgetCard({
 }: WidgetCardProps) {
   return (
     <Card className={twMerge("relative", className)} {...restProps}>
-      <Card.Body className="flex-row items-center gap-6">
+      <Card.Body className="flex-row items-center gap-3 sm:gap-6">
         <span
           className={twMerge(
             "flex items-center justify-center rounded-full text-xl sm:text-4xl",
@@ -50,7 +50,7 @@ export function WidgetCard({
         >
           {icon}
         </span>
-        <div className="flex flex-col w-full gap-1 sm:gap-3">
+        <div className="flex flex-col w-full sm:gap-3">
           {isString(title) ? (
             <p className="text-xs sm:text-sm">{title}</p>
           ) : (
@@ -58,7 +58,7 @@ export function WidgetCard({
           )}
 
           {isString(description) ? (
-            <b className="text-black text-xl sm:text-[1.75rem] font-semibold">
+            <b className="text-black text-lg sm:text-[1.75rem] font-semibold">
               {description}
             </b>
           ) : (

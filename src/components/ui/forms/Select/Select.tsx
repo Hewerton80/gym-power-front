@@ -3,7 +3,8 @@ import ReactSelect, { MultiValue, PropsValue, SingleValue } from "react-select";
 import { twMerge } from "tailwind-merge";
 import { Spinner } from "@/components/ui/feedback/Spinner";
 import styled from "./Select.module.css";
-import { Badge } from "../../dataDisplay/Badge";
+import { FormLabel } from "@/components/ui/forms/FormLabel";
+import { FormHelperText } from "@/components/ui/forms/FormHelperText";
 
 export interface SelectOption {
   value?: string;
@@ -13,12 +14,9 @@ export interface SelectOption {
 
 export type OnchangeSigleValue = (newValue: SingleValue<SelectOption>) => void;
 
-// export { ActionMeta };
-
 export type OnchangeMultValue = (
   newValue: SelectOption[],
   actionMeta: any
-  // actionMeta: ActionMeta<SelectOption>
 ) => void;
 
 export interface SelectProps {
@@ -75,11 +73,7 @@ export const Select = forwardRef(
 
     return (
       <div className={twMerge("flex flex-col w-full", formControlClassName)}>
-        {label && (
-          <label className="mb-1 font-bold" htmlFor={restProps?.id}>
-            {label}
-          </label>
-        )}
+        {label && <FormLabel htmlFor={restProps?.id}>{label}</FormLabel>}
         <ReactSelect
           ref={ref}
           classNamePrefix="select"
@@ -115,11 +109,7 @@ export const Select = forwardRef(
           )}
           {...restProps}
         />
-        {error && (
-          <span className="text-danger text-xs font-bold whitespace-nowrap mt-1">
-            {error}
-          </span>
-        )}
+        {error && <FormHelperText>{error}</FormHelperText>}
       </div>
     );
   }

@@ -39,7 +39,7 @@ export const navItems: INavItem[] = [
   },
   {
     title: "Treinos",
-    path: "/app/teacher/workouts",
+    path: "/app/teacher/trainings",
     layoutSegment: BASE_PATHS.BASE_TEACHER_PATH,
     icon: <FaDumbbell />,
     avaliablesRoles: { TEACHER: true },

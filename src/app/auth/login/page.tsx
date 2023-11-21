@@ -58,16 +58,17 @@ export default function LoginPage() {
     <div className="flex flex-col lg:flex-row min-h-screen items-center">
       <div
         className={twMerge(
-          "pt-0 lg:pt-20 mb-8 lg:mb-0 relative  bg-white z-10 shadow-lg",
+          "pt-0 lg:pt-20 mb-4 sm:mb-8 lg:mb-0 relative  bg-white z-10 shadow-sm sm:shadow-lg",
           "h-auto lg:h-screen max-w-full lg:max-w-[22.5rem] 2xl:max-w-[35rem] w-full",
           "after:absolute after:-z-10 after:h-full after:top-0 after:right-[-8.75rem]",
           "after:bg-white after:w-[8.75rem] after:hidden lg:after:block",
           styled.side
         )}
       >
-        <div className="flex flex-col items-center pt-12">
-          <div className="flex items-center gap-3 mb-6">
+        <div className="flex flex-col items-center pt-4 sm:pt-12">
+          <div className="flex items-center gap-3 mb-2 sm:mb-6">
             <Image
+              className="h-10 sm:h-20 w-10 sm:w-20"
               src="/images/logo-1.png"
               alt="logo"
               width={80}
@@ -75,24 +76,24 @@ export default function LoginPage() {
               priority
             />
             <Image
+              className="h-6 hidden sm:block"
               src="/images/logo-2.png"
               alt="logo2"
               width={108}
               height={24}
-              className="h-6"
               priority
             />
           </div>
-          <h2 className="text-2xl text-heading mb-2 font-medium">
+          <h2 className="text-xl sm:text-2xl text-heading mb-1 sm:mb-2 font-medium">
             Welcome back!
           </h2>
-          <p className="text-center">
+          <p className="text-center text-sm sm:text-base">
             User Experience & Interface Design <br /> Strategy SaaS Solutions
           </p>
         </div>
         <div className="mx-auto max-w-[180px] lg:max-w-full w-full">
           <Image
-            className="py-6 lg:py-28"
+            className="py-3 sm:py-6 lg:py-28"
             src="/images/personal_trainer_re_cnua.svg"
             alt="logo3"
             width={450}
@@ -106,7 +107,7 @@ export default function LoginPage() {
           onSubmit={handleSubmit(handleLogin)}
           className={twMerge("flex flex-col max-w-md 2xl:max-w-lg w-full")}
         >
-          <h2 className="text-black text-2xl text-center mb-6">
+          <h2 className="text-black text-xl sm:text-2xl text-center mb-2 sm:mb-6">
             Sign in your account
           </h2>
           <div className="flex flex-col gap-4 mb-6">
