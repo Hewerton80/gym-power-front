@@ -35,11 +35,13 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
   const toogleSideBarButtonElement = useMemo(() => {
     return (
-      <span className="items-center justify-center cursor-pointer">
-        <FaBarsStaggered className="text-primary text-3xl" />
-      </span>
+      canShowSideBar && (
+        <span className="items-center justify-center cursor-pointer">
+          <FaBarsStaggered className="text-primary text-3xl" />
+        </span>
+      )
     );
-  }, []);
+  }, [canShowSideBar]);
 
   const sideBarElement = useMemo(() => {
     return (
@@ -144,7 +146,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                 {toogleSideBarButtonElement}
               </Slot>
               <Slot
-                className="hidden md:flex bg-red"
+                className="hidden md:flex"
                 onClick={() =>
                   setShowOnlyIcons(
                     (currentShowOnlyIcons) => !currentShowOnlyIcons

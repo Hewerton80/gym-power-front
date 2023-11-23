@@ -29,26 +29,20 @@ export default function LoginPage() {
   useEffect(() => {
     if (!loginError) return;
     const statusCode = loginError?.response?.status;
-    const message = loginError?.response?.data?.messages;
-    console.log({ status: statusCode, message: message });
+    const messages = loginError?.response?.data?.messages;
     console.log(Object.getOwnPropertyDescriptors(loginError));
-    if (statusCode === 401 && message === "invalid email or password") {
+    if (statusCode === 401 && messages?.includes("invalid email or password")) {
       setError("email", { message: " " });
       setError("password", { message: "Email ou senha incorretos" });
     } else {
       setError("email", { message: " " });
-      setError("password", { message: message || "Falha ao fazer login" });
+      setError("password", { message: messages || "Falha ao fazer login" });
     }
-    // else if (loginError) {
-    //   setError("email", { message: " " });
-    //   setError("password", { message: loginError?.message });
-    // }
-    // console.log({ loginError: statusCode });
   }, [loginError, setError]);
 
   const handleLogin = useCallback(
-    (loginCrentials: ILoginCrentials) => {
-      login(loginCrentials);
+    ({ email, password }: ILoginCrentials) => {
+      login({ email: email?.trim(), password: password });
       clearErrors();
     },
     [login, clearErrors]

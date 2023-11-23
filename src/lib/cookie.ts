@@ -2,9 +2,7 @@ import { CONSTANTS } from "@/utils/constants";
 import Cookies from "js-cookie";
 
 export const getCurretToken = () => {
-  const token = Cookies.get(CONSTANTS.COOKIES_KEYS.TOKEN);
-  console.log({ token });
-  return token;
+  return Cookies.get(CONSTANTS.COOKIES_KEYS.TOKEN);
 };
 
 export const removeAllCookies = () => {

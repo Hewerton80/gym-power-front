@@ -21,7 +21,6 @@ export function useGetUsers() {
   } = useQuery({
     queryFn: () => apiBase.get<IUser[]>("/users").then((res) => res.data || []),
     queryKey: [],
-    initialData: undefined,
     retry: 4,
   });
 
