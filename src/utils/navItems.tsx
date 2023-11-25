@@ -37,13 +37,13 @@ export const navItems: INavItem[] = [
     icon: <FaUsers />,
     avaliablesRoles: { ADMIN: true },
   },
-  {
-    title: "Treinos",
-    path: "/app/teacher/trainings",
-    layoutSegment: BASE_PATHS.BASE_TEACHER_PATH,
-    icon: <FaDumbbell />,
-    avaliablesRoles: { TEACHER: true },
-  },
+  // {
+  //   title: "Treinos",
+  //   path: "/app/teacher/trainings",
+  //   layoutSegment: BASE_PATHS.BASE_TEACHER_PATH,
+  //   icon: <FaDumbbell />,
+  //   avaliablesRoles: { TEACHER: true },
+  // },
   {
     title: "Alunos",
     path: "/app/teacher/students",

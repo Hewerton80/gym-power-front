@@ -7,8 +7,6 @@ import {
   IColmunDataTable,
   IRowDataTable,
 } from "@/components/ui/dataDisplay/DataTable";
-import { FeedBackError } from "@/components/ui/feedback/FeedBackError";
-import { TableSkeleton } from "@/components/ui/feedback/TableSkeleton";
 import { useGetUsers } from "@/hooks/api/useUser";
 import { UserRole } from "@/types/User";
 import { isUndefined } from "@/utils/isType";
@@ -32,39 +30,33 @@ export default function UsersPage() {
 
   const rows = useMemo<IRowDataTable[]>(
     () =>
-      users?.map((user, i) => ({
-        value: String(i),
-        contents: [
-          user?.name,
-          user?.email,
-          user?.userRoles?.map(({ role }) => UserRole[role])?.join(", "),
-          user?.isActive ? "Ativo" : "Inativo",
-          <div className="flex" key={`${i}-action`}>
-            <IconButton
-              className="ml-auto"
-              key="0 - 1"
-              asChild
-              icon={
-                <Link href={`/app/admin/users/${user?.id}/edit`}>
-                  <MdEdit />
-                </Link>
-              }
-            />
-          </div>,
-        ],
-      })) || [],
+      Array.isArray(users)
+        ? users?.map((user, i) => ({
+            value: String(i),
+            contents: [
+              user?.name,
+              user?.email,
+              user?.userRoles?.map(({ role }) => UserRole[role])?.join(", "),
+              user?.isActive ? "Ativo" : "Inativo",
+              <div className="flex" key={`${i}-action`}>
+                {user?.id && (
+                  <IconButton
+                    className="ml-auto"
+                    key="0 - 1"
+                    asChild
+                    icon={
+                      <Link href={`/app/admin/users/${user?.id}/edit`}>
+                        <MdEdit />
+                      </Link>
+                    }
+                  />
+                )}
+              </div>,
+            ],
+          }))
+        : [],
     [users]
   );
-
-  const handleTableContent = useMemo(() => {
-    if (usersError) {
-      return <FeedBackError onTryAgain={refetchUsers} />;
-    }
-    if (isLoadingUsers || isUndefined(users)) {
-      return <TableSkeleton columns={cols} numRows={15} />;
-    }
-    return <DataTable columns={cols} rows={rows} />;
-  }, [cols, users, isLoadingUsers, rows, usersError, refetchUsers]);
 
   return (
     <Card>
@@ -76,7 +68,15 @@ export default function UsersPage() {
           </Button>
         </Card.Actions>
       </Card.Header>
-      <Card.Body>{handleTableContent}</Card.Body>
+      <Card.Body>
+        <DataTable
+          columns={cols}
+          rows={rows}
+          onTryAgainIfError={refetchUsers}
+          isError={Boolean(usersError)}
+          isLoading={isLoadingUsers || isUndefined(users)}
+        />
+      </Card.Body>
     </Card>
   );
 }

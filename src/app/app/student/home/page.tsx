@@ -101,23 +101,6 @@ export default function StudentPage() {
     []
   );
 
-  const handleTableContent = useMemo(() => {
-    if (trainingsError) {
-      return <FeedBackError onTryAgain={refetchTrainings} />;
-    }
-    if (isloadingTrainings || isUndefined(trainings)) {
-      return <TableSkeleton columns={cols} numRows={3} />;
-    }
-    return <DataTable columns={cols} rows={rows} />;
-  }, [
-    cols,
-    trainings,
-    isloadingTrainings,
-    rows,
-    trainingsError,
-    refetchTrainings,
-  ]);
-
   useEffect(() => {
     console.log({ trainings });
   }, [trainings]);
@@ -150,7 +133,16 @@ export default function StudentPage() {
               </Button>
             </Card.Actions>
           </Card.Header>
-          <Card.Body>{handleTableContent}</Card.Body>
+          <Card.Body>
+            <DataTable
+              columns={cols}
+              rows={rows}
+              onTryAgainIfError={refetchTrainings}
+              isError={Boolean(trainingsError)}
+              isLoading={isloadingTrainings || isUndefined(trainings)}
+              numSkeletonRows={3}
+            />
+          </Card.Body>
         </Card>
       </div>
       <div className="col-span-12">

@@ -7,7 +7,7 @@ export function useGetMyTrainings() {
 
   const {
     data: trainings,
-    isPending: isloadingTrainings,
+    isFetching: isloadingTrainings,
     error: trainingsError,
     refetch: refetchTrainings,
   } = useQuery({

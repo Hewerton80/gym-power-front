@@ -15,13 +15,13 @@ export function useGetUsers() {
 
   const {
     data: users,
-    isPending: isLoadingUsers,
+    isFetching: isLoadingUsers,
     error: usersError,
     refetch: refetchUsers,
   } = useQuery({
     queryFn: () => apiBase.get<IUser[]>("/users").then((res) => res.data || []),
     queryKey: [],
-    retry: 4,
+    retry: 1,
   });
 
   return {
@@ -37,15 +37,14 @@ export function useGetUser(userId?: string) {
 
   const {
     data: user,
-    isLoading: isLoadingUser,
+    isFetching: isLoadingUser,
     error: userError,
     refetch: refetchUser,
   } = useQuery({
     queryFn: () =>
       apiBase.get<IUser>(`/users/${userId}`).then((res) => res.data),
-    queryKey: ["user", userId],
+    queryKey: [],
     enabled: Boolean(userId),
-    initialData: undefined,
     retry: 1,
   });
 

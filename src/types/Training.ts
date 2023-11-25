@@ -5,8 +5,10 @@ export const TrainingStatus = {
   incomplete: "Imcompleto",
 };
 
+export type TrainingNamesType = keyof typeof TrainingStatus;
+
 export interface ITraining {
   id?: string;
   name?: string;
-  status?: keyof typeof TrainingStatus;
+  status?: TrainingNamesType;
 }

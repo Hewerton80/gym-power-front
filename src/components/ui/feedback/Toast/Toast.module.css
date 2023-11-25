@@ -1,11 +1,8 @@
 .root:global(.Toastify__toast-container) :global(.Toastify__toast) {
-  @apply bg-success px-8 py-0;
+  @apply bg-success;
 }
 .root:global(.Toastify__toast-container) :global(.Toastify__toast-body) {
-  @apply flex-row-reverse text-white font-bold text-base p-0 m-0;
-}
-.root:global(.Toastify__toast-container) :global(.Toastify__close-button) {
-  @apply hidden;
+  @apply text-white py-0;
 }
 .root:global(.Toastify__toast-container) :global(.Toastify__progress-bar) {
   background: theme("colors.white");

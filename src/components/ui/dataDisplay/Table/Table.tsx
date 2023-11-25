@@ -25,7 +25,10 @@ function TableContainer({
 }: TableContainerProps) {
   return (
     <div
-      className={twMerge("w-full overflow-x-auto custom-scroll", className)}
+      className={twMerge(
+        "flex w-full overflow-x-auto custom-scroll",
+        className
+      )}
       {...restProps}
     >
       {children}
@@ -50,10 +53,7 @@ function Thead({ children, className, ...restProps }: TheadProps) {
 function Th({ children, className, ...restProps }: ThProps) {
   return (
     <th
-      className={twMerge(
-        "[&:not(:first-child)]:pl-5 pr-5 py-5 align-top text-left",
-        className
-      )}
+      className={twMerge("px-5 pr-5 py-5 align-top text-left", className)}
       {...restProps}
     >
       {children}
@@ -64,7 +64,10 @@ function Th({ children, className, ...restProps }: ThProps) {
 function Tr({ children, className, ...restProps }: TrProps) {
   return (
     <tr
-      className={twMerge("[&+&]:border-t border-b-border", className)}
+      className={twMerge(
+        "[tbody>&]:odd:bg-row-table border-b border-b-border",
+        className
+      )}
       {...restProps}
     >
       {children}
@@ -82,13 +85,7 @@ function Tbody({ children, className, ...restProps }: TbodyProps) {
 
 function Td({ children, className, ...restProps }: TdProps) {
   return (
-    <td
-      className={twMerge(
-        "[&:not(:first-child)]:pl-5 [&:not(:last-child)]:pr-5 py-3",
-        className
-      )}
-      {...restProps}
-    >
+    <td className={twMerge("px-5 py-3", className)} {...restProps}>
       {children}
     </td>
   );

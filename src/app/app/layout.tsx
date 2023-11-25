@@ -6,17 +6,22 @@ import { INavItem, navItems } from "@/utils/navItems";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { FaBarsStaggered } from "react-icons/fa6";
 import { Slot } from "@radix-ui/react-slot";
+import { Resizable } from "re-resizable";
 
+const minWidth = 218;
+const initialSideBarWidth = 272;
 export default function AppLayout({ children }: { children: ReactNode }) {
   const currentPath = usePathname();
   const { loggedUser } = useAuth();
 
   const [showSideBar, setShowSideBar] = useState(false);
   const [showOnlyIcons, setShowOnlyIcons] = useState(false);
+  const [sideBarWidth, setSideBarWidth] = useState(initialSideBarWidth);
+  const [resizingSideBar, setResizingSideBar] = useState(false);
 
   const avaliableNavItems = useMemo<INavItem[]>(() => {
     return navItems.filter(({ avaliablesRoles }) =>
@@ -43,73 +48,109 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     );
   }, [canShowSideBar]);
 
+  useEffect(() => {
+    if (sideBarWidth < minWidth) {
+      setShowOnlyIcons(true);
+      setSideBarWidth(initialSideBarWidth);
+    } else if (sideBarWidth < initialSideBarWidth) {
+      setSideBarWidth(initialSideBarWidth);
+    }
+  }, [sideBarWidth]);
+
   const sideBarElement = useMemo(() => {
     return (
       canShowSideBar && (
         <aside
           className={twMerge(
-            "flex-col bg-white h-screen shadow-sm",
-            "duration-100 ease-linear",
-            showOnlyIcons ? "w-20" : "w-[17rem]"
+            "bg-white shadow-sm",
+            "duration-100 ease-linear overflow-hidden"
           )}
         >
-          <div className="flex items-center px-6 gap-3 h-20 w-full">
-            <Image
-              src="/images/logo-1.png"
-              alt="logo"
-              width={52}
-              height={52}
-              priority
-            />
-            <Image
-              className={twMerge("h-6", showOnlyIcons ? "hidden" : "block")}
-              src="/images/logo-2.png"
-              alt="logo2"
-              width={108}
-              height={24}
-              priority
-            />
-          </div>
-          <nav className="flex w-full">
-            <ul
-              className={twMerge(
-                "flex flex-col w-full pt-4 space-y-2.5",
-                showOnlyIcons ? "pt-4 pr-3.5 pl-3.5" : "pl-6 pr-0"
-              )}
-            >
-              {avaliableNavItems.map(({ title, icon, path }, i) => {
-                const isActive = currentPath.includes(path);
-                return (
-                  <li key={`${title}-${i}`} className="flex w-full">
-                    <Link
-                      onClick={() => setShowSideBar(false)}
-                      href={path}
-                      className={twMerge(
-                        "flex items-center w-full gap-4 font-medium relative",
-                        "hover:text-link duration-100 ease-linear rounded-[0.625rem]",
-                        showOnlyIcons ? "p-3.5" : "p-5",
-                        isActive &&
-                          twMerge(
-                            "text-link bg-link/10 after:absolute ",
-                            "after:right-0 after:h-full after:w-1.5 after:rounded-md after:bg-link",
-                            showOnlyIcons ? "after:hidden" : "after:block"
-                          )
-                      )}
-                    >
-                      <span className="text-2xl">{icon}</span>
-                      <span className={showOnlyIcons ? "hidden" : "block"}>
-                        {title}
-                      </span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
+          <Resizable
+            className={twMerge(
+              "flex flex-col",
+              "duration-100 ease-linear overflow-hidden border-white"
+            )}
+            enable={{ right: !showOnlyIcons }}
+            size={{ width: showOnlyIcons ? 80 : sideBarWidth, height: "100vh" }}
+            onResizeStart={() => setResizingSideBar(true)}
+            onResizeStop={(e, direction, ref, d) => {
+              setResizingSideBar(false);
+              console.log({ futureW: sideBarWidth + d.width });
+              setSideBarWidth(() => sideBarWidth + d.width);
+            }}
+            handleWrapperClass={twMerge(
+              "[&>div]:duration-100 [&>div]:ease-linear",
+              "[&>div]:border-r-8 [&>div]:border-r-white",
+              "[&>div]:hover:border-r-primary",
+              resizingSideBar && "[&>div]:border-r-primary"
+            )}
+          >
+            <div className="flex items-center px-6 gap-3 h-20 w-full">
+              <Image
+                src="/images/logo-1.png"
+                alt="logo"
+                width={52}
+                height={52}
+                priority
+              />
+              <Image
+                className={twMerge("h-6", showOnlyIcons ? "hidden" : "block")}
+                src="/images/logo-2.png"
+                alt="logo2"
+                width={108}
+                height={24}
+                priority
+              />
+            </div>
+            <nav className="flex w-full">
+              <ul
+                className={twMerge(
+                  "flex flex-col w-full pt-4 space-y-2.5",
+                  showOnlyIcons ? "pt-4 pr-3.5 pl-3.5" : "pl-6 pr-0"
+                )}
+              >
+                {avaliableNavItems.map(({ title, icon, path }, i) => {
+                  const isActive = currentPath.includes(path);
+                  return (
+                    <li key={`${title}-${i}`} className="flex w-full">
+                      <Link
+                        onClick={() => setShowSideBar(false)}
+                        href={path}
+                        className={twMerge(
+                          "flex items-center w-full gap-4 font-medium relative",
+                          "hover:text-link duration-100 ease-linear rounded-[0.625rem]",
+                          showOnlyIcons ? "p-3.5" : "p-5",
+                          isActive &&
+                            twMerge(
+                              "text-link bg-link/10 after:absolute ",
+                              "after:right-0 after:h-full after:w-1.5 after:rounded-md after:bg-link",
+                              showOnlyIcons ? "after:hidden" : "after:block"
+                            )
+                        )}
+                      >
+                        <span className="text-2xl">{icon}</span>
+                        <span className={showOnlyIcons ? "hidden" : "block"}>
+                          {title}
+                        </span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+          </Resizable>
         </aside>
       )
     );
-  }, [canShowSideBar, avaliableNavItems, currentPath, showOnlyIcons]);
+  }, [
+    canShowSideBar,
+    avaliableNavItems,
+    currentPath,
+    sideBarWidth,
+    showOnlyIcons,
+    resizingSideBar,
+  ]);
 
   return (
     <>

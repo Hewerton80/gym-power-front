@@ -4,8 +4,10 @@ export enum ExerciseStatus {
   finished = "Finalizado",
 }
 
+export type ExerciseNamesType = keyof typeof ExerciseStatus;
+
 export interface Exercise {
   id?: string;
   name?: string;
-  status?: keyof typeof ExerciseStatus;
+  status?: ExerciseNamesType;
 }
