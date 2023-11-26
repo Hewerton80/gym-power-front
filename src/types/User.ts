@@ -1,3 +1,5 @@
+import { ITrainingPlans } from "./TrainingPlans";
+
 export enum UserRole {
   ADMIN = "Administrador",
   TEACHER = "Professor",
@@ -20,6 +22,6 @@ export interface IUser {
   createdAt?: string;
   userRoles?: { role: UserRolesNamesType }[];
   roles: UserRolesNamesType[];
-  trainingPlans?: any[];
+  trainingPlans?: ITrainingPlans[];
   avatarBgColor?: string;
 }

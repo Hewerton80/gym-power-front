@@ -15,7 +15,6 @@ import { useRouter } from "next/navigation";
 import { Select } from "@/components/ui/forms/Select";
 import { usersRolesOptions } from "@/utils/userRolesOptions";
 import { UserRole, UserRolesNamesType } from "@/types/User";
-import { AxiosError } from "axios";
 import { FeedBackLoading } from "@/components/ui/feedback/FeedBackLoading";
 import { isUndefined } from "@/utils/isType";
 import { FeedBackError } from "@/components/ui/feedback/FeedBackError";
@@ -206,7 +205,7 @@ export function UserForm({ userId }: IUserFormProps) {
                 isAutocomplite
                 isMulti
                 onchangeMultValue={onChange}
-                label="Email"
+                label="Funções"
                 placeholder="Funções..."
                 options={usersRolesOptions}
                 error={fieldState?.error?.message}

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { Providers } from "@/contexts";
-import "./globals.css";
 import { AlertModal } from "@/components/ui/overlay/AlertModal";
 import { Toast } from "@/components/ui/feedback/Toast";
+import "./globals.css";
 
 const poppins = Poppins({
   subsets: ["latin"],

@@ -17,9 +17,7 @@ import Link from "next/link";
 import { statusTrainingBadge } from "@/utils/statusTrainingBadge";
 import { useAuth } from "@/hooks/api/useAuth";
 import { useGetMyTrainings } from "@/hooks/api/useTraining";
-import { TableSkeleton } from "@/components/ui/feedback/TableSkeleton";
 import { isUndefined } from "@/utils/isType";
-import { FeedBackError } from "@/components/ui/feedback/FeedBackError";
 
 export default function StudentPage() {
   const { loggedUser } = useAuth();

@@ -1,8 +1,8 @@
 "use client";
-import { UserForm } from "@/app/app/admin/users/UserForm";
+import { UserForm } from "@/components/screens/UserForm";
 import { useParams } from "next/navigation";
 
 export default function EditUsersPage() {
-  const params = useParams();
-  return <UserForm userId={String(params?.id)} />;
+  const params = useParams<{ id: string }>();
+  return <UserForm userId={params?.id} />;
 }

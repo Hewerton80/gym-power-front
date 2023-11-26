@@ -77,7 +77,7 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
         setUserError(error);
       }
     },
-    [handleSetUser, router]
+    [handleSetUser, router, apiBase]
   );
 
   const geAdminOrTeacher = useCallback(
@@ -101,7 +101,7 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
         setUserError(error);
       }
     },
-    [handleSetUser, router]
+    [handleSetUser, router, apiBase]
   );
 
   const onLoginSuccess = useCallback(
