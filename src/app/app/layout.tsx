@@ -11,6 +11,9 @@ import { twMerge } from "tailwind-merge";
 import { FaBarsStaggered } from "react-icons/fa6";
 import { Slot } from "@radix-ui/react-slot";
 import { Resizable } from "re-resizable";
+import Cookies from "js-cookie";
+import { IconButton } from "@/components/ui/buttons/IconButton";
+import { FaMoon, FaSun } from "react-icons/fa";
 
 const minWidth = 218;
 const initialSideBarWidth = 272;
@@ -22,6 +25,33 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   const [showOnlyIcons, setShowOnlyIcons] = useState(false);
   const [sideBarWidth, setSideBarWidth] = useState(initialSideBarWidth);
   const [resizingSideBar, setResizingSideBar] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    if (sideBarWidth < minWidth) {
+      setShowOnlyIcons(true);
+      setSideBarWidth(initialSideBarWidth);
+    } else if (sideBarWidth < initialSideBarWidth) {
+      setSideBarWidth(initialSideBarWidth);
+    }
+  }, [sideBarWidth]);
+
+  useEffect(() => {
+    if (Cookies.get("theme") === "dark") {
+      setTheme("dark");
+    }
+    Cookies.set("theme", "dark");
+  }, []);
+
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+      Cookies.set("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      Cookies.set("theme", "light");
+    }
+  }, [theme]);
 
   const avaliableNavItems = useMemo<INavItem[]>(() => {
     return navItems.filter(({ avaliablesRoles }) =>
@@ -48,28 +78,19 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     );
   }, [canShowSideBar]);
 
-  useEffect(() => {
-    if (sideBarWidth < minWidth) {
-      setShowOnlyIcons(true);
-      setSideBarWidth(initialSideBarWidth);
-    } else if (sideBarWidth < initialSideBarWidth) {
-      setSideBarWidth(initialSideBarWidth);
-    }
-  }, [sideBarWidth]);
-
   const sideBarElement = useMemo(() => {
     return (
       canShowSideBar && (
         <aside
           className={twMerge(
-            "bg-white shadow-sm",
+            "bg-white dark:bg-dark-card shadow-sm",
             "duration-100 ease-linear overflow-hidden"
           )}
         >
           <Resizable
             className={twMerge(
-              "flex flex-col",
-              "duration-100 ease-linear overflow-hidden border-white"
+              "flex flex-col duration-100 ease-linear overflow-hidden",
+              " border-white dark:border-dark-card"
             )}
             enable={{ right: !showOnlyIcons }}
             size={{ width: showOnlyIcons ? 80 : sideBarWidth, height: "100vh" }}
@@ -81,7 +102,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             }}
             handleWrapperClass={twMerge(
               "[&>div]:duration-100 [&>div]:ease-linear",
-              "[&>div]:border-r-8 [&>div]:border-r-white",
+              "[&>div]:border-r-8 [&>div]:border-r-white [&>div]:dark:border-r-dark-card",
               "[&>div]:hover:border-r-primary",
               resizingSideBar && "[&>div]:border-r-primary"
             )}
@@ -120,11 +141,13 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                         className={twMerge(
                           "flex items-center w-full gap-4 font-medium relative",
                           "hover:text-link duration-100 ease-linear rounded-[0.625rem]",
+                          "hover:text-white",
                           showOnlyIcons ? "p-3.5" : "p-5",
                           isActive &&
                             twMerge(
-                              "text-link bg-link/10 after:absolute ",
-                              "after:right-0 after:h-full after:w-1.5 after:rounded-md after:bg-link",
+                              "text-link bg-link/10 after:absolute after:bg-link",
+                              "dark:text-white dark:bg-dark-body after:dark:bg-white",
+                              "after:right-0 after:h-full after:w-1.5 after:rounded-md",
                               showOnlyIcons ? "after:hidden" : "after:block"
                             )
                         )}
@@ -176,7 +199,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         )}
 
         <div className="flex flex-col flex-1 overflow-x-hidden">
-          <header className="bg-white h-20 shadow-sm">
+          <header className="bg-white dark:bg-dark-card h-20 shadow-sm">
             <div className="flex items-center h-full px-4 sm:px-8">
               <Slot
                 className="flex md:hidden"
@@ -196,7 +219,15 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               >
                 {toogleSideBarButtonElement}
               </Slot>
-              <div className="flex ml-auto">
+              <div className="flex gap-4 items-center ml-auto">
+                <IconButton
+                  icon={theme === "dark" ? <FaMoon /> : <FaSun />}
+                  onClick={() =>
+                    setTheme((currentTheme) =>
+                      currentTheme === "dark" ? "light" : "dark"
+                    )
+                  }
+                />
                 <ProfilePopover />
               </div>
             </div>

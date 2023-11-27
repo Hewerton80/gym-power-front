@@ -6,6 +6,7 @@ import { isUndefined } from "@/utils/isType";
 import { useMemo } from "react";
 import { FeedBackLoading } from "../ui/feedback/FeedBackLoading";
 import { Card } from "@/components/ui/cards/Card";
+import { differenceInYears } from "date-fns";
 
 interface ITrainingPlansProps {
   studendId: string;
@@ -24,7 +25,30 @@ export function TrainingPlans({ studendId }: ITrainingPlansProps) {
     if (isLoadingPage || isUndefined(student)) {
       return <FeedBackLoading />;
     }
-    return <></>;
+    return (
+      <div className="flex flex-col">
+        <div className="flex flex-wrap gap-4 ">
+          <span>
+            <b> Altura:</b> {student?.heightInMt}M
+          </span>
+          <span>
+            <b>Peso:</b> {student?.weightInKg}kg
+          </span>
+          <span>
+            <b>sexo:</b> {student?.gender}
+          </span>
+          <span>
+            <b>Idade:</b>{" "}
+            {student?.dateOfBirth
+              ? `${differenceInYears(
+                  new Date(),
+                  new Date(student?.dateOfBirth)
+                )} anos`
+              : "-"}
+          </span>
+        </div>
+      </div>
+    );
   }, [studentError, isLoadingPage, student, refetchStudent]);
 
   return (

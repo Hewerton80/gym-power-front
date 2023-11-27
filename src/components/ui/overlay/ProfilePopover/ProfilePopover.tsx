@@ -9,8 +9,10 @@ import assets from "../../../../../assets.json";
 import slideAndFadeANimation from "@/components/helpers/slideAndFade.module.css";
 import { UserRole } from "@/types/User";
 
-const menuItemClasseName =
-  "flex items-center px-6 py-2 text-sm hover:text-primary hover:bg-light gap-3 cursor-pointer";
+const menuItemClasseName = twMerge(
+  "flex items-center px-6 py-2 text-sm sm:text-base cursor-pointer gap-3",
+  "hover:text-primary hover:bg-light hover:dark:bg-dark-card/60"
+);
 
 export function ProfilePopover() {
   const { logout, loggedUser } = useAuth();
@@ -24,10 +26,10 @@ export function ProfilePopover() {
             bgColor={loggedUser?.avatarBgColor}
           />
           <div className="flex flex-col">
-            <strong className="text-black text-sm sm:text-base">
+            <strong className="text-black dark:text-white text-sm sm:text-base">
               {loggedUser?.name}
             </strong>
-            <p className="text-xs">
+            <p className="text-xs text-body-text dark:text-white">
               {loggedUser?.roles?.map((role) => UserRole[role])?.join(", ")}
             </p>
           </div>
@@ -38,8 +40,8 @@ export function ProfilePopover() {
           <div
             className={twMerge(
               "flex flex-col w-52 py-4 z-50",
-              "bg-white outline-none shadow-lg",
-              "animate- origin-top-right",
+              "bg-white dark:bg-dark-body outline-none shadow-lg",
+              "origin-top-right",
               slideAndFadeANimation.root,
               "rounded"
             )}

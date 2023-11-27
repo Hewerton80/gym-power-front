@@ -40,7 +40,7 @@ function Thead({ children, className, ...restProps }: TheadProps) {
   return (
     <thead
       className={twMerge(
-        "text-xs text-black font-bold border-b border-b-border",
+        "text-xs text-black dark:text-white font-bold border-b border-b-border",
         className
       )}
       {...restProps}
@@ -65,7 +65,8 @@ function Tr({ children, className, ...restProps }: TrProps) {
   return (
     <tr
       className={twMerge(
-        "[tbody>&]:odd:bg-row-table border-b border-b-border",
+        "[tbody>&]:odd:bg-row-table [tbody>&]:odd:dark:bg-transparent ",
+        "border-b border-b-border dark:border-b-body-text",
         className
       )}
       {...restProps}
@@ -77,7 +78,10 @@ function Tr({ children, className, ...restProps }: TrProps) {
 
 function Tbody({ children, className, ...restProps }: TbodyProps) {
   return (
-    <tbody className={twMerge("text-sm font-normal", className)} {...restProps}>
+    <tbody
+      className={twMerge("text-sm font-normal dark:text-light", className)}
+      {...restProps}
+    >
       {children}
     </tbody>
   );

@@ -25,15 +25,10 @@ export const useAxios = () => {
       },
       (error) => {
         const reponseError = error.response;
-        // console.log({
-        //   errorData:
-        //     reponseError.data?.messages?.includes("token is expired"),
-        // });
         if (
           reponseError.status === 401 &&
           reponseError?.data?.messages?.includes("token is expired")
         ) {
-          // window.location.href = "/login";
           showAlert({
             title: "Sua sessão expirou",
             description: "Faça login novamente",

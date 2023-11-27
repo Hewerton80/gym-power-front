@@ -17,6 +17,7 @@ import { removeAllCookies } from "@/lib/cookie";
 import { AxiosRequestConfig } from "axios";
 import { getRandomRGBColor } from "@/utils/getRandomColor";
 import { useAxios } from "@/hooks/utils/useAxios";
+import { navItems } from "@/utils/navItems";
 interface IResponseLogin {
   token: string;
   roles: UserRolesNamesType[];
@@ -71,7 +72,7 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
           requestConfig
         );
         handleSetUser({ ...data, roles, avatarBgColor: getRandomRGBColor() });
-        router.push("/app/student/home");
+        router.replace("/app/student/home");
       } catch (error) {
         removeAllCookies();
         setUserError(error);
@@ -91,11 +92,10 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
       try {
         const { data } = await apiBase.get<IUser>("/me/users", requestConfig);
         handleSetUser({ ...data, roles, avatarBgColor: getRandomRGBColor() });
-        router.push(
-          `/app/${
-            roles.includes("ADMIN") ? "admin/users" : "teacher/trainings"
-          }`
+        const foundedNavItem = navItems.find(
+          (navItem) => navItem.avaliablesRoles[roles[0]]
         );
+        router.replace(foundedNavItem?.path as string);
       } catch (error) {
         removeAllCookies();
         setUserError(error);

@@ -78,11 +78,6 @@ export default function StudensPage() {
     <Card>
       <Card.Header>
         <Card.Title>Alunos</Card.Title>
-        {/* <Card.Actions>
-          <Button asChild>
-            <Link href="/app/admin/students/create">Adicionar usuário</Link>
-          </Button>
-        </Card.Actions> */}
       </Card.Header>
       <Card.Body>
         <DataTable

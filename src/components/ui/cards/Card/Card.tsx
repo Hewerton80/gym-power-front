@@ -21,7 +21,8 @@ function Card({ children, className, asChild, ...restProps }: CardProps) {
   return (
     <Comp
       className={twMerge(
-        "flex flex-col w-full rounded-[1.25rem] shadow-sm overflow-hidden bg-white",
+        "flex flex-col w-full rounded-[1.25rem] overflow-hidden",
+        "shadow-sm bg-white dark:bg-dark-card",
         className
       )}
       {...restProps}
@@ -58,7 +59,7 @@ function Title({ children, className, asChild, ...rest }: CardProps) {
 
   return (
     <Comp className={twMerge("flex items-center", className)} {...rest}>
-      <h4 className="text-base sm:text-xl text-black font-medium">
+      <h4 className="text-base sm:text-xl text-black dark:text-white font-medium">
         {children}
       </h4>
     </Comp>
