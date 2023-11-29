@@ -14,6 +14,24 @@ pnpm dev
 bun dev
 ```
 
+Prisma:
+
+```bash
+
+
+#Pull the schema from an existing database, updating the Prisma schema
+$ npx prisma generate
+
+#migrate schema
+$ npx prisma migrate dev
+
+#Pull the schema from an existing database, updating the Prisma schema
+$ npx prisma db push
+
+#The command used to populate the database
+$ npx prisma db seed
+```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.

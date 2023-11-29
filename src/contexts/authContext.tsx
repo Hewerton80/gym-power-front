@@ -14,7 +14,7 @@ import Cookies from "js-cookie";
 import { CONSTANTS } from "@/utils/constants";
 import { removeAllCookies } from "@/lib/cookie";
 // import { BASE_PATHS } from "@/utils/navItems";
-import { AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { getRandomRGBColor } from "@/utils/getRandomColor";
 import { useAxios } from "@/hooks/utils/useAxios";
 import { navItems } from "@/utils/navItems";
@@ -105,18 +105,20 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
   );
 
   const onLoginSuccess = useCallback(
-    async ({ roles, token }: IResponseLogin) => {
+    // async ({ roles, token }: IResponseLogin) => {
+    async (data: any) => {
       setUserError(null);
       setIsFetchingUser(true);
-      Cookies.set(CONSTANTS.COOKIES_KEYS.TOKEN, token);
-      const requestConfig = {
-        headers: { Authorization: `Bearer ${token}` },
-      };
-      if (roles.includes("ADMIN") || roles.includes("TEACHER")) {
-        await geAdminOrTeacher({ roles, requestConfig });
-      } else if (roles.includes("STUDENT")) {
-        await geStudant({ roles, requestConfig });
-      }
+      console.log({ data });
+      // Cookies.set(CONSTANTS.COOKIES_KEYS.TOKEN, token);
+      // const requestConfig = {
+      //   headers: { Authorization: `Bearer ${token}` },
+      // };
+      // if (roles.includes("ADMIN") || roles.includes("TEACHER")) {
+      //   await geAdminOrTeacher({ roles, requestConfig });
+      // } else if (roles.includes("STUDENT")) {
+      //   await geStudant({ roles, requestConfig });
+      // }
 
       setIsFetchingUser(false);
     },
@@ -129,8 +131,11 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
     mutate: login,
   } = useMutation({
     mutationFn: (loginCrentials: ILoginCrentials) =>
-      apiBase
-        .post<IResponseLogin>("/auth/login", loginCrentials)
+      // apiBase
+      //   .post<IResponseLogin>("/auth/login", loginCrentials)
+      //   .then((res) => res.data),
+      axios
+        .post<IResponseLogin>("/api/auth/login", loginCrentials)
         .then((res) => res.data),
     onSuccess: onLoginSuccess,
   });
