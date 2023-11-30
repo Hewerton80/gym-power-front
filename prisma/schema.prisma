@@ -22,11 +22,9 @@ model User {
     name             String
     password         String?
     isActive         Boolean           @default(true)
-    teacherId        String?           @unique()
     isAdmin          Boolean
     isTeacher        Boolean
     trainingPlans    TrainingPlan[]
-    userId           String?           @unique
     dateOfBirth      DateTime
     gender           Gender
     heightInMt       Float?

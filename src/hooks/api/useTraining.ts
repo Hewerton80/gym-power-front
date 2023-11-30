@@ -16,6 +16,7 @@ export function useGetMyTrainings() {
         .get<ITraining[]>("/me/training-plan-history")
         .then((res) => res.data || []),
     queryKey: [],
+    enabled: false,
     retry: 0,
   });
 

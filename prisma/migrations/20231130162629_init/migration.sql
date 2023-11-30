@@ -5,6 +5,7 @@ CREATE TABLE `User` (
     `name` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NULL,
     `isActive` BOOLEAN NOT NULL DEFAULT true,
+    `teacherId` VARCHAR(191) NULL,
     `isAdmin` BOOLEAN NOT NULL,
     `isTeacher` BOOLEAN NOT NULL,
     `userId` VARCHAR(191) NULL,
@@ -15,6 +16,7 @@ CREATE TABLE `User` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `User_email_key`(`email`),
+    UNIQUE INDEX `User_teacherId_key`(`teacherId`),
     UNIQUE INDEX `User_userId_key`(`userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -48,6 +50,10 @@ CREATE TABLE `TrainingPlan` (
     `name` VARCHAR(191) NOT NULL,
     `isActive` BOOLEAN NULL DEFAULT true,
     `objective` VARCHAR(1000) NULL,
+    `teacherId` VARCHAR(191) NOT NULL,
+    `teacherName` VARCHAR(191) NOT NULL,
+    `teacherEmail` VARCHAR(191) NOT NULL,
+    `studentId` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
@@ -113,7 +119,7 @@ CREATE TABLE `TrainingExerciseHistory` (
 ALTER TABLE `Exercise` ADD CONSTRAINT `Exercise_muscleId_fkey` FOREIGN KEY (`muscleId`) REFERENCES `Muscle`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `TrainingPlan` ADD CONSTRAINT `TrainingPlan_id_fkey` FOREIGN KEY (`id`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `TrainingPlan` ADD CONSTRAINT `TrainingPlan_studentId_fkey` FOREIGN KEY (`studentId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Training` ADD CONSTRAINT `Training_trainingPlanId_fkey` FOREIGN KEY (`trainingPlanId`) REFERENCES `TrainingPlan`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

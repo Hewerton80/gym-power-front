@@ -11,7 +11,7 @@ import { useGetUsers } from "@/hooks/api/useUser";
 import { UserRole } from "@/types/User";
 import { isUndefined } from "@/utils/isType";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { MdEdit } from "react-icons/md";
 
 export default function UsersPage() {
@@ -28,6 +28,24 @@ export default function UsersPage() {
     []
   );
 
+  const getTextRoles = useCallback(
+    (index: number) => {
+      const user = users?.[index];
+      if (!user?.isAdmin && !user?.isTeacher) {
+        return "-";
+      }
+      const roles = [];
+      if (user?.isAdmin) {
+        roles.push("Administrador");
+      }
+      if (user?.isTeacher) {
+        roles.push("Professor");
+      }
+      return roles.join(", ");
+    },
+    [users]
+  );
+
   const rows = useMemo<IRowDataTable[]>(
     () =>
       Array.isArray(users)
@@ -36,7 +54,7 @@ export default function UsersPage() {
             contents: [
               user?.name,
               user?.email,
-              user?.userRoles?.map(({ role }) => UserRole[role])?.join(", "),
+              getTextRoles(i),
               user?.isActive ? "Ativo" : "Inativo",
               <div className="flex" key={`${i}-action`}>
                 {user?.id && (

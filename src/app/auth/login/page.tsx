@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/buttons/Button";
 import { useAuth } from "@/hooks/api/useAuth";
 import { useCallback, useEffect } from "react";
 import { z } from "zod";
-import { ILoginCrentials } from "@/contexts/authContext";
 import { ToZodObjectSchema } from "@/lib/zodHelpers";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { LoginCredentials } from "@/dtos/loginCredentials";
 
-const loginFormSchema = z.object<ToZodObjectSchema<ILoginCrentials>>({
+const loginFormSchema = z.object<ToZodObjectSchema<LoginCredentials>>({
   email: z.string().min(1, { message: "Um email deve ser informado" }),
   password: z.string().min(1, { message: "Uma senha deve ser informada" }),
 });
@@ -20,7 +20,7 @@ const loginFormSchema = z.object<ToZodObjectSchema<ILoginCrentials>>({
 export default function LoginPage() {
   const { login, loginError, isLoging } = useAuth();
   const { control, handleSubmit, setError, clearErrors } =
-    useForm<ILoginCrentials>({
+    useForm<LoginCredentials>({
       defaultValues: { email: "", password: "" },
       resolver: zodResolver(loginFormSchema),
       mode: "onSubmit",
@@ -29,20 +29,19 @@ export default function LoginPage() {
   useEffect(() => {
     if (!loginError) return;
     const statusCode = loginError?.response?.status;
-    const messages = loginError?.response?.data?.messages;
-    console.log(Object.getOwnPropertyDescriptors(loginError));
-    if (statusCode === 401 && messages?.includes("invalid email or password")) {
+    const message = loginError?.response?.data?.message;
+    if (statusCode === 401) {
       setError("email", { message: " " });
-      setError("password", { message: "Email ou senha incorretos" });
+      setError("password", { message });
     } else {
       setError("email", { message: " " });
-      setError("password", { message: messages || "Falha ao fazer login" });
+      setError("password", { message: "Falha ao fazer login" });
     }
   }, [loginError, setError]);
 
   const handleLogin = useCallback(
-    ({ email, password }: ILoginCrentials) => {
-      login({ email: email?.trim(), password: password });
+    (loginCredentials: LoginCredentials) => {
+      login(loginCredentials);
       clearErrors();
     },
     [login, clearErrors]
@@ -120,13 +119,14 @@ export default function LoginPage() {
             <Controller
               control={control}
               name="password"
-              render={({ field, fieldState }) => (
+              render={({ field: { value, ...restField }, fieldState }) => (
                 <Input
+                  value={value || ""}
                   placeholder="type tour password"
                   label="Password"
                   type="password"
                   error={fieldState.error?.message}
-                  {...field}
+                  {...restField}
                 />
               )}
             />

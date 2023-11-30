@@ -3,6 +3,7 @@ import { IUser } from "@/types/User";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useAxios } from "../utils/useAxios";
+import { User } from "@prisma/client";
 
 export interface IUserForm extends IUser {
   isEditUser?: boolean;
@@ -19,7 +20,7 @@ export function useGetUsers() {
     error: usersError,
     refetch: refetchUsers,
   } = useQuery({
-    queryFn: () => apiBase.get<IUser[]>("/users").then((res) => res.data || []),
+    queryFn: () => apiBase.get<User[]>("/users").then((res) => res.data || []),
     queryKey: [],
     retry: 1,
   });

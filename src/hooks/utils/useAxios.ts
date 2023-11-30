@@ -10,7 +10,7 @@ export const useAxios = () => {
   const apiBase = useMemo(
     () =>
       axios.create({
-        baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000",
+        baseURL: "/api",
         headers: {
           Authorization: `Bearer ${getCurretToken()}`,
         },

@@ -137,7 +137,7 @@ export default function StudentPage() {
               rows={rows}
               onTryAgainIfError={refetchTrainings}
               isError={Boolean(trainingsError)}
-              isLoading={isloadingTrainings || isUndefined(trainings)}
+              // isLoading={isloadingTrainings || isUndefined(trainings)}
               numSkeletonRows={3}
             />
           </Card.Body>
