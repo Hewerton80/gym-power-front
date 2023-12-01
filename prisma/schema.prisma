@@ -30,6 +30,7 @@ model User {
     heightInMt       Float?
     weightInKg       Float?
     studentExercises StudentExercise[]
+    avatarBgColor    String
     createdAt        DateTime          @default(now())
 }
 

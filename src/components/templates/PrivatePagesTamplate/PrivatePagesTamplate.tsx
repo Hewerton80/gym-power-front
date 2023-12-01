@@ -1,7 +1,6 @@
 "use client";
 import { ProfilePopover } from "@/components/ui/overlay/ProfilePopover";
 import { useAuth } from "@/hooks/api/useAuth";
-import { UserRolesNamesType } from "@/types/User";
 import { INavItem, navItems } from "@/utils/navItems";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,18 +13,33 @@ import { Resizable } from "re-resizable";
 import Cookies from "js-cookie";
 import { IconButton } from "@/components/ui/buttons/IconButton";
 import { FaMoon, FaSun } from "react-icons/fa";
+import { User } from "@prisma/client";
+import { SplashScreen } from "@/components/ui/feedback/SplashScreen";
 
 const minWidth = 218;
 const initialSideBarWidth = 272;
-export default function AppLayout({ children }: { children: ReactNode }) {
+
+interface IPrivatePagesTamplateProps {
+  children: ReactNode;
+  loggedUser: User;
+}
+
+export function PrivatePagesTamplate({
+  children,
+  loggedUser,
+}: IPrivatePagesTamplateProps) {
   const currentPath = usePathname();
-  const { loggedUser } = useAuth();
+  const { handleSetUser, isLogged } = useAuth();
 
   const [showSideBar, setShowSideBar] = useState(false);
   const [showOnlyIcons, setShowOnlyIcons] = useState(false);
   const [sideBarWidth, setSideBarWidth] = useState(initialSideBarWidth);
   const [resizingSideBar, setResizingSideBar] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    handleSetUser(loggedUser);
+  }, [loggedUser, handleSetUser]);
 
   useEffect(() => {
     if (sideBarWidth < minWidth) {
@@ -130,7 +144,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                       onClick={() => setShowSideBar(false)}
                       href={path}
                       className={twMerge(
-                        "flex items-center w-full gap-4 font-medium relative",
+                        "flex items-center w-full gap-4 font-medium relative whitespace-nowrap",
                         "hover:text-link duration-100 ease-linear rounded-[0.625rem]",
                         showOnlyIcons ? "p-3.5" : "p-5",
                         isActive &&
@@ -162,6 +176,10 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     showOnlyIcons,
     resizingSideBar,
   ]);
+
+  if (!isLogged) {
+    return <SplashScreen />;
+  }
 
   return (
     <>

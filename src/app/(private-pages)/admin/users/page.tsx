@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dataDisplay/DataTable";
 import { useGetUsers } from "@/hooks/api/useUser";
 import { UserRole } from "@/types/User";
+import { getUserTextRoles } from "@/utils/getUserTextRoles";
 import { isUndefined } from "@/utils/isType";
 import Link from "next/link";
 import { useCallback, useMemo } from "react";
@@ -54,7 +55,7 @@ export default function UsersPage() {
             contents: [
               user?.name,
               user?.email,
-              getTextRoles(i),
+              getUserTextRoles(user),
               user?.isActive ? "Ativo" : "Inativo",
               <div className="flex" key={`${i}-action`}>
                 {user?.id && (
@@ -63,7 +64,7 @@ export default function UsersPage() {
                     key="0 - 1"
                     asChild
                     icon={
-                      <Link href={`/app/admin/users/${user?.id}/edit`}>
+                      <Link href={`/admin/users/${user?.id}/edit`}>
                         <MdEdit />
                       </Link>
                     }
@@ -82,7 +83,7 @@ export default function UsersPage() {
         <Card.Title>Usuários</Card.Title>
         <Card.Actions>
           <Button asChild>
-            <Link href="/app/admin/users/create">Adicionar usuário</Link>
+            <Link href="/admin/users/create">Adicionar usuário</Link>
           </Button>
         </Card.Actions>
       </Card.Header>

@@ -3,12 +3,13 @@ import * as RadixAvatar from "@radix-ui/react-avatar";
 import { useMemo, ComponentProps } from "react";
 import { twMerge } from "tailwind-merge";
 import assets from "../../../../../assets.json";
-
+import colors from "tailwindcss/colors";
 export interface AvatarProps extends ComponentProps<typeof RadixAvatar.Root> {
   src?: string;
   alt?: string;
   username?: string;
   bgColor?: string;
+  color?: string;
 }
 
 export function Avatar({
@@ -16,6 +17,7 @@ export function Avatar({
   alt,
   username = "",
   bgColor = assets.colors.primary,
+  color = colors.white,
   className,
   ...restProps
 }: AvatarProps) {
@@ -50,11 +52,8 @@ export function Avatar({
         />
       )}
       <RadixAvatar.Fallback
-        className={twMerge(
-          "flex items-center justify-center h-full w-full",
-          "text-base uppercase text-white"
-        )}
-        style={{ backgroundColor: bgColor }}
+        className="flex items-center justify-center h-full w-full text-base uppercase"
+        style={{ backgroundColor: bgColor, color }}
       >
         {nameInities}
       </RadixAvatar.Fallback>

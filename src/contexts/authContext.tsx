@@ -1,5 +1,4 @@
 "use client";
-import { UserRolesNamesType } from "@/types/User";
 import { useRouter } from "next/navigation";
 import {
   createContext,
@@ -15,7 +14,7 @@ import { CONSTANTS } from "@/utils/constants";
 import { removeAllCookies } from "@/lib/cookie";
 // import { BASE_PATHS } from "@/utils/navItems";
 import axios, { AxiosRequestConfig } from "axios";
-import { getRandomRGBColor } from "@/utils/getRandomColor";
+import { getRandomRGBColor } from "@/utils/colors";
 import { useAxios } from "@/hooks/utils/useAxios";
 import { navItems } from "@/utils/navItems";
 import { User } from "@prisma/client";
@@ -32,8 +31,9 @@ interface IAuthContextProviderProps {
 interface ILoginContext {
   loginError: any;
   isLoging: boolean;
+  isLogged: boolean;
   loggedUser: User | null;
-  //   handleSetUser: (User: User | null) => void;
+  handleSetUser: (User: User | null) => void;
   login: (loginCredentials: LoginCredentials) => void;
   logout: () => void;
 }
@@ -46,6 +46,8 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
 
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
 
+  const isLogged = useMemo(() => Boolean(loggedUser), [loggedUser]);
+
   const handleSetUser = useCallback((user: User | null) => {
     setLoggedUser(user);
     if (user) {
@@ -55,75 +57,19 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
     }
   }, []);
 
-  // const geStudant = useCallback(
-  //   async ({
-  //     roles,
-  //     requestConfig,
-  //   }: {
-  //     roles: UserRolesNamesType[];
-  //     requestConfig: AxiosRequestConfig;
-  //   }) => {
-  //     try {
-  //       const { data } = await apiBase.get<User>(
-  //         "/me/students",
-  //         requestConfig
-  //       );
-  //       handleSetUser({ ...data, roles, avatarBgColor: getRandomRGBColor() });
-  //       router.replace("/app/student/home");
-  //     } catch (error) {
-  //       removeAllCookies();
-  //       setUserError(error);
-  //     }
-  //   },
-  //   [handleSetUser, router, apiBase]
-  // );
-
-  // const geAdminOrTeacher = useCallback(
-  //   async ({
-  //     roles,
-  //     requestConfig,
-  //   }: {
-  //     roles: UserRolesNamesType[];
-  //     requestConfig: AxiosRequestConfig;
-  //   }) => {
-  //     try {
-  //       const { data } = await apiBase.get<User>("/me/users", requestConfig);
-  //       handleSetUser({ ...data, roles, avatarBgColor: getRandomRGBColor() });
-  //       const foundedNavItem = navItems.find(
-  //         (navItem) => navItem.avaliablesRoles[roles[0]]
-  //       );
-  //       router.replace(foundedNavItem?.path as string);
-  //     } catch (error) {
-  //       removeAllCookies();
-  //       setUserError(error);
-  //     }
-  //   },
-  //   [handleSetUser, router, apiBase]
-  // );
-
   const onLoginSuccess = useCallback(
-    // async ({ roles, token }: IResponseLogin) => {
     async ({ user, token }: IResponseLogin) => {
       Cookies.set(CONSTANTS.COOKIES_KEYS.TOKEN, token);
       console.log({ user, token });
-      handleSetUser(user);
       if (user?.isAdmin) {
-        router.replace("/app/admin/users");
+        router.replace("/admin/users");
       } else if (user?.isTeacher) {
-        router.replace("/app/teacher/students");
+        router.replace("/teacher/students");
       } else {
-        router.replace("/app/student/home");
+        router.replace("/student/home");
       }
-      // const requestConfig = {
-      //   headers: { Authorization: `Bearer ${token}` },
-      // };
-      // if (roles.includes("ADMIN") || roles.includes("TEACHER")) {
-      //   await geAdminOrTeacher({ roles, requestConfig });
-      // } else if (roles.includes("STUDENT")) {
-      //   await geStudant({ roles, requestConfig });
-      // }
     },
-    [router, handleSetUser]
+    [router]
   );
 
   const {
@@ -132,9 +78,6 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
     mutate: login,
   } = useMutation({
     mutationFn: (loginCrentials: LoginCredentials) =>
-      // apiBase
-      //   .post<IResponseLogin>("/auth/login", loginCrentials)
-      //   .then((res) => res.data),
       apiBase
         .post<IResponseLogin>("/auth/login", loginCrentials)
         .then((res) => res.data),
@@ -154,23 +97,13 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
     }
   }, [handleSetUser]);
 
-  //   useEffect(() => {
-  //     const isInSomeLoggedPage =
-  //       selectedLayoutSegment !== BASE_PATHS.BASE_AUTH_PATH;
-  //     const loggedUserInCache = Cookies.get(CONSTANTS.COOKIES_KEYS.USER);
-  //     const tokenInCache = Cookies.get(CONSTANTS.COOKIES_KEYS.TOKEN);
-  //     const hasNotSomeImportantIndo = !loggedUserInCache || !tokenInCache;
-  //     if (isInSomeLoggedPage && hasNotSomeImportantIndo) {
-  //       logout();
-  //     }
-  //   }, [selectedLayoutSegment, logout]);
-
   return (
     <AuthContext.Provider
       value={{
         login,
         logout,
-        // handleSetUser,
+        handleSetUser,
+        isLogged,
         loggedUser,
         isLoging,
         loginError,

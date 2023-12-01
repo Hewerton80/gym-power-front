@@ -3,20 +3,11 @@ import axios from "axios";
 import { useEffect, useMemo } from "react";
 import { useAlertModal } from "./useAlertModal";
 import { useRouter } from "next/navigation";
+import { apiBase } from "@/lib/axios";
 
 export const useAxios = () => {
   const { showAlert } = useAlertModal();
   const router = useRouter();
-  const apiBase = useMemo(
-    () =>
-      axios.create({
-        baseURL: "/api",
-        headers: {
-          Authorization: `Bearer ${getCurretToken()}`,
-        },
-      }),
-    []
-  );
 
   useEffect(() => {
     apiBase.interceptors.response.use(

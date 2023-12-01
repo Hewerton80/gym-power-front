@@ -61,7 +61,7 @@ export default function StudensPage() {
                 asChild
                 icon={
                   <Link
-                    href={`/app/teacher/students/${student?.id}/training-plans`}
+                    href={`/teacher/students/${student?.id}/training-plans`}
                   >
                     <AiOutlineEye />
                   </Link>

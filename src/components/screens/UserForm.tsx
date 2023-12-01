@@ -125,7 +125,7 @@ export function UserForm({ userId }: IUserFormProps) {
     (userDataForm: IUserForm) => {
       const onSuccess = () => {
         toast(`Usuário ${isEditUser ? "editado" : "criado"} com sucesso!`);
-        router.push("/app/admin/users");
+        router.push("/admin/users");
       };
       const onError = (error: any) => {
         if (error?.response?.status === 409) {

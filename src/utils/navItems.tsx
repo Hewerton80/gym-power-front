@@ -26,28 +26,28 @@ export interface INavItem {
 export const navItems: INavItem[] = [
   {
     title: "Usuários",
-    path: "/app/admin/users",
+    path: "/admin/users",
     layoutSegment: BASE_PATHS.BASE_ADMIN_PATH,
     icon: <FaUsers />,
     avaliablesRoles: { isAdmin: true },
   },
   // {
   //   title: "Treinos",
-  //   path: "/app/teacher/trainings",
+  //   path: "/teacher/trainings",
   //   layoutSegment: BASE_PATHS.BASE_TEACHER_PATH,
   //   icon: <FaDumbbell />,
   //   avaliablesRoles: { TEACHER: true },
   // },
   {
     title: "Alunos",
-    path: "/app/teacher/students",
+    path: "/teacher/students",
     layoutSegment: BASE_PATHS.BASE_TEACHER_PATH,
     icon: <GiMuscleUp />,
     avaliablesRoles: { isTeacher: true },
   },
   {
     title: "Área do aluno",
-    path: "/app/student/home",
+    path: "/student/home",
     layoutSegment: BASE_PATHS.BASE_STUDENT_PATH,
     icon: <FaHome />,
   },

@@ -151,7 +151,7 @@ export default function StudentPage() {
             <div className="flex items-center justify-between w-full">
               <p className="text-sm">Treino de hoje</p>
               <Button asChild>
-                <Link href="/app/student/training/qeor455">Ir até treino</Link>
+                <Link href="/student/training/qeor455">Ir até treino</Link>
               </Button>
             </div>
           }

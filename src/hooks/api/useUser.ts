@@ -5,6 +5,8 @@ import { useMemo } from "react";
 import { useAxios } from "../utils/useAxios";
 import { User } from "@prisma/client";
 
+interface IGetUser extends User {}
+
 export interface IUserForm extends IUser {
   isEditUser?: boolean;
   confirmPassword?: string;
@@ -20,7 +22,8 @@ export function useGetUsers() {
     error: usersError,
     refetch: refetchUsers,
   } = useQuery({
-    queryFn: () => apiBase.get<User[]>("/users").then((res) => res.data || []),
+    queryFn: () =>
+      apiBase.get<IGetUser[]>("/users").then((res) => res.data || []),
     queryKey: [],
     retry: 1,
   });
