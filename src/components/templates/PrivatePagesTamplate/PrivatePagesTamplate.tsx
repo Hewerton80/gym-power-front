@@ -15,31 +15,28 @@ import { IconButton } from "@/components/ui/buttons/IconButton";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { User } from "@prisma/client";
 import { SplashScreen } from "@/components/ui/feedback/SplashScreen";
+import { useTheme } from "@/hooks/utils/useTheme";
 
 const minWidth = 218;
 const initialSideBarWidth = 272;
 
 interface IPrivatePagesTamplateProps {
   children: ReactNode;
-  loggedUser: User;
 }
 
-export function PrivatePagesTamplate({
-  children,
-  loggedUser,
-}: IPrivatePagesTamplateProps) {
+export function PrivatePagesTamplate({ children }: IPrivatePagesTamplateProps) {
   const currentPath = usePathname();
-  const { handleSetUser, isLogged } = useAuth();
+  const { theme, toggleTheme } = useTheme();
+  const { loggedUser, isLogged } = useAuth();
 
   const [showSideBar, setShowSideBar] = useState(false);
   const [showOnlyIcons, setShowOnlyIcons] = useState(false);
   const [sideBarWidth, setSideBarWidth] = useState(initialSideBarWidth);
   const [resizingSideBar, setResizingSideBar] = useState(false);
-  const [theme, setTheme] = useState<"light" | "dark">("light");
 
-  useEffect(() => {
-    handleSetUser(loggedUser);
-  }, [loggedUser, handleSetUser]);
+  // useEffect(() => {
+  //   handleSetUser(loggedUser);
+  // }, [loggedUser, handleSetUser]);
 
   useEffect(() => {
     if (sideBarWidth < minWidth) {
@@ -49,23 +46,6 @@ export function PrivatePagesTamplate({
       setSideBarWidth(initialSideBarWidth);
     }
   }, [sideBarWidth]);
-
-  useEffect(() => {
-    if (Cookies.get("theme") === "dark") {
-      setTheme("dark");
-    }
-    Cookies.set("theme", "dark");
-  }, []);
-
-  useEffect(() => {
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
-      Cookies.set("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      Cookies.set("theme", "light");
-    }
-  }, [theme]);
 
   const avaliableNavItems = useMemo<INavItem[]>(() => {
     return navItems.filter((navItems) =>
@@ -223,11 +203,7 @@ export function PrivatePagesTamplate({
               <div className="flex gap-4 items-center ml-auto">
                 <IconButton
                   icon={theme === "dark" ? <FaMoon /> : <FaSun />}
-                  onClick={() =>
-                    setTheme((currentTheme) =>
-                      currentTheme === "dark" ? "light" : "dark"
-                    )
-                  }
+                  onClick={() => toggleTheme()}
                 />
                 <ProfilePopover />
               </div>

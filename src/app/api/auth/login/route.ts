@@ -30,5 +30,5 @@ export async function POST(request: NextRequest) {
 
   delete (foundUser as any)?.password;
 
-  return NextResponse.json({ token }, { status: 201 });
+  return NextResponse.json({ token, user: foundUser }, { status: 201 });
 }

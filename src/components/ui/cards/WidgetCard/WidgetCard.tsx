@@ -58,7 +58,7 @@ export function WidgetCard({
           )}
 
           {isString(description) ? (
-            <b className="text-black text-lg sm:text-[1.75rem] font-semibold">
+            <b className="text-black dark:text-light text-lg sm:text-[1.75rem] font-semibold">
               {description}
             </b>
           ) : (

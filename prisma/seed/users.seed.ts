@@ -6,9 +6,13 @@ import { getRange } from "../../src/utils/getRange";
 import { getRandomRGBColor } from "../../src/utils/colors";
 
 export async function seedUser() {
+  const countUsers = await prisma.user.count();
+  if (countUsers >= 20) {
+    return;
+  }
   const password = await hash("123456789", 10);
   await prisma.user.createMany({
-    data: getRange(100).map(() => ({
+    data: getRange(30).map(() => ({
       name: faker.person.fullName(),
       email: faker.internet.email(),
       isAdmin: faker.datatype.boolean(),

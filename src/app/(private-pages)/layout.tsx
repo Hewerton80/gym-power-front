@@ -3,23 +3,15 @@ import { ReactNode } from "react";
 import { cookies } from "next/headers";
 import { CONSTANTS } from "@/utils/constants";
 import { redirect } from "next/navigation";
-import { getRequestHeaders } from "@/utils/getRequestHeader";
+import { removeAllCookies } from "@/lib/cookie";
 
-export default async function AppLayout({ children }: { children: ReactNode }) {
+export default function AppLayout({ children }: { children: ReactNode }) {
   const cookieStore = cookies();
-  const response = await fetch(`${process.env.BASE_URL}/api/me/user`, {
-    headers: getRequestHeaders(
-      String(cookieStore.get(CONSTANTS.COOKIES_KEYS.TOKEN)?.value)
-    ),
-  });
-  const loggedUser = await response.json();
-
-  if (!loggedUser) {
+  const cachedUser = cookieStore.get(CONSTANTS.COOKIES_KEYS.USER)?.value;
+  const chachedToken = cookieStore.get(CONSTANTS.COOKIES_KEYS.TOKEN)?.value;
+  if (!cachedUser || !chachedToken) {
+    removeAllCookies();
     redirect("/auth/login");
   }
-  return (
-    <PrivatePagesTamplate loggedUser={loggedUser}>
-      {children}
-    </PrivatePagesTamplate>
-  );
+  return <PrivatePagesTamplate>{children}</PrivatePagesTamplate>;
 }

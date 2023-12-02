@@ -60,7 +60,7 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
   const onLoginSuccess = useCallback(
     async ({ user, token }: IResponseLogin) => {
       Cookies.set(CONSTANTS.COOKIES_KEYS.TOKEN, token);
-      console.log({ user, token });
+      handleSetUser(user);
       if (user?.isAdmin) {
         router.replace("/admin/users");
       } else if (user?.isTeacher) {
@@ -69,7 +69,7 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
         router.replace("/student/home");
       }
     },
-    [router]
+    [router, handleSetUser]
   );
 
   const {
@@ -92,6 +92,7 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
 
   useEffect(() => {
     const loggedUserInCache = Cookies.get(CONSTANTS.COOKIES_KEYS.USER);
+    console.log({ loggedUserInCache, Cookies: Cookies.get() });
     if (loggedUserInCache) {
       handleSetUser(JSON.parse(loggedUserInCache) as User);
     }
