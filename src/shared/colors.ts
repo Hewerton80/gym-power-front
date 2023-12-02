@@ -1,4 +1,4 @@
-import { getRandomInt } from "../utils/getRandomInt";
+import { getRandomInt } from "./getRandomInt";
 
 export const getRandomRGBColor = () => {
   const r = getRandomInt(0, 255);

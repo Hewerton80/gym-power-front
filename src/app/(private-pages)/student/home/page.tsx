@@ -14,10 +14,10 @@ import {
 } from "@/components/ui/dataDisplay/DataTable";
 import { useEffect, useMemo } from "react";
 import Link from "next/link";
-import { statusTrainingBadge } from "@/utils/statusTrainingBadge";
+import { statusTrainingBadge } from "@/shared/statusTrainingBadge";
 import { useAuth } from "@/hooks/api/useAuth";
 import { useGetMyTrainings } from "@/hooks/api/useTraining";
-import { isUndefined } from "@/utils/isType";
+import { isUndefined } from "@/shared/isType";
 
 export default function StudentPage() {
   const { loggedUser } = useAuth();

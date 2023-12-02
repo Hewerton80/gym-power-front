@@ -1,5 +1,5 @@
 import { Card, CardProps } from "@/components/ui/cards/Card";
-import { isString } from "@/utils/isType";
+import { isString } from "@/shared/isType";
 import { twMerge } from "tailwind-merge";
 
 const variants = {

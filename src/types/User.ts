@@ -1,3 +1,4 @@
+import { User } from "@prisma/client";
 import { ITrainingPlans } from "./TrainingPlans";
 
 export enum UserRole {
@@ -25,3 +26,5 @@ export interface IUser {
   trainingPlans?: ITrainingPlans[];
   avatarBgColor?: string;
 }
+
+export interface IGetUsers extends User {}

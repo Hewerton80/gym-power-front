@@ -9,8 +9,8 @@ import {
 } from "@/components/ui/dataDisplay/DataTable";
 import { useGetUsers } from "@/hooks/api/useUser";
 import { UserRole } from "@/types/User";
-import { getUserTextRoles } from "@/utils/getUserTextRoles";
-import { isUndefined } from "@/utils/isType";
+import { getUserTextRoles } from "@/shared/getUserTextRoles";
+import { isUndefined } from "@/shared/isType";
 import Link from "next/link";
 import { useCallback, useMemo } from "react";
 import { MdEdit } from "react-icons/md";
@@ -27,24 +27,6 @@ export default function UsersPage() {
       { content: "", field: "actions" },
     ],
     []
-  );
-
-  const getTextRoles = useCallback(
-    (index: number) => {
-      const user = users?.[index];
-      if (!user?.isAdmin && !user?.isTeacher) {
-        return "-";
-      }
-      const roles = [];
-      if (user?.isAdmin) {
-        roles.push("Administrador");
-      }
-      if (user?.isTeacher) {
-        roles.push("Professor");
-      }
-      return roles.join(", ");
-    },
-    [users]
   );
 
   const rows = useMemo<IRowDataTable[]>(

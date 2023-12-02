@@ -10,13 +10,12 @@ import {
 } from "react";
 import { useMutation } from "@tanstack/react-query";
 import Cookies from "js-cookie";
-import { CONSTANTS } from "@/utils/constants";
+import { CONSTANTS } from "@/shared/constants";
 import { removeAllCookies } from "@/lib/cookie";
-// import { BASE_PATHS } from "@/utils/navItems";
 import axios, { AxiosRequestConfig } from "axios";
-import { getRandomRGBColor } from "@/utils/colors";
+import { getRandomRGBColor } from "@/shared/colors";
 import { useAxios } from "@/hooks/utils/useAxios";
-import { navItems } from "@/utils/navItems";
+import { navItems } from "@/shared/navItems";
 import { User } from "@prisma/client";
 import { LoginCredentials } from "@/dtos/loginCredentials";
 
@@ -92,7 +91,6 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
 
   useEffect(() => {
     const loggedUserInCache = Cookies.get(CONSTANTS.COOKIES_KEYS.USER);
-    console.log({ loggedUserInCache, Cookies: Cookies.get() });
     if (loggedUserInCache) {
       handleSetUser(JSON.parse(loggedUserInCache) as User);
     }

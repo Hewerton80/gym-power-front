@@ -1,11 +1,8 @@
 import { SelectOption } from "@/components/ui/forms/Select";
-import { IUser } from "@/types/User";
+import { IGetUsers, IUser } from "@/types/User";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useAxios } from "../utils/useAxios";
-import { User } from "@prisma/client";
-
-interface IGetUser extends User {}
 
 export interface IUserForm extends IUser {
   isEditUser?: boolean;
@@ -23,7 +20,7 @@ export function useGetUsers() {
     refetch: refetchUsers,
   } = useQuery({
     queryFn: () =>
-      apiBase.get<IGetUser[]>("/users").then((res) => res.data || []),
+      apiBase.get<IGetUsers[]>("/admin/users").then((res) => res.data || []),
     queryKey: [],
     retry: 1,
   });

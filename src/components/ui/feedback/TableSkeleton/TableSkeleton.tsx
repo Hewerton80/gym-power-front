@@ -1,4 +1,4 @@
-import { getRange } from "@/utils/getRange";
+import { getRange } from "@/shared/getRange";
 import {
   DataTable,
   IColmunDataTable,

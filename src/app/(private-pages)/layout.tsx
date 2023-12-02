@@ -1,7 +1,7 @@
 import { PrivatePagesTamplate } from "@/components/templates/PrivatePagesTamplate";
 import { ReactNode } from "react";
 import { cookies } from "next/headers";
-import { CONSTANTS } from "@/utils/constants";
+import { CONSTANTS } from "@/shared/constants";
 import { redirect } from "next/navigation";
 import { removeAllCookies } from "@/lib/cookie";
 

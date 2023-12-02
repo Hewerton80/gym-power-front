@@ -3,11 +3,22 @@ import axios from "axios";
 import { useEffect, useMemo } from "react";
 import { useAlertModal } from "./useAlertModal";
 import { useRouter } from "next/navigation";
-import { apiBase } from "@/lib/axios";
+import { CONSTANTS } from "@/shared/constants";
 
 export const useAxios = () => {
   const { showAlert } = useAlertModal();
   const router = useRouter();
+
+  const apiBase = useMemo(
+    () =>
+      axios.create({
+        baseURL: "/api",
+        headers: {
+          Authorization: `Bearer ${getCurretToken()}`,
+        },
+      }),
+    []
+  );
 
   useEffect(() => {
     apiBase.interceptors.response.use(
@@ -18,7 +29,8 @@ export const useAxios = () => {
         const reponseError = error.response;
         if (
           reponseError.status === 401 &&
-          reponseError?.data?.messages?.includes("token is expired")
+          reponseError?.data?.message ===
+            CONSTANTS.API_RESPONSE_MENSSAGES.INVALID_TOKEN
         ) {
           showAlert({
             title: "Sua sessão expirou",
@@ -33,7 +45,7 @@ export const useAxios = () => {
     return () => {
       apiBase.interceptors.response.clear();
     };
-  }, [showAlert, apiBase, router]);
+  }, [showAlert, router]);
 
   return { apiBase };
 };

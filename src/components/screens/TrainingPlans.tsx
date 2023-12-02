@@ -2,7 +2,7 @@
 import { useGetStudent } from "@/hooks/api/useStudent";
 import { useParams } from "next/navigation";
 import { FeedBackError } from "../ui/feedback/FeedBackError";
-import { isUndefined } from "@/utils/isType";
+import { isUndefined } from "@/shared/isType";
 import { useMemo } from "react";
 import { FeedBackLoading } from "../ui/feedback/FeedBackLoading";
 import { Card } from "@/components/ui/cards/Card";

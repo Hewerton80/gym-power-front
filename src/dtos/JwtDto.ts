@@ -1,3 +1,1 @@
-import { User } from "@prisma/client";
-
-export type JwtDto = Pick<User, "id">;
+export type JwtDto = { sub: string; iat: number; exp: number };

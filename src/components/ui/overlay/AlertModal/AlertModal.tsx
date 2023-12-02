@@ -3,7 +3,7 @@ import React, { forwardRef, useContext } from "react";
 import { Modal, ModalProps } from "@/components/ui/overlay/Modal";
 import { twMerge } from "tailwind-merge";
 import { Button, ButtonVariantStyle } from "@/components/ui/buttons/Button";
-import { isString } from "@/utils/isType";
+import { isString } from "@/shared/isType";
 import { AlertContext } from "@/contexts/alertContext";
 
 // type VariantsMap = {

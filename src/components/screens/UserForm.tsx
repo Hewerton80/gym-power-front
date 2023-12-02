@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/forms/Input";
 import { IUserForm, useGetUser, useMutateUser } from "@/hooks/api/useUser";
 import { ToZodObjectSchema } from "@/lib/zodHelpers";
 import { z } from "zod";
-import { CONSTANTS } from "@/utils/constants";
+import { CONSTANTS } from "@/shared/constants";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect, useMemo } from "react";
@@ -13,20 +13,22 @@ import { toast } from "react-toastify";
 import { useAlertModal } from "@/hooks/utils/useAlertModal";
 import { useRouter } from "next/navigation";
 import { Select } from "@/components/ui/forms/Select";
-import { usersRolesOptions } from "@/utils/userRolesOptions";
+import { usersRolesOptions } from "@/shared/userRolesOptions";
 import { UserRole, UserRolesNamesType } from "@/types/User";
 import { FeedBackLoading } from "@/components/ui/feedback/FeedBackLoading";
-import { isUndefined } from "@/utils/isType";
+import { isUndefined } from "@/shared/isType";
 import { FeedBackError } from "@/components/ui/feedback/FeedBackError";
 
-const { ERROR_MESSAGES } = CONSTANTS;
+const { VALIDATION_ERROR_MESSAGES } = CONSTANTS;
 
 const userFormSchema = z
   .object<ToZodObjectSchema<IUserForm>>({
     id: z.string().optional(),
-    name: z.string().min(1, ERROR_MESSAGES.REQUIRED_FIELDS),
+    name: z.string().min(1, VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS),
     email: z.string().optional(),
-    userRolesOptions: z.array(z.any()).min(1, ERROR_MESSAGES.REQUIRED_FIELDS),
+    userRolesOptions: z
+      .array(z.any())
+      .min(1, VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS),
     password: z.string().optional(),
     confirmPassword: z.string().optional(),
     isEditUser: z.boolean().optional(),
@@ -34,17 +36,20 @@ const userFormSchema = z
   .refine(
     ({ email, isEditUser }) =>
       isEditUser ? true : Boolean(String(email)?.trim()),
-    { message: ERROR_MESSAGES.REQUIRED_FIELDS, path: ["email"] }
+    { message: VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS, path: ["email"] }
   )
   .refine(
     ({ password, isEditUser }) =>
       isEditUser ? true : Boolean(String(password)?.trim()),
-    { message: ERROR_MESSAGES.REQUIRED_FIELDS, path: ["password"] }
+    { message: VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS, path: ["password"] }
   )
   .refine(
     ({ confirmPassword, isEditUser }) =>
       isEditUser ? true : Boolean(String(confirmPassword)?.trim()),
-    { message: ERROR_MESSAGES.REQUIRED_FIELDS, path: ["confirmPassword"] }
+    {
+      message: VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS,
+      path: ["confirmPassword"],
+    }
   )
   .refine(
     ({ password, confirmPassword, isEditUser }) =>

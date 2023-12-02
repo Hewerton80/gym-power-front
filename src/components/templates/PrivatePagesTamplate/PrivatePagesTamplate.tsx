@@ -1,7 +1,7 @@
 "use client";
 import { ProfilePopover } from "@/components/ui/overlay/ProfilePopover";
 import { useAuth } from "@/hooks/api/useAuth";
-import { INavItem, navItems } from "@/utils/navItems";
+import { INavItem, navItems } from "@/shared/navItems";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

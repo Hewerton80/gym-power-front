@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/buttons/Button";
 import { Card } from "@/components/ui/cards/Card";
 import { ExerciseCard } from "@/components/ui/cards/ExerciseCard";
-import { getRange } from "@/utils/getRange";
+import { getRange } from "@/shared/getRange";
 import { BsFillPlayFill } from "react-icons/bs";
 
 export default function TrainingPage() {

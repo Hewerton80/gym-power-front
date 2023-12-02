@@ -10,7 +10,7 @@ import {
 import { useGetStudents } from "@/hooks/api/useStudent";
 import { useGetUsers } from "@/hooks/api/useUser";
 import { UserRole } from "@/types/User";
-import { isUndefined } from "@/utils/isType";
+import { isUndefined } from "@/shared/isType";
 import Link from "next/link";
 import { useMemo } from "react";
 import { AiOutlineEye } from "react-icons/ai";
