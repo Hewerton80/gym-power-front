@@ -1,4 +1,3 @@
-"use client";
 import { useRouter } from "next/navigation";
 import {
   createContext,
@@ -12,10 +11,7 @@ import { useMutation } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 import { CONSTANTS } from "@/shared/constants";
 import { removeAllCookies } from "@/lib/cookie";
-import axios, { AxiosRequestConfig } from "axios";
-import { getRandomRGBColor } from "@/shared/colors";
 import { useAxios } from "@/hooks/utils/useAxios";
-import { navItems } from "@/shared/navItems";
 import { User } from "@prisma/client";
 import { LoginCredentials } from "@/dtos/loginCredentials";
 
@@ -32,7 +28,7 @@ interface ILoginContext {
   isLoging: boolean;
   isLogged: boolean;
   loggedUser: User | null;
-  handleSetUser: (User: User | null) => void;
+  handleSetContextLoggedUser: (User: User | null) => void;
   login: (loginCredentials: LoginCredentials) => void;
   logout: () => void;
 }
@@ -47,19 +43,13 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
 
   const isLogged = useMemo(() => Boolean(loggedUser), [loggedUser]);
 
-  const handleSetUser = useCallback((user: User | null) => {
+  const handleSetContextLoggedUser = useCallback((user: User | null) => {
     setLoggedUser(user);
-    if (user) {
-      Cookies.set(CONSTANTS.COOKIES_KEYS.USER, JSON.stringify(user));
-    } else {
-      Cookies.remove(CONSTANTS.COOKIES_KEYS.USER);
-    }
   }, []);
 
   const onLoginSuccess = useCallback(
     async ({ user, token }: IResponseLogin) => {
       Cookies.set(CONSTANTS.COOKIES_KEYS.TOKEN, token);
-      handleSetUser(user);
       if (user?.isAdmin) {
         router.replace("/admin/users");
       } else if (user?.isTeacher) {
@@ -68,7 +58,7 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
         router.replace("/student/home");
       }
     },
-    [router, handleSetUser]
+    [router]
   );
 
   const {
@@ -84,24 +74,17 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
   });
 
   const logout = useCallback(() => {
-    handleSetUser(null);
+    handleSetContextLoggedUser(null);
     removeAllCookies();
     router.replace("/auth/login");
-  }, [router, handleSetUser]);
-
-  useEffect(() => {
-    const loggedUserInCache = Cookies.get(CONSTANTS.COOKIES_KEYS.USER);
-    if (loggedUserInCache) {
-      handleSetUser(JSON.parse(loggedUserInCache) as User);
-    }
-  }, [handleSetUser]);
+  }, [router, handleSetContextLoggedUser]);
 
   return (
     <AuthContext.Provider
       value={{
         login,
         logout,
-        handleSetUser,
+        handleSetContextLoggedUser,
         isLogged,
         loggedUser,
         isLoging,

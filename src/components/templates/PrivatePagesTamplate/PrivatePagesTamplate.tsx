@@ -10,11 +10,8 @@ import { twMerge } from "tailwind-merge";
 import { FaBarsStaggered } from "react-icons/fa6";
 import { Slot } from "@radix-ui/react-slot";
 import { Resizable } from "re-resizable";
-import Cookies from "js-cookie";
 import { IconButton } from "@/components/ui/buttons/IconButton";
 import { FaMoon, FaSun } from "react-icons/fa";
-import { User } from "@prisma/client";
-import { SplashScreen } from "@/components/ui/feedback/SplashScreen";
 import { useTheme } from "@/hooks/utils/useTheme";
 
 const minWidth = 218;
@@ -27,16 +24,12 @@ interface IPrivatePagesTamplateProps {
 export function PrivatePagesTamplate({ children }: IPrivatePagesTamplateProps) {
   const currentPath = usePathname();
   const { theme, toggleTheme } = useTheme();
-  const { loggedUser, isLogged } = useAuth();
+  const { loggedUser } = useAuth();
 
   const [showSideBar, setShowSideBar] = useState(false);
   const [showOnlyIcons, setShowOnlyIcons] = useState(false);
   const [sideBarWidth, setSideBarWidth] = useState(initialSideBarWidth);
   const [resizingSideBar, setResizingSideBar] = useState(false);
-
-  // useEffect(() => {
-  //   handleSetUser(loggedUser);
-  // }, [loggedUser, handleSetUser]);
 
   useEffect(() => {
     if (sideBarWidth < minWidth) {
@@ -156,10 +149,6 @@ export function PrivatePagesTamplate({ children }: IPrivatePagesTamplateProps) {
     showOnlyIcons,
     resizingSideBar,
   ]);
-
-  if (!isLogged) {
-    return <SplashScreen />;
-  }
 
   return (
     <>

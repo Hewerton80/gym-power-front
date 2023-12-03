@@ -1,15 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { verifyJWT } from "@/lib/auth";
+import { getUserWithComputedFields } from "@/types/User";
+import { User } from "@prisma/client";
+import { CONSTANTS } from "@/shared/constants";
 
 export async function GET(request: NextRequest) {
   const { payload, error } = await verifyJWT(request);
   if (error) {
-    return NextResponse.json({ error }, { status: 401 });
+    return NextResponse.json({ message: error }, { status: 401 });
   }
   const user = await prisma.user.findUnique({
     where: { id: payload?.sub },
+    include: {
+      trainingPlans: {
+        include: {
+          trainings: {
+            include: {
+              trainingExercises: true,
+              trainingHistory: { take: 5, orderBy: { startDate: "desc" } },
+            },
+          },
+        },
+      },
+    },
   });
-
-  return NextResponse.json(user, { status: 200 });
+  if (!user) {
+    return NextResponse.json(
+      { message: CONSTANTS.API_RESPONSE_MENSSAGES.USER_NOT_FOUND },
+      { status: 404 }
+    );
+  }
+  const userWichComputedfields = getUserWithComputedFields(user);
+  return NextResponse.json(userWichComputedfields, { status: 200 });
 }

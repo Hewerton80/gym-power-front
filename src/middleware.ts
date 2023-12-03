@@ -18,17 +18,16 @@ export const config = {
 };
 
 export async function middleware(request: NextRequest) {
-  console.log({ url: request.nextUrl.pathname });
-
   const { pathname } = request.nextUrl;
+  console.log({ pathname });
+
   const isPrivateEndpoints =
     pathname.startsWith("/api") && !pathname.includes("/auth");
   if (isPrivateEndpoints) {
     const { error } = await verifyJWT(request);
     if (error) {
-      return NextResponse.json({ error }, { status: 401 });
+      return NextResponse.json({ message: error }, { status: 401 });
     }
-    return NextResponse.next();
   }
 
   return NextResponse.next();

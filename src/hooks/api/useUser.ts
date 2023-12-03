@@ -3,11 +3,34 @@ import { IGetUsers, IUser } from "@/types/User";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useAxios } from "../utils/useAxios";
+import { User } from "@prisma/client";
 
 export interface IUserForm extends IUser {
   isEditUser?: boolean;
   confirmPassword?: string;
   userRolesOptions?: SelectOption[] | null;
+}
+
+export function useGetMe() {
+  const { apiBase } = useAxios();
+
+  const {
+    data: me,
+    isFetching: isLoadingMe,
+    error: meError,
+    refetch: refetchMe,
+  } = useQuery({
+    queryFn: () => apiBase.get<User>("/me/user").then((res) => res.data),
+    queryKey: [],
+    retry: 0,
+  });
+
+  return {
+    me,
+    isLoadingMe,
+    meError,
+    refetchMe,
+  };
 }
 
 export function useGetUsers() {
@@ -20,7 +43,7 @@ export function useGetUsers() {
     refetch: refetchUsers,
   } = useQuery({
     queryFn: () =>
-      apiBase.get<IGetUsers[]>("/admin/users").then((res) => res.data || []),
+      apiBase.get<IGetUsers[]>("/users").then((res) => res.data || []),
     queryKey: [],
     retry: 1,
   });

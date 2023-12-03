@@ -105,7 +105,7 @@ export default function StudentPage() {
 
   return (
     <div className="grid grid-cols-12 gap-7">
-      <div className="grid grid-cols-2 sm:grid-cols-1 gap-7 col-span-12 lg:col-span-4">
+      <div className="grid grid-cols-2 sm:grid-cols-1 gap-7 col-span-12 xl:col-span-4">
         <WidgetCard
           title="Altura"
           description={`${loggedUser?.heightInMt}m`}
@@ -118,7 +118,7 @@ export default function StudentPage() {
           icon={<FaWeight />}
         />
       </div>
-      <div className="col-span-12 lg:col-span-8">
+      <div className="col-span-12 xl:col-span-8">
         <Card className="h-full">
           <Card.Header>
             <Card.Title>Últimos treinos</Card.Title>

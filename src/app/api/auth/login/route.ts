@@ -7,25 +7,28 @@ import { CONSTANTS } from "@/shared/constants";
 
 export async function POST(request: NextRequest) {
   const loginCredentials = (await request.json()) as LoginCredentials;
-  loginCredentials.password;
 
   const foundUser = await prisma.user.findUnique({
     where: { email: loginCredentials?.email?.trim() },
+    include: {
+      trainingPlans: {
+        include: { trainings: { include: { trainingExercises: true } } },
+      },
+    },
   });
 
-  const passwordIsMAtch =
+  const passwordIsMatch =
     loginCredentials?.password && foundUser?.password
       ? compareSync(loginCredentials?.password, foundUser?.password)
       : false;
 
-  if (!foundUser || !passwordIsMAtch) {
+  if (!foundUser || !passwordIsMatch) {
     return NextResponse.json(
       { message: CONSTANTS.API_RESPONSE_MENSSAGES.INVALID_CREDENTIALS },
       { status: 401 }
     );
   }
   const token = await signJWT({ sub: foundUser?.id });
-  console.log({ logintoken: token });
   delete (foundUser as any)?.password;
   return NextResponse.json({ token, user: foundUser }, { status: 201 });
 }

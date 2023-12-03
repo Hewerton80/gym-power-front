@@ -4,10 +4,12 @@ import { useEffect, useMemo } from "react";
 import { useAlertModal } from "./useAlertModal";
 import { useRouter } from "next/navigation";
 import { CONSTANTS } from "@/shared/constants";
+import { useAuth } from "../api/useAuth";
 
 export const useAxios = () => {
   const { showAlert } = useAlertModal();
   const router = useRouter();
+  const { logout } = useAuth();
 
   const apiBase = useMemo(
     () =>
@@ -36,7 +38,7 @@ export const useAxios = () => {
             title: "Sua sessão expirou",
             description: "Faça login novamente",
             variant: "info",
-            onClose: () => router.replace("/auth/login"),
+            onClose: logout,
           });
         }
         return Promise.reject(error);
@@ -45,7 +47,7 @@ export const useAxios = () => {
     return () => {
       apiBase.interceptors.response.clear();
     };
-  }, [showAlert, router]);
+  }, [apiBase, showAlert, logout]);
 
   return { apiBase };
 };

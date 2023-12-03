@@ -7,7 +7,7 @@ export const getCurretToken = () => {
 
 export const removeAllCookies = () => {
   const cookies = Cookies.get();
-  delete cookies[CONSTANTS.COOKIES_KEYS.THEME];
+  // delete cookies?.[CONSTANTS.COOKIES_KEYS.THEME];
   for (const cookie in cookies) {
     console.log({ cookie });
     if (cookies.hasOwnProperty(cookie)) {

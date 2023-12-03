@@ -16,7 +16,6 @@ export const CONSTANTS = {
   },
   COOKIES_KEYS: {
     TOKEN: "TOKEN",
-    USER: "USER",
     THEME: "THEME",
   },
 };

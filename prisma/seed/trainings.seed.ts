@@ -11,17 +11,17 @@ export async function seedTraingigs() {
   const exercisesTrainigsB = [...exercises].splice(7, 14).map((exercise) => ({
     exerciseId: exercise.id,
     intervalInSeconds: 60,
-    order: 1,
+    order: 2,
   }));
   const exercisesTrainigsC = [...exercises].splice(14, 21).map((exercise) => ({
     exerciseId: exercise.id,
     intervalInSeconds: 60,
-    order: 1,
+    order: 3,
   }));
   const exercisesTrainigsD = [...exercises].splice(21, 31).map((exercise) => ({
     exerciseId: exercise.id,
     intervalInSeconds: 60,
-    order: 1,
+    order: 4,
   }));
 
   const teachers = await prisma.user.findMany({ where: { isTeacher: true } });
@@ -49,18 +49,61 @@ export async function seedTraingigs() {
               {
                 name: "Treino A",
                 trainingExercises: { create: exercisesTrainigsA },
+                order: 1,
+                trainingHistory: {
+                  create: [
+                    {
+                      startDate: new Date("2023-10-03T17:59:24"),
+                      endDate: new Date("2023-10-03T20:59:24"),
+                    },
+                    {
+                      startDate: new Date("2023-10-07T17:59:24"),
+                      endDate: new Date("2023-10-07T20:59:24"),
+                    },
+                  ],
+                },
               },
               {
                 name: "Treino B",
                 trainingExercises: { create: exercisesTrainigsB },
+                order: 2,
+                trainingHistory: {
+                  create: [
+                    {
+                      startDate: new Date("2023-10-04T17:59:24"),
+                      endDate: new Date("2023-10-04T20:59:24"),
+                    },
+                    {
+                      startDate: new Date("2023-10-08T17:59:24"),
+                      endDate: new Date("2023-10-08T20:59:24"),
+                    },
+                  ],
+                },
               },
               {
                 name: "Treino C",
                 trainingExercises: { create: exercisesTrainigsC },
+                order: 3,
+                trainingHistory: {
+                  create: [
+                    {
+                      startDate: new Date("2023-10-05T17:59:24"),
+                      endDate: new Date("2023-10-05T20:59:24"),
+                    },
+                  ],
+                },
               },
               {
                 name: "Treino D",
                 trainingExercises: { create: exercisesTrainigsD },
+                order: 4,
+                trainingHistory: {
+                  create: [
+                    {
+                      startDate: new Date("2023-10-06T17:59:24"),
+                    },
+                  ],
+                },
               },
             ],
           },
