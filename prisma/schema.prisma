@@ -16,6 +16,12 @@ enum Gender {
     O
 }
 
+enum ExerciseStatus {
+    READY_TO_START
+    IN_PROGRESS
+    FINISHED
+}
+
 model User {
     id               String            @id @default(cuid())
     email            String            @unique
@@ -102,6 +108,7 @@ model TrainingExercise {
     treiningId              String
     exerciseId              String
     intervalInSeconds       Int?
+    status                  ExerciseStatus            @default(READY_TO_START)
     order                   Int                       @default(0)
     isActive                Boolean?                  @default(true)
     createdAt               DateTime                  @default(now())

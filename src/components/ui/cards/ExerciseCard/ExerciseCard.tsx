@@ -3,7 +3,10 @@ import Image from "next/image";
 import { BsFillPlayFill, BsStopCircle } from "react-icons/bs";
 import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/buttons/Button";
-import { ExerciseWithComputedFields } from "@/types/Exercise";
+import {
+  ExercisePtBrStatus,
+  ExerciseWithComputedFields,
+} from "@/types/Exercise";
 import { twMerge } from "tailwind-merge";
 
 interface ExerciseCardProps {
@@ -32,7 +35,7 @@ export function ExerciseCard({ exercise }: ExerciseCardProps) {
       />
       <div className="flex flex-col w-full">
         <h3 className="font-semibold text-sm md:text-base text-heading dark:text-white mb-2">
-          {exercise?.name}
+          {/* { ExercisePtBrStatus?.[exercise!.status]} */}
         </h3>
 
         {exercise?.description && (

@@ -57,7 +57,10 @@ export const getUserWithComputedFields = (
     computedFuelds.trainingPlan.trainings =
       computedFuelds.trainingPlan?.trainings?.map((training) => {
         const exercises = training?.trainingExercises?.map(
-          (trainingExercise) => trainingExercise?.exercise
+          (trainingExercise) => ({
+            ...trainingExercise?.exercise,
+            status: trainingExercise?.status,
+          })
         );
         const letter = String.fromCharCode(training.order + 64);
         const musclesNames = exercises?.map(

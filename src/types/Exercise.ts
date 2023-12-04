@@ -1,20 +1,25 @@
-import { Exercise } from "@prisma/client";
+import { Exercise, ExerciseStatus } from "@prisma/client";
 import { MuscleWithComputedFields } from "./Muscle";
 
-export enum ExerciseStatus {
-  incomplete = "Imcompleto",
-  inProgress = "Em Progresso",
-  finished = "Finalizado",
-}
+type ExerciseStatusMap = {
+  [key in ExerciseStatus]: string;
+};
 
-export type ExerciseNamesType = keyof typeof ExerciseStatus;
+export const ExercisePtBrStatus: ExerciseStatusMap = {
+  READY_TO_START: "Pronto para começar",
+  IN_PROGRESS: "Em Progresso",
+  FINISHED: "Finalizado",
+};
+
+export type ExerciseNamesType = keyof typeof ExercisePtBrStatus;
 
 export interface IExercise {
   id?: string;
   name?: string;
-  status?: ExerciseNamesType;
+  // status?: ExerciseNamesType;
 }
 
 export interface ExerciseWithComputedFields extends Exercise {
   muscle?: MuscleWithComputedFields;
+  status?: ExerciseStatus;
 }
