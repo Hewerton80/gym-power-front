@@ -12,17 +12,22 @@ import {
   IColmunDataTable,
   IRowDataTable,
 } from "@/components/ui/dataDisplay/DataTable";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import { statusTrainingBadge } from "@/shared/statusTrainingBadge";
 import { useAuth } from "@/hooks/api/useAuth";
 import { useGetMyTrainings } from "@/hooks/api/useTraining";
-import { isUndefined } from "@/shared/isType";
 
 export default function StudentPage() {
   const { loggedUser } = useAuth();
-  const { trainings, isloadingTrainings, trainingsError, refetchTrainings } =
-    useGetMyTrainings();
+  const {
+    // trainings,
+    // isloadingTrainings,
+    // trainingsError,
+    // refetchTrainings,
+    // getRecommendedTraingToDay,
+    recommendedTraingToDay,
+  } = useGetMyTrainings(loggedUser?.trainingPlan?.trainings);
 
   const cols = useMemo<IColmunDataTable[]>(
     () => [
@@ -99,33 +104,56 @@ export default function StudentPage() {
     []
   );
 
-  useEffect(() => {
-    console.log({ trainings });
-  }, [trainings]);
+  // useEffect(() => {
+  //   console.log({ trainings });
+  // }, [trainings]);
 
   return (
     <div className="grid grid-cols-12 gap-7">
-      <div className="grid grid-cols-2 sm:grid-cols-1 gap-7 col-span-12 xl:col-span-4">
-        <WidgetCard
-          title="Altura"
-          description={`${loggedUser?.heightInMt}m`}
-          icon={<VscSymbolRuler />}
-        />
-        <WidgetCard
-          variant="info"
-          title="Peso"
-          description={`${loggedUser?.weightInKg}kg`}
-          icon={<FaWeight />}
-        />
+      <WidgetCard
+        className="col-span-6 2xl:col-span-3"
+        title="Altura"
+        description={`${loggedUser?.heightInMt}m`}
+        icon={<VscSymbolRuler />}
+      />
+      <WidgetCard
+        className="col-span-6 2xl:col-span-3"
+        variant="info"
+        title="Peso"
+        description={`${loggedUser?.weightInKg}kg`}
+        icon={<FaWeight />}
+      />
+      <div className="col-span-12 2xl:col-span-6">
+        {recommendedTraingToDay && (
+          <WidgetCard
+            className="col-span-3"
+            variant="secondary"
+            title={
+              <div className="flex items-center justify-between w-full">
+                <p className="text-sm">Treino de hoje</p>
+                <Button asChild>
+                  <Link
+                    href={`/student/training/${recommendedTraingToDay?.id}`}
+                  >
+                    Ir até treino
+                  </Link>
+                </Button>
+              </div>
+            }
+            description={String(recommendedTraingToDay?.title)}
+            icon={<LuDumbbell />}
+          />
+        )}
       </div>
-      <div className="col-span-12 xl:col-span-8">
+      <div className="col-span-12">
         <Card className="h-full">
           <Card.Header>
             <Card.Title>Últimos treinos</Card.Title>
             <Card.Actions>
               <Button
-                asChild={Boolean(trainings?.length)}
-                disabled={!trainings?.length}
+                asChild
+                // disabled={!trainings?.length}
+                disabled
               >
                 <Link href="#">Ver mais</Link>
               </Button>
@@ -135,29 +163,13 @@ export default function StudentPage() {
             <DataTable
               columns={cols}
               rows={rows}
-              onTryAgainIfError={refetchTrainings}
-              isError={Boolean(trainingsError)}
+              // onTryAgainIfError={refetchTrainings}
+              // isError={Boolean(trainingsError)}
               // isLoading={isloadingTrainings || isUndefined(trainings)}
               numSkeletonRows={3}
             />
           </Card.Body>
         </Card>
-      </div>
-      <div className="col-span-12">
-        <WidgetCard
-          className="col-span-3"
-          variant="secondary"
-          title={
-            <div className="flex items-center justify-between w-full">
-              <p className="text-sm">Treino de hoje</p>
-              <Button asChild>
-                <Link href="/student/training/qeor455">Ir até treino</Link>
-              </Button>
-            </div>
-          }
-          description="D - Ombro"
-          icon={<LuDumbbell />}
-        />
       </div>
     </div>
   );

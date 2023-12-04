@@ -1,6 +1,7 @@
-import { ExerciseStatus } from "@/types/Exercise";
+import { ExerciseStatus, ExerciseWithComputedFields } from "@/types/Exercise";
 import { Training } from "@prisma/client";
 import { TrainingHistoryWithComputedFields } from "./trainingHistory";
+import { TrainingExerciseWithComputedFields } from "./trainingExercise";
 
 export const TrainingStatus = {
   ...ExerciseStatus,
@@ -16,6 +17,10 @@ export interface ITraining {
 }
 
 export interface TrainingWithComputedFields extends Training {
-  status?: TrainingNamesType;
-  trainingHistory?: TrainingHistoryWithComputedFields[];
+  trainingHistories?: TrainingHistoryWithComputedFields[];
+  trainingExercises?: TrainingExerciseWithComputedFields[];
+  exercises?: ExerciseWithComputedFields[];
+  title?: string;
 }
+
+export interface IGetTraining extends TrainingWithComputedFields {}

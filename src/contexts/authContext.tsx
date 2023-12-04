@@ -3,7 +3,6 @@ import {
   createContext,
   ReactNode,
   useCallback,
-  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -14,10 +13,11 @@ import { removeAllCookies } from "@/lib/cookie";
 import { useAxios } from "@/hooks/utils/useAxios";
 import { User } from "@prisma/client";
 import { LoginCredentials } from "@/dtos/loginCredentials";
+import { UserWithComputedFields } from "@/types/User";
 
 interface IResponseLogin {
   token: string;
-  user: User;
+  user: UserWithComputedFields;
 }
 interface IAuthContextProviderProps {
   children: ReactNode;
@@ -27,8 +27,8 @@ interface ILoginContext {
   loginError: any;
   isLoging: boolean;
   isLogged: boolean;
-  loggedUser: User | null;
-  handleSetContextLoggedUser: (User: User | null) => void;
+  loggedUser: UserWithComputedFields | null;
+  handleSetContextLoggedUser: (User: UserWithComputedFields | null) => void;
   login: (loginCredentials: LoginCredentials) => void;
   logout: () => void;
 }
@@ -39,13 +39,18 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
   const router = useRouter();
   const { apiBase } = useAxios();
 
-  const [loggedUser, setLoggedUser] = useState<User | null>(null);
+  const [loggedUser, setLoggedUser] = useState<UserWithComputedFields | null>(
+    null
+  );
 
   const isLogged = useMemo(() => Boolean(loggedUser), [loggedUser]);
 
-  const handleSetContextLoggedUser = useCallback((user: User | null) => {
-    setLoggedUser(user);
-  }, []);
+  const handleSetContextLoggedUser = useCallback(
+    (user: UserWithComputedFields | null) => {
+      setLoggedUser(user);
+    },
+    []
+  );
 
   const onLoginSuccess = useCallback(
     async ({ user, token }: IResponseLogin) => {

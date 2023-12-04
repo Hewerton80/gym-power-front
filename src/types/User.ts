@@ -1,10 +1,11 @@
-import { User, Prisma } from "@prisma/client";
+import { User } from "@prisma/client";
 import {
   ITrainingPlans,
   TrainingPlanWithComputedFields,
 } from "./TrainingPlans";
 import { differenceInYears } from "date-fns";
-import { TrainingNamesType } from "./Training";
+import { removeElementsRepeated } from "@/shared/array";
+import { ExerciseWithComputedFields } from "./Exercise";
 
 export enum UserRole {
   ADMIN = "Administrador",
@@ -31,8 +32,9 @@ export interface IUser {
   trainingPlans?: ITrainingPlans[];
   avatarBgColor?: string;
 }
-interface UserWithComputedFields
+export interface UserWithComputedFields
   extends Omit<User, "password" | "trainingPlans"> {
+  title?: string;
   age?: number;
   trainingPlan?: TrainingPlanWithComputedFields;
 }
@@ -54,14 +56,21 @@ export const getUserWithComputedFields = (
       .trainingPlans[0] as TrainingPlanWithComputedFields;
     computedFuelds.trainingPlan.trainings =
       computedFuelds.trainingPlan?.trainings?.map((training) => {
-        let status: TrainingNamesType = "incomplete";
-        const lastTrainingHistory = training?.trainingHistory?.at(-1);
-        if (lastTrainingHistory) {
-          status = lastTrainingHistory?.endDate ? "finished" : "inProgress";
-        }
+        const exercises = training?.trainingExercises?.map(
+          (trainingExercise) => trainingExercise?.exercise
+        );
+        const letter = String.fromCharCode(training.order + 64);
+        const musclesNames = exercises?.map(
+          (exercise) => exercise?.muscle?.name
+        );
+        training?.exercises;
+        delete training?.trainingExercises;
         return {
           ...training,
-          status,
+          exercises: exercises as ExerciseWithComputedFields[],
+          title: `${letter} - ${removeElementsRepeated(
+            musclesNames || []
+          )?.join(", ")}`,
         };
       }) || [];
   }

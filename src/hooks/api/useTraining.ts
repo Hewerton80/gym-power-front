@@ -1,29 +1,12 @@
-import { ITraining } from "@/types/Training";
-import { useQuery } from "@tanstack/react-query";
-import { useAxios } from "../utils/useAxios";
+import { TrainingWithComputedFields } from "@/types/Training";
+import { useMemo } from "react";
 
-export function useGetMyTrainings() {
-  const { apiBase } = useAxios();
+export function useGetMyTrainings(trainings?: TrainingWithComputedFields[]) {
+  const recommendedTraingToDay = useMemo(() => {
+    const index =
+      trainings?.findIndex((training) => training.isRecommendedToDay) || [];
+    return trainings?.[Number(index)];
+  }, [trainings]);
 
-  const {
-    data: trainings,
-    isFetching: isloadingTrainings,
-    error: trainingsError,
-    refetch: refetchTrainings,
-  } = useQuery({
-    queryFn: () =>
-      apiBase
-        .get<ITraining[]>("/me/training-plan-history")
-        .then((res) => res.data || []),
-    queryKey: [],
-    enabled: false,
-    retry: 0,
-  });
-
-  return {
-    trainings,
-    isloadingTrainings,
-    trainingsError,
-    refetchTrainings,
-  };
+  return { recommendedTraingToDay };
 }

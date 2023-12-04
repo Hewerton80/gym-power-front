@@ -34,21 +34,6 @@ model User {
     createdAt        DateTime          @default(now())
 }
 
-// model Student {
-//     id               String            @id @default(cuid())
-//     userId           String?           @unique
-//     name             String
-//     email            String            @unique
-//     dateOfBirth      DateTime
-//     gender           Gender
-//     heightInMt       Float?
-//     weightInKg       Float?
-//     isActive         Boolean?          @default(true)
-//     createdAt        DateTime          @default(now())
-//     studentExercises StudentExercise[]
-//     trainingPlans    TrainingPlan[]
-// }
-
 model Muscle {
     id        String     @id @default(cuid())
     name      String
@@ -99,15 +84,17 @@ model TrainingPlan {
 }
 
 model Training {
-    id                String             @id @default(cuid())
-    name              String
-    order             Int                @default(0)
-    trainingPlanId    String
-    isActive          Boolean?           @default(true)
-    createdAt         DateTime           @default(now())
-    trainingPlan      TrainingPlan       @relation(fields: [trainingPlanId], references: [id])
-    trainingHistory   TrainingHistory[]
-    trainingExercises TrainingExercise[]
+    id                 String             @id @default(cuid())
+    name               String
+    order              Int                @default(0)
+    trainingPlanId     String
+    isInProgress       Boolean?           @default(false)
+    isRecommendedToDay Boolean?           @default(false)
+    isActive           Boolean?           @default(true)
+    createdAt          DateTime           @default(now())
+    trainingPlan       TrainingPlan       @relation(fields: [trainingPlanId], references: [id])
+    trainingHistory    TrainingHistory[]
+    trainingExercises  TrainingExercise[]
 }
 
 model TrainingExercise {

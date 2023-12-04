@@ -1,21 +1,31 @@
+"use client";
 import { Button } from "@/components/ui/buttons/Button";
 import { Card } from "@/components/ui/cards/Card";
 import { ExerciseCard } from "@/components/ui/cards/ExerciseCard";
-import { getRange } from "@/shared/getRange";
+import { useAuth } from "@/hooks/api/useAuth";
+import { useParams } from "next/navigation";
+import { useMemo } from "react";
 import { BsFillPlayFill } from "react-icons/bs";
 
 export default function TrainingPage() {
+  const params = useParams<{ id: string }>();
+  const { loggedUser } = useAuth();
+
+  const traning = useMemo(() => {
+    return loggedUser?.trainingPlan?.trainings?.find((t) => t.id === params.id);
+  }, [loggedUser, params]);
+
   return (
     <Card>
       <Card.Header>
-        <Card.Title>D - Ombro</Card.Title>
+        <Card.Title>{traning?.title}</Card.Title>
         <Card.Actions>
           <Button leftIcon={<BsFillPlayFill size={20} />}>Inciar treino</Button>
         </Card.Actions>
       </Card.Header>
       <Card.Body className="space-y-4">
-        {getRange(8).map((i) => (
-          <ExerciseCard key={i} />
+        {traning?.exercises?.map((exercise) => (
+          <ExerciseCard key={exercise?.id} exercise={exercise} />
         ))}
       </Card.Body>
     </Card>

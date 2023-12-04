@@ -16,9 +16,12 @@ export async function GET(request: NextRequest) {
       trainingPlans: {
         include: {
           trainings: {
+            orderBy: { order: "asc" },
             include: {
-              trainingExercises: true,
-              trainingHistory: { take: 5, orderBy: { startDate: "desc" } },
+              trainingExercises: {
+                orderBy: { order: "asc" },
+                include: { exercise: { include: { muscle: true } } },
+              },
             },
           },
         },

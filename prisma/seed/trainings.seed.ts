@@ -97,6 +97,8 @@ export async function seedTraingigs() {
                 name: "Treino D",
                 trainingExercises: { create: exercisesTrainigsD },
                 order: 4,
+                isInProgress: true,
+                isRecommendedToDay: true,
                 trainingHistory: {
                   create: [
                     {
