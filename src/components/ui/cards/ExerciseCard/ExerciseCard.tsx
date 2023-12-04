@@ -4,6 +4,7 @@ import { BsFillPlayFill, BsStopCircle } from "react-icons/bs";
 import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/buttons/Button";
 import {
+  ExerciseNamesType,
   ExercisePtBrStatus,
   ExerciseWithComputedFields,
 } from "@/types/Exercise";
@@ -33,9 +34,9 @@ export function ExerciseCard({ exercise }: ExerciseCardProps) {
         alt="exercice"
         src={exercise?.image || ""}
       />
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col h-full w-full">
         <h3 className="font-semibold text-sm md:text-base text-heading dark:text-white mb-2">
-          {/* { ExercisePtBrStatus?.[exercise!.status]} */}
+          {[exercise?.name]}
         </h3>
 
         {exercise?.description && (
@@ -49,12 +50,14 @@ export function ExerciseCard({ exercise }: ExerciseCardProps) {
 
         <div
           className={twMerge(
-            "flex flex-col sm:flex-row items-center justify-between gap-1 w-full"
+            "flex flex-col sm:flex-row items-center justify-between gap-1 w-full h-full"
           )}
         >
-          <span className="mt-auto">Em progresso</span>
+          <span>
+            {ExercisePtBrStatus?.[exercise?.status as ExerciseNamesType]}
+          </span>
           <Button
-            className="ml-auto"
+            className=""
             leftIcon={isRunning ? <BsStopCircle /> : <BsFillPlayFill />}
             variantStyle={isRunning ? "danger" : "primary"}
             onClick={handleChanExerciciStatus}
