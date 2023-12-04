@@ -1,6 +1,6 @@
-import { User } from "@prisma/client";
+import { UserWithComputedFields } from "@/types/User";
 
-export const getUserTextRoles = (user: User) => {
+export const getUserTextRoles = (user: UserWithComputedFields) => {
   if (!user?.isAdmin && !user?.isTeacher) {
     return "Estudante";
   }

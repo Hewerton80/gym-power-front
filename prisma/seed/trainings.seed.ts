@@ -97,12 +97,13 @@ export async function seedTraingigs() {
                 name: "Treino D",
                 trainingExercises: { create: exercisesTrainigsD },
                 order: 4,
-                isInProgress: true,
+                isInProgress: false,
                 isRecommendedToDay: true,
                 trainingHistory: {
                   create: [
                     {
                       startDate: new Date("2023-10-06T17:59:24"),
+                      endDate: new Date("2023-10-06T18:59:24"),
                     },
                   ],
                 },

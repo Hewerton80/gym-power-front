@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { verifyJWT } from "@/lib/auth";
 import { getUserWithComputedFields } from "@/types/User";
-import { User } from "@prisma/client";
 import { CONSTANTS } from "@/shared/constants";
 
 export async function GET(request: NextRequest) {

@@ -36,7 +36,7 @@ export function ProfilePopover() {
               {loggedUser?.name}
             </strong>
             <p className="text-xs text-body-text dark:text-white">
-              {getUserTextRoles(loggedUser as User)}
+              {getUserTextRoles(loggedUser)}
             </p>
           </div>
         </div>

@@ -20,7 +20,9 @@ export default function TrainingPage() {
       <Card.Header>
         <Card.Title>{traning?.title}</Card.Title>
         <Card.Actions>
-          <Button leftIcon={<BsFillPlayFill size={20} />}>Inciar treino</Button>
+          <Button variantStyle="info" leftIcon={<BsFillPlayFill size={20} />}>
+            Iniciar treino
+          </Button>
         </Card.Actions>
       </Card.Header>
       <Card.Body className="space-y-4">

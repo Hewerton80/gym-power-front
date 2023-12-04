@@ -9,10 +9,13 @@ export const CONSTANTS = {
     PASSWORDS_NOT_MATCH: "As senhas não coincidem. Por favor, tente novamente",
   },
   API_RESPONSE_MENSSAGES: {
+    USER_HAS_NO_PERMISSION: "Usuário não tem permissão para realizar esta ação",
     INVALID_TOKEN: "Token inválido",
     INVALID_CREDENTIALS: "Usuário ou senha inválidos",
     USER_NOT_FOUND: "Usuário não encontrado",
-    USER_HAS_NO_PERMISSION: "Usuário não tem permissão para realizar esta ação",
+    TRAINING_NOT_FOUND: "Treino não encontrado",
+    TRAINING_ALWREADY_PROGRESS: "Treino já está em progresso",
+    TRAINING_ALWREADY_NOT_PROGRESS: "Treino já não está em progresso",
   },
   COOKIES_KEYS: {
     TOKEN: "TOKEN",
