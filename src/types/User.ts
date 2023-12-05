@@ -81,3 +81,44 @@ export const getUserWithComputedFields = (
   delete (computedFuelds as any)?.trainingPlans;
   return computedFuelds;
 };
+
+// export const getUserWithComputedFields = (
+//   user: any
+// ): UserWithComputedFields => {
+//   const computedFuelds: UserWithComputedFields = { ...user };
+//   if (user?.dateOfBirth) {
+//     computedFuelds.age = differenceInYears(
+//       new Date(),
+//       new Date(user.dateOfBirth)
+//     );
+//   }
+//   if (user?.trainingPlans?.length > 0) {
+//     computedFuelds.trainingPlan = user
+//       .trainingPlans[0] as TrainingPlanWithComputedFields;
+//     computedFuelds.trainingPlan.trainings =
+//       computedFuelds.trainingPlan?.trainings?.map((training) => {
+//         const exercises = training?.trainingExercises?.map(
+//           (trainingExercise) => ({
+//             ...trainingExercise?.exercise,
+//             status: trainingExercise?.status,
+//           })
+//         );
+//         const letter = String.fromCharCode(training.order + 64);
+//         const musclesNames = exercises?.map(
+//           (exercise) => exercise?.muscle?.name
+//         );
+//         training?.exercises;
+//         delete training?.trainingExercises;
+//         return {
+//           ...training,
+//           exercises: exercises as ExerciseWithComputedFields[],
+//           title: `${letter} - ${removeElementsRepeated(
+//             musclesNames || []
+//           )?.join(", ")}`,
+//         };
+//       }) || [];
+//   }
+//   delete (computedFuelds as any)?.password;
+//   delete (computedFuelds as any)?.trainingPlans;
+//   return computedFuelds;
+// };

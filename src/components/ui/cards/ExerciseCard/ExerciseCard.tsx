@@ -36,7 +36,7 @@ export function ExerciseCard({ exercise }: ExerciseCardProps) {
       />
       <div className="flex flex-col h-full w-full">
         <h3 className="font-semibold text-sm md:text-base text-heading dark:text-white mb-2">
-          {[exercise?.name]}
+          {exercise?.name}
         </h3>
 
         {exercise?.description && (

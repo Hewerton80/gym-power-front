@@ -11,21 +11,13 @@ export async function GET(request: NextRequest) {
   }
   const user = await prisma.user.findUnique({
     where: { id: payload?.sub },
-    include: {
-      trainingPlans: {
-        include: {
-          trainings: {
-            orderBy: { order: "asc" },
-            // include: {
-            //   trainingExercises: {
-            //     orderBy: { order: "asc" },
-            //     include: { exercise: { include: { muscle: true } } },
-            //   },
-            // },
-          },
-        },
-      },
-    },
+    // include: {
+    //   trainingPlans: {
+    //     include: {
+    //       trainings: true,
+    //     },
+    //   },
+    // },
   });
   // const user = await prisma.user.findUnique({
   //   where: { id: payload?.sub },
@@ -51,6 +43,6 @@ export async function GET(request: NextRequest) {
       { status: 404 }
     );
   }
-  const userWichComputedfields = getUserWithComputedFields(user);
-  return NextResponse.json(userWichComputedfields, { status: 200 });
+  //   const userWichComputedfields = getUserWithComputedFields(user);
+  return NextResponse.json(user, { status: 200 });
 }
