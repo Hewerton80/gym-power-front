@@ -17,6 +17,7 @@ import Link from "next/link";
 import { statusTrainingBadge } from "@/shared/statusTrainingBadge";
 import { useAuth } from "@/hooks/api/useAuth";
 import { useGetMyTrainings } from "@/hooks/api/useTraining";
+import { TrainingCard } from "@/components/ui/cards/TrainingCard";
 
 export default function StudentPage() {
   const { loggedUser } = useAuth();
@@ -29,80 +30,80 @@ export default function StudentPage() {
     recommendedTraingToDay,
   } = useGetMyTrainings(loggedUser?.trainingPlan?.trainings);
 
-  const cols = useMemo<IColmunDataTable[]>(
-    () => [
-      { field: "date", content: "Data" },
-      { field: "training", content: "Treino" },
-      { field: "time", content: "Duração" },
-      { field: "status", content: "Starus" },
-      { field: "actions", content: "" },
-    ],
-    []
-  );
+  // const cols = useMemo<IColmunDataTable[]>(
+  //   () => [
+  //     { field: "date", content: "Data" },
+  //     { field: "training", content: "Treino" },
+  //     { field: "time", content: "Duração" },
+  //     { field: "status", content: "Starus" },
+  //     { field: "actions", content: "" },
+  //   ],
+  //   []
+  // );
 
-  const rows = useMemo<IRowDataTable[]>(
-    () => [
-      {
-        value: "0",
-        contents: [
-          "seg, 01 Fev",
-          "A - Peito, Tríceps, ombro",
-          "2h 15m",
-          statusTrainingBadge["incomplete"],
-          <div key={`action-3`} className="flex justify-end">
-            <IconButton
-              key="0 - 3"
-              icon={
-                <Link href="#">
-                  <AiOutlineEye />
-                </Link>
-              }
-            />
-          </div>,
-          ,
-        ],
-      },
-      {
-        value: "1",
-        contents: [
-          "ter, 02 Mar",
-          "B - Dorsal, Bíceps",
-          "1h 0m",
-          statusTrainingBadge["finished"],
-          <div key={`action-3`} className="flex justify-end">
-            <IconButton
-              key="0 - 3"
-              icon={
-                <Link href="#">
-                  <AiOutlineEye />
-                </Link>
-              }
-            />
-          </div>,
-        ],
-      },
-      {
-        value: "2",
-        contents: [
-          "Qui, 03 Abr",
-          "C - Perna",
-          "59m",
-          statusTrainingBadge["inProgress"],
-          <div key={`action-3`} className="flex justify-end">
-            <IconButton
-              key="0 - 3"
-              icon={
-                <Link href="#">
-                  <AiOutlineEye />
-                </Link>
-              }
-            />
-          </div>,
-        ],
-      },
-    ],
-    []
-  );
+  // const rows = useMemo<IRowDataTable[]>(
+  //   () => [
+  //     {
+  //       value: "0",
+  //       contents: [
+  //         "seg, 01 Fev",
+  //         "A - Peito, Tríceps, ombro",
+  //         "2h 15m",
+  //         statusTrainingBadge["incomplete"],
+  //         <div key={`action-3`} className="flex justify-end">
+  //           <IconButton
+  //             key="0 - 3"
+  //             icon={
+  //               <Link href="#">
+  //                 <AiOutlineEye />
+  //               </Link>
+  //             }
+  //           />
+  //         </div>,
+  //         ,
+  //       ],
+  //     },
+  //     {
+  //       value: "1",
+  //       contents: [
+  //         "ter, 02 Mar",
+  //         "B - Dorsal, Bíceps",
+  //         "1h 0m",
+  //         statusTrainingBadge["finished"],
+  //         <div key={`action-3`} className="flex justify-end">
+  //           <IconButton
+  //             key="0 - 3"
+  //             icon={
+  //               <Link href="#">
+  //                 <AiOutlineEye />
+  //               </Link>
+  //             }
+  //           />
+  //         </div>,
+  //       ],
+  //     },
+  //     {
+  //       value: "2",
+  //       contents: [
+  //         "Qui, 03 Abr",
+  //         "C - Perna",
+  //         "59m",
+  //         statusTrainingBadge["inProgress"],
+  //         <div key={`action-3`} className="flex justify-end">
+  //           <IconButton
+  //             key="0 - 3"
+  //             icon={
+  //               <Link href="#">
+  //                 <AiOutlineEye />
+  //               </Link>
+  //             }
+  //           />
+  //         </div>,
+  //       ],
+  //     },
+  //   ],
+  //   []
+  // );
 
   // useEffect(() => {
   //   console.log({ trainings });
@@ -111,19 +112,29 @@ export default function StudentPage() {
   return (
     <div className="grid grid-cols-12 gap-7">
       <WidgetCard
-        className="col-span-6 2xl:col-span-3"
+        className="col-span-6"
         title="Altura"
         description={`${loggedUser?.heightInMt}m`}
         icon={<VscSymbolRuler />}
       />
       <WidgetCard
-        className="col-span-6 2xl:col-span-3"
+        className="col-span-6"
         variant="info"
         title="Peso"
         description={`${loggedUser?.weightInKg}kg`}
         icon={<FaWeight />}
       />
-      <div className="col-span-12 2xl:col-span-6">
+      <Card className="col-span-12">
+        <Card.Header>
+          <Card.Title>Meus treinos</Card.Title>
+        </Card.Header>
+        <Card.Body className="flex-col space-y-2">
+          {loggedUser?.trainingPlan?.trainings?.map((training) => (
+            <TrainingCard key={training?.id} training={training} />
+          ))}
+        </Card.Body>
+      </Card>
+      {/* <div className="col-span-12 2xl:col-span-6">
         {recommendedTraingToDay && (
           <WidgetCard
             className="col-span-3"
@@ -144,8 +155,8 @@ export default function StudentPage() {
             icon={<LuDumbbell />}
           />
         )}
-      </div>
-      <div className="col-span-12">
+      </div> */}
+      {/* <div className="col-span-12">
         <Card className="h-full">
           <Card.Header>
             <Card.Title>Últimos treinos</Card.Title>
@@ -170,7 +181,7 @@ export default function StudentPage() {
             />
           </Card.Body>
         </Card>
-      </div>
+      </div> */}
     </div>
   );
 }

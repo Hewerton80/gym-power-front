@@ -16,12 +16,12 @@ export async function GET(request: NextRequest) {
         include: {
           trainings: {
             orderBy: { order: "asc" },
-            // include: {
-            //   trainingExercises: {
-            //     orderBy: { order: "asc" },
-            //     include: { exercise: { include: { muscle: true } } },
-            //   },
-            // },
+            include: {
+              trainingExercises: {
+                orderBy: { order: "asc" },
+                include: { exercise: { include: { muscle: true } } },
+              },
+            },
           },
         },
       },

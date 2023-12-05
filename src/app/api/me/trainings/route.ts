@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { verifyJWT } from "@/lib/auth";
 import { getUserWithComputedFields } from "@/types/User";
 import { CONSTANTS } from "@/shared/constants";
+import { getTrainingsWithComputedFields } from "@/types/Training";
 
 export async function GET(request: NextRequest) {
   const { payload, error } = await verifyJWT(request);
@@ -11,38 +12,33 @@ export async function GET(request: NextRequest) {
   }
   const user = await prisma.user.findUnique({
     where: { id: payload?.sub },
-    // include: {
-    //   trainingPlans: {
-    //     include: {
-    //       trainings: true,
-    //     },
-    //   },
-    // },
+    include: {
+      trainingPlans: {
+        where: { isActive: true },
+        include: {
+          trainings: {
+            orderBy: { order: "asc" },
+            include: {
+              trainingExercises: {
+                orderBy: { order: "asc" },
+                include: { exercise: { include: { muscle: true } } },
+              },
+            },
+          },
+        },
+      },
+    },
   });
-  // const user = await prisma.user.findUnique({
-  //   where: { id: payload?.sub },
-  //   include: {
-  //     trainingPlans: {
-  //       include: {
-  //         trainings: {
-  //           orderBy: { order: "asc" },
-  //           include: {
-  //             trainingExercises: {
-  //               orderBy: { order: "asc" },
-  //               include: { exercise: { include: { muscle: true } } },
-  //             },
-  //           },
-  //         },
-  //       },
-  //     },
-  //   },
-  // });
   if (!user) {
     return NextResponse.json(
       { message: CONSTANTS.API_RESPONSE_MENSSAGES.USER_NOT_FOUND },
       { status: 404 }
     );
   }
+  const trainingsWichComputedfields = getTrainingsWithComputedFields(
+    user?.trainingPlans?.[0]?.trainings as any[]
+  );
+
   //   const userWichComputedfields = getUserWithComputedFields(user);
-  return NextResponse.json(user, { status: 200 });
+  return NextResponse.json(trainingsWichComputedfields, { status: 200 });
 }
