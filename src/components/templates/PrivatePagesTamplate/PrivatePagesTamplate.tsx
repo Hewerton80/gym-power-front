@@ -109,8 +109,9 @@ export function PrivatePagesTamplate({ children }: IPrivatePagesTamplateProps) {
                 showOnlyIcons ? "pt-4 pr-3.5 pl-3.5" : "pl-6 pr-0"
               )}
             >
-              {avaliableNavItems.map(({ title, icon, path }, i) => {
-                const isActive = currentPath.includes(path);
+              {avaliableNavItems.map(({ title, icon, path, basePath }, i) => {
+                console.log({ currentPath, basePath });
+                const isActive = currentPath.includes(`/${basePath}`);
                 return (
                   <li key={`${title}-${i}`} className="flex w-full">
                     <Link

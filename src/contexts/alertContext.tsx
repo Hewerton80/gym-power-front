@@ -105,7 +105,6 @@ export function AlertContextProvider({ children }: IAlertContextProps) {
           onClose: handleCloseAlert,
           onClickCancelButton: handleClickCancelButton,
           onClickConfirmButton: handleClickConfirmButton,
-
           ...restAlertModalValues,
         },
       }}

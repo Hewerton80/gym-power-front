@@ -19,36 +19,36 @@ export interface INavItem {
   title: string;
   path: string;
   icon: JSX.Element;
-  layoutSegment: BASE_PATHS;
+  basePath: BASE_PATHS;
   avaliablesRoles?: AvaliablesRoles;
 }
 
 export const navItems: INavItem[] = [
   {
     title: "Usuários",
-    path: "/admin/users",
-    layoutSegment: BASE_PATHS.BASE_ADMIN_PATH,
+    path: `/${BASE_PATHS.BASE_ADMIN_PATH}/users`,
+    basePath: BASE_PATHS.BASE_ADMIN_PATH,
     icon: <FaUsers />,
     avaliablesRoles: { isAdmin: true },
   },
   // {
   //   title: "Treinos",
   //   path: "/teacher/trainings",
-  //   layoutSegment: BASE_PATHS.BASE_TEACHER_PATH,
+  //   basePath: BASE_PATHS.BASE_TEACHER_PATH,
   //   icon: <FaDumbbell />,
   //   avaliablesRoles: { TEACHER: true },
   // },
   {
     title: "Alunos",
-    path: "/teacher/students",
-    layoutSegment: BASE_PATHS.BASE_TEACHER_PATH,
+    path: `/${BASE_PATHS.BASE_TEACHER_PATH}/students`,
+    basePath: BASE_PATHS.BASE_TEACHER_PATH,
     icon: <GiMuscleUp />,
     avaliablesRoles: { isTeacher: true },
   },
   {
     title: "Área do aluno",
-    path: "/student/home",
-    layoutSegment: BASE_PATHS.BASE_STUDENT_PATH,
+    path: `/${BASE_PATHS.BASE_STUDENT_PATH}/home`,
+    basePath: BASE_PATHS.BASE_STUDENT_PATH,
     icon: <FaHome />,
   },
 ];

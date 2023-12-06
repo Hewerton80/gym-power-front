@@ -1,4 +1,4 @@
-import React, { ComponentPropsWithoutRef } from "react";
+import React, { ComponentPropsWithoutRef, ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { twMerge } from "tailwind-merge";
 import { FaTimes } from "react-icons/fa";
@@ -9,7 +9,10 @@ import {
   CardFooterProps,
 } from "@/components/ui/cards/Card";
 
-export interface ModalProps extends CardProps {
+export interface ModalProps {
+  children: ReactNode;
+  id?: string;
+  className?: string;
   show?: boolean;
   hideCloseIcon?: boolean;
   onClose?: () => void;

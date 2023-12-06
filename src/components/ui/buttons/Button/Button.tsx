@@ -18,7 +18,6 @@ interface ButtonStyle {
   activeRing?: string;
   hoverBg?: string;
   hoverText?: string;
-  spinnerBorderT: string;
   darkStyles?: string[];
 }
 
@@ -30,7 +29,6 @@ const generateButtonStyles = (baseStyles: ButtonStyle) => {
     focusRing,
     activeRing,
     hoverBg,
-    spinnerBorderT,
     hoverText,
     darkStyles,
   } = baseStyles;
@@ -41,7 +39,6 @@ const generateButtonStyles = (baseStyles: ButtonStyle) => {
     activeRing,
     focusRing,
     hoverBg,
-    spinnerBorderT,
     hoverText,
     darkStyles,
   ];
@@ -61,7 +58,6 @@ const buttonVariants = {
       text: "text-white",
       focusRing: "focus:ring-primary/40",
       activeRing: "active:ring-primary/40",
-      spinnerBorderT: "[&>.spinner]:border-t-white",
     }),
     success: generateButtonStyles({
       bg: "bg-success",
@@ -69,7 +65,6 @@ const buttonVariants = {
       text: "text-white",
       focusRing: "focus:ring-success/40",
       activeRing: "active:ring-success/40",
-      spinnerBorderT: "[&>.spinner]:border-t-white",
     }),
     info: generateButtonStyles({
       bg: "bg-info",
@@ -77,7 +72,6 @@ const buttonVariants = {
       text: "text-white",
       focusRing: "focus:ring-info/40",
       activeRing: "active:ring-info/40",
-      spinnerBorderT: "[&>.spinner]:border-t-white",
     }),
     warning: generateButtonStyles({
       bg: "bg-warning",
@@ -85,7 +79,6 @@ const buttonVariants = {
       text: "text-white",
       focusRing: "focus:ring-warning/40",
       activeRing: "active:ring-warning/40",
-      spinnerBorderT: "[&>.spinner]:border-t-white",
     }),
     danger: generateButtonStyles({
       bg: "bg-danger",
@@ -93,7 +86,13 @@ const buttonVariants = {
       text: "text-white",
       focusRing: "focus:ring-danger/40",
       activeRing: "active:ring-danger/40",
-      spinnerBorderT: "[&>.spinner]:border-t-white",
+    }),
+    light: generateButtonStyles({
+      bg: "bg-light",
+      border: "border-light",
+      text: "text-black",
+      focusRing: "focus:ring-light/40",
+      activeRing: "active:ring-light/40",
     }),
   },
 };

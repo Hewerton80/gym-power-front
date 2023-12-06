@@ -5,6 +5,7 @@ import { twMerge } from "tailwind-merge";
 import { Button, ButtonVariantStyle } from "@/components/ui/buttons/Button";
 import { isString } from "@/shared/isType";
 import { AlertContext } from "@/contexts/alertContext";
+import { Spinner } from "../../feedback/Spinner";
 
 // type VariantsMap = {
 //   [Property in Variant]: { icon: JSX.Element };
@@ -26,6 +27,7 @@ export interface AlertModalProps
   variant?: VariantType;
   showCancelButton?: boolean;
   isSubmiting?: boolean;
+  isLoading?: boolean;
   description?: string | JSX.Element;
   confirmButtonText?: string;
   cancelButtonText?: string;
@@ -42,11 +44,12 @@ const AlertModal = forwardRef(() => {
       title,
       description,
       variant = "default",
+      isLoading,
       isSubmiting,
       confirmButtonText = "Ok",
       cancelButtonText = "Voltar",
-      confirmButtonVariantStyle = "danger-outlined",
-      cancelButtonVariantStyle = "primary-outlined",
+      confirmButtonVariantStyle = "primary",
+      cancelButtonVariantStyle = "light",
       showCancelButton,
       onClose,
       onClickConfirmButton,
@@ -57,7 +60,7 @@ const AlertModal = forwardRef(() => {
   return (
     <Modal
       show={show}
-      onClose={() => !isSubmiting && onClose?.()}
+      onClose={() => !isSubmiting && !isLoading && onClose?.()}
       className=" shadow-gray-100"
       hideCloseIcon
       {...restProps}
@@ -74,28 +77,35 @@ const AlertModal = forwardRef(() => {
               {title}
             </h4>
           )}
+          {isLoading ? (
+            <Spinner size={48} />
+          ) : (
+            <>{isString(description) ? <p>{description}</p> : description}</>
+          )}
 
-          {isString(description) ? <p>{description}</p> : description}
+          {/* {isString(description) ? <p>{description}</p> : description} */}
         </div>
       </Modal.Body>
-      <Modal.Footer orientation="center">
-        {showCancelButton && (
+      {!isLoading && (
+        <Modal.Footer className="gap-4" orientation="center">
+          {showCancelButton && (
+            <Button
+              variantStyle={cancelButtonVariantStyle}
+              onClick={onClickCancelButton}
+              disabled={isSubmiting}
+            >
+              {cancelButtonText}
+            </Button>
+          )}
           <Button
-            variantStyle={variant as ButtonVariantStyle}
-            onClick={onClickCancelButton}
-            disabled={isSubmiting}
+            variantStyle={confirmButtonVariantStyle}
+            onClick={onClickConfirmButton}
+            isLoading={isSubmiting}
           >
-            {cancelButtonText}
+            {confirmButtonText}
           </Button>
-        )}
-        <Button
-          variantStyle={variant as ButtonVariantStyle}
-          onClick={onClickConfirmButton}
-          isLoading={isSubmiting}
-        >
-          {confirmButtonText}
-        </Button>
-      </Modal.Footer>
+        </Modal.Footer>
+      )}
     </Modal>
   );
 });

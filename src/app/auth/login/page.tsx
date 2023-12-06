@@ -11,6 +11,7 @@ import { ToZodObjectSchema } from "@/lib/zodHelpers";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginCredentials } from "@/dtos/loginCredentials";
+import { getErrorMessage } from "@/shared/getErrorMenssage";
 
 const loginFormSchema = z.object<ToZodObjectSchema<LoginCredentials>>({
   email: z.string().min(1, { message: "Um email deve ser informado" }),
@@ -29,10 +30,9 @@ export default function LoginPage() {
   useEffect(() => {
     if (!loginError) return;
     const statusCode = loginError?.response?.status;
-    const message = loginError?.response?.data?.message;
     if (statusCode === 401) {
       setError("email", { message: " " });
-      setError("password", { message });
+      setError("password", { message: getErrorMessage(loginError) });
     } else {
       setError("email", { message: " " });
       setError("password", { message: "Falha ao fazer login" });

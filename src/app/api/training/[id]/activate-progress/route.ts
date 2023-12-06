@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { CONSTANTS } from "@/shared/constants";
+const { TRAINING_NOT_FOUND, TRAINING_ALWREADY_PROGRESS } =
+  CONSTANTS.API_RESPONSE_MENSSAGES;
 
 export async function PATCH(
   _: unknown,
@@ -13,15 +15,12 @@ export async function PATCH(
   });
 
   if (!foundTraning) {
-    return NextResponse.json(
-      { message: CONSTANTS.API_RESPONSE_MENSSAGES.TRAINING_NOT_FOUND },
-      { status: 404 }
-    );
+    return NextResponse.json({ message: TRAINING_NOT_FOUND }, { status: 404 });
   }
 
   if (foundTraning.isInProgress) {
     return NextResponse.json(
-      { message: CONSTANTS.API_RESPONSE_MENSSAGES.TRAINING_ALWREADY_PROGRESS },
+      { message: TRAINING_ALWREADY_PROGRESS },
       { status: 409 }
     );
   }
@@ -29,6 +28,7 @@ export async function PATCH(
   const progressTrainingsToUpdate = foundTraning?.trainingPlan?.trainings?.map(
     (training) => ({
       id: training?.id,
+      isRecommendedToDay: false,
       isInProgress: training?.id === foundTraning?.id,
     })
   );
