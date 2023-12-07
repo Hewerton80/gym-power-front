@@ -13,11 +13,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   const { me, meError } = useGetMe();
 
   useEffect(() => {
+    if (isLogged) return;
     if (me) {
       console.log({ me });
       handleSetContextLoggedUser(me);
     }
-  }, [me, handleSetContextLoggedUser]);
+  }, [me, isLogged, handleSetContextLoggedUser]);
 
   useEffect(() => {
     if (meError) {

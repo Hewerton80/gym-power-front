@@ -22,4 +22,5 @@ export interface IExercise {
 export interface ExerciseWithComputedFields extends Exercise {
   muscle?: MuscleWithComputedFields;
   status?: ExerciseStatus;
+  trainingExerciseId?: string;
 }

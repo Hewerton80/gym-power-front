@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { CONSTANTS } from "@/shared/constants";
-const { TRAINING_NOT_FOUND, TRAINING_ALWREADY_PROGRESS } =
-  CONSTANTS.API_RESPONSE_MENSSAGES;
+const {
+  TRAINING_NOT_FOUND,
+  TRAINING_ALWREADY_PROGRESS,
+  ALWREADY_HAS_TRAINING_IN_PROGRESS,
+} = CONSTANTS.API_RESPONSE_MENSSAGES;
 
 export async function PATCH(
   _: unknown,
@@ -18,25 +21,35 @@ export async function PATCH(
     return NextResponse.json({ message: TRAINING_NOT_FOUND }, { status: 404 });
   }
 
-  if (foundTraning.isInProgress) {
+  if (foundTraning?.isInProgress) {
     return NextResponse.json(
       { message: TRAINING_ALWREADY_PROGRESS },
       { status: 409 }
     );
   }
 
-  const progressTrainingsToUpdate = foundTraning?.trainingPlan?.trainings?.map(
-    (training) => ({
-      id: training?.id,
-      isRecommendedToDay: false,
-      isInProgress: training?.id === foundTraning?.id,
-    })
+  const trainings = foundTraning?.trainingPlan?.trainings;
+
+  const alwreadyHasSomeTrainingInProgress = trainings?.some(
+    (training) => training?.isInProgress
   );
+
+  if (alwreadyHasSomeTrainingInProgress) {
+    return NextResponse.json(
+      { message: ALWREADY_HAS_TRAINING_IN_PROGRESS },
+      { status: 409 }
+    );
+  }
+
+  const progressTrainingsToUpdate = trainings?.map((training) => ({
+    id: training?.id,
+    isInProgress: training?.id === foundTraning?.id,
+  }));
 
   for (const training of progressTrainingsToUpdate) {
     await prisma.training.update({
       where: { id: training?.id },
-      data: { isInProgress: training?.isInProgress },
+      data: { isInProgress: training?.isInProgress, isRecommendedToDay: false },
     });
   }
 
@@ -44,5 +57,5 @@ export async function PATCH(
     data: { trainingId: foundTraning?.id },
   });
 
-  return NextResponse.json({ status: 204 });
+  return NextResponse.json({}, { status: 201 });
 }

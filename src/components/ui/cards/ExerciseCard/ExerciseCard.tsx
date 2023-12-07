@@ -1,25 +1,80 @@
 "use client";
 import Image from "next/image";
 import { BsFillPlayFill, BsStopCircle } from "react-icons/bs";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/ui/buttons/Button";
-import {
-  ExerciseNamesType,
-  ExercisePtBrStatus,
-  ExerciseWithComputedFields,
-} from "@/types/Exercise";
+import { ExerciseWithComputedFields } from "@/types/Exercise";
 import { twMerge } from "tailwind-merge";
+import Cookies from "js-cookie";
+import { ExerciseHistoryWithComputedFields } from "@/types/TrainingExerciseHistory";
+import { ExerciseStatus } from "@prisma/client";
+import { sleep } from "@/shared/sleep";
 
 interface ExerciseCardProps {
   exercise?: ExerciseWithComputedFields;
 }
 
 export function ExerciseCard({ exercise }: ExerciseCardProps) {
-  const [isRunning, setIsRunnig] = useState(false);
+  const [cacheTrainigState, setCatchTrainigState] =
+    useState<ExerciseHistoryWithComputedFields>(() => {
+      const cacheTrainig = Cookies.get(String(exercise?.trainingExerciseId));
+      console.log({ cacheTrainig });
+      if (cacheTrainig) {
+        return JSON.parse(cacheTrainig) as ExerciseHistoryWithComputedFields;
+      }
+      return {
+        id: "",
+        trainingExerciseId: String(exercise?.trainingExerciseId),
+        exerciseId: String(exercise?.id),
+        startDate: null,
+        endDate: null,
+      } as ExerciseHistoryWithComputedFields;
+    });
 
-  const handleChanExerciciStatus = useCallback(() => {
-    setIsRunnig((currentStatus) => !currentStatus);
-  }, []);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const exerciseStatus = useMemo<ExerciseStatus>(() => {
+    if (cacheTrainigState?.startDate && !cacheTrainigState?.endDate) {
+      return "IN_PROGRESS";
+    }
+    if (cacheTrainigState?.startDate && cacheTrainigState?.endDate) {
+      return "FINISHED";
+    }
+    return "READY_TO_START";
+  }, [cacheTrainigState]);
+
+  const handleStartExercise = useCallback(async () => {
+    setIsLoading(true);
+    await sleep(1000);
+    const newCasheTrainigState: ExerciseHistoryWithComputedFields = {
+      id: "",
+      trainingExerciseId: String(exercise?.trainingExerciseId),
+      exerciseId: String(exercise?.id),
+      startDate: new Date(),
+      endDate: null,
+    };
+    setCatchTrainigState(newCasheTrainigState);
+    Cookies.set(
+      String(exercise?.trainingExerciseId),
+      JSON.stringify(newCasheTrainigState)
+    );
+    setIsLoading(false);
+  }, [exercise]);
+
+  const handleFinishExercise = useCallback(async () => {
+    setIsLoading(true);
+    await sleep(1000);
+    const newCasheTrainigState: ExerciseHistoryWithComputedFields = {
+      ...cacheTrainigState,
+      endDate: new Date(),
+    };
+    setCatchTrainigState(newCasheTrainigState);
+    Cookies.set(
+      String(exercise?.trainingExerciseId),
+      JSON.stringify(newCasheTrainigState)
+    );
+    setIsLoading(false);
+  }, [cacheTrainigState, exercise]);
 
   return (
     <div
@@ -40,30 +95,41 @@ export function ExerciseCard({ exercise }: ExerciseCardProps) {
         </h3>
 
         {exercise?.description && (
-          <p className="line-clamp-3 text-sm mb-1">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip
-          </p>
+          <p className="line-clamp-3 text-sm mb-1">{exercise?.description}</p>
         )}
 
         <div
           className={twMerge(
-            "flex flex-col sm:flex-row items-center justify-between gap-1 w-full h-full"
+            "flex flex-col sm:flex-row items-center  gap-1 w-full h-full"
           )}
         >
-          <span>
-            {ExercisePtBrStatus?.[exercise?.status as ExerciseNamesType]}
-          </span>
-          <Button
-            className=""
-            leftIcon={isRunning ? <BsStopCircle /> : <BsFillPlayFill />}
-            variantStyle={isRunning ? "danger" : "primary"}
-            onClick={handleChanExerciciStatus}
-          >
-            {isRunning ? "Finalizar" : "Iniciar"} exercício
-          </Button>
+          {exerciseStatus === "READY_TO_START" && (
+            <Button
+              className="ml-auto"
+              leftIcon={<BsFillPlayFill />}
+              variantStyle="primary"
+              onClick={handleStartExercise}
+              isLoading={isLoading}
+            >
+              Iniciar exercício
+            </Button>
+          )}
+          {exerciseStatus === "IN_PROGRESS" && (
+            <Button
+              className="ml-auto"
+              leftIcon={<BsStopCircle />}
+              variantStyle="danger"
+              onClick={handleFinishExercise}
+              isLoading={isLoading}
+            >
+              Finalizar exercício
+            </Button>
+          )}
+          {exerciseStatus === "FINISHED" && (
+            <Button className="ml-auto" variantStyle="success" disabled>
+              Finalizado
+            </Button>
+          )}
         </div>
       </div>
     </div>

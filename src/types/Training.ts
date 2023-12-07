@@ -9,29 +9,50 @@ export interface TrainingWithComputedFields extends Training {
   trainingExercises?: TrainingExerciseWithComputedFields[];
   exercises?: ExerciseWithComputedFields[];
   title?: string;
+  exercicesCount: number;
 }
 
 export interface IGetTraining extends TrainingWithComputedFields {}
 
+const getExerciseTitle = (exercise: any) => {
+  const letter = String.fromCharCode(exercise.order + 64);
+  const musclesNames = exercise?.trainingExercises?.map(
+    (trainingExercise: any) => trainingExercise?.exercise?.muscle?.name
+  );
+  return `${letter} - ${removeElementsRepeated(musclesNames || [])?.join(
+    ", "
+  )}`;
+};
+
 export const getTrainingWithComputedFields = (
   training: any
 ): TrainingWithComputedFields => {
-  const letter = String.fromCharCode(training.order + 64);
-  const musclesNames = (
+  const title = getExerciseTitle(training);
+
+  const exercises = (
     training?.trainingExercises as TrainingExerciseWithComputedFields[]
-  )?.map((trainingExercise) => trainingExercise?.exercise?.muscle?.name);
-  training?.exercises;
-  const title = `${letter} - ${removeElementsRepeated(musclesNames || [])?.join(
-    ", "
-  )}`;
+  )?.map((trainingExercise) => ({
+    ...trainingExercise?.exercise,
+    status: trainingExercise?.status,
+    trainingExerciseId: trainingExercise?.id,
+  }));
+
   delete training?.trainingExercises;
-  return {
-    ...training,
-    // exercises: exercises as ExerciseWithComputedFields[],
-    title,
-  };
+
+  const trainingWithComputedFields = { ...training, title };
+  if (Array.isArray(exercises)) {
+    trainingWithComputedFields.exercises = exercises;
+  }
+
+  return trainingWithComputedFields;
 };
 
 export const getTrainingsWithComputedFields = (trainings: any[]) => {
-  return trainings.map((training) => getTrainingWithComputedFields(training));
+  return trainings.map((training) => {
+    const trainingWithComputedFields = getTrainingWithComputedFields(training);
+    trainingWithComputedFields.exercicesCount =
+      trainingWithComputedFields?.exercises?.length || 0;
+    delete trainingWithComputedFields?.exercises;
+    return trainingWithComputedFields;
+  });
 };

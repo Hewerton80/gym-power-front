@@ -10,6 +10,7 @@ import slideAndFadeANimation from "@/components/helpers/slideAndFade.module.css"
 import { getUserTextRoles } from "@/shared/getUserTextRoles";
 import { User } from "@prisma/client";
 import { getContrastColor } from "@/shared/colors";
+import colors from "tailwindcss/colors";
 
 const menuItemClasseName = twMerge(
   "flex items-center px-6 py-2 text-sm sm:text-base cursor-pointer gap-3",
@@ -29,7 +30,11 @@ export function ProfilePopover() {
           <Avatar
             username={loggedUser?.name}
             bgColor={loggedUser?.avatarBgColor}
-            color={getContrastColor(loggedUser?.avatarBgColor)}
+            color={
+              loggedUser?.avatarBgColor
+                ? getContrastColor(loggedUser?.avatarBgColor)
+                : colors.black
+            }
           />
           <div className="flex flex-col">
             <strong className="text-black dark:text-white text-sm sm:text-base">

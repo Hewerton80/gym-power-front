@@ -1,9 +1,8 @@
 import { SelectOption } from "@/components/ui/forms/Select";
-import { IGetUsers, IUser } from "@/types/User";
+import { IGetUsers, IUser, UserWithComputedFields } from "@/types/User";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useAxios } from "../utils/useAxios";
-import { User } from "@prisma/client";
 
 export interface IUserForm extends IUser {
   isEditUser?: boolean;
@@ -18,18 +17,18 @@ export function useGetMe() {
     data: me,
     isFetching: isLoadingMe,
     error: meError,
-    refetch: refetchMe,
   } = useQuery({
-    queryFn: () => apiBase.get<User>("/me/user").then((res) => res.data),
+    queryFn: () =>
+      apiBase.get<UserWithComputedFields>("/me/user").then((res) => res.data),
     queryKey: [],
-    retry: 0,
+    retryOnMount: false,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
-
   return {
     me,
     isLoadingMe,
     meError,
-    refetchMe,
   };
 }
 

@@ -63,5 +63,5 @@ export async function PATCH(
     });
   }
 
-  return NextResponse.json({ status: 204 });
+  return NextResponse.json(null, { status: 201 });
 }

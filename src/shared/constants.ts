@@ -15,6 +15,7 @@ export const CONSTANTS = {
     USER_NOT_FOUND: "Usuário não encontrado",
     TRAINING_NOT_FOUND: "Treino não encontrado",
     TRAINING_ALWREADY_PROGRESS: "Treino já está em progresso",
+    ALWREADY_HAS_TRAINING_IN_PROGRESS: "Já existe um treino em progresso",
     TRAINING_ALWREADY_NOT_PROGRESS: "Treino já não está em progresso",
   },
   COOKIES_KEYS: {

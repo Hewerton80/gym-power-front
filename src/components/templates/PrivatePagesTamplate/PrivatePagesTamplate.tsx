@@ -110,7 +110,6 @@ export function PrivatePagesTamplate({ children }: IPrivatePagesTamplateProps) {
               )}
             >
               {avaliableNavItems.map(({ title, icon, path, basePath }, i) => {
-                console.log({ currentPath, basePath });
                 const isActive = currentPath.includes(`/${basePath}`);
                 return (
                   <li key={`${title}-${i}`} className="flex w-full">

@@ -4,29 +4,39 @@ import { Button } from "../../buttons/Button";
 import { Badge } from "../../dataDisplay/Badge";
 import { twMerge } from "tailwind-merge";
 import { useAlertModal } from "@/hooks/utils/useAlertModal";
-import { useCallback, useEffect } from "react";
+import { useCallback, useMemo } from "react";
 import { useMutateTraning } from "@/hooks/api/useTraining";
 import { getErrorMessage } from "@/shared/getErrorMenssage";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface TrainingCardProps {
   training?: TrainingWithComputedFields;
+  hideStartTrainingButton?: boolean;
 }
 
-export function TrainingCard({ training }: TrainingCardProps) {
+export function TrainingCard({
+  training,
+  hideStartTrainingButton,
+}: TrainingCardProps) {
   const router = useRouter();
-  const { showAlert } = useAlertModal();
+  const { showAlert, closeAlert } = useAlertModal();
 
   const { startTraining } = useMutateTraning();
 
-  const goToTrainingPage = useCallback(() => {
-    router.push(`/student/training/${training?.id}`);
-  }, [router, training]);
+  const traningPath = useMemo(
+    () => `/student/training/${training?.id}`,
+    [training]
+  );
 
   const handleStartTraining = useCallback(() => {
-    const onSuccess = goToTrainingPage;
+    const onSuccess = () => {
+      closeAlert();
+      router.push(traningPath);
+    };
 
     const onError = (error: any) => {
+      closeAlert();
       showAlert({
         title: "Erro ao iniciar treino",
         description: getErrorMessage(error),
@@ -44,13 +54,13 @@ export function TrainingCard({ training }: TrainingCardProps) {
         startTraining(training?.id || "", { onSuccess, onError });
       },
     });
-  }, [training, showAlert, startTraining, goToTrainingPage]);
+  }, [training, showAlert, startTraining, closeAlert, router, traningPath]);
 
   return (
     <div
       className={twMerge(
-        "flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4 p-4",
-        "border-b-border border-b rounded-[1.25rem]"
+        "flex flex-col xl:flex-row items-start xl:items-center gap-4 p-4",
+        "border-b-border dark:border-dark-border border-b rounded-[1.25rem]"
       )}
     >
       <div className="flex gap-4">
@@ -69,14 +79,26 @@ export function TrainingCard({ training }: TrainingCardProps) {
           <h4 className="text-sm md:text-lg font-medium text-heading dark:text-light">
             {training?.title?.split(" - ")?.[1]}
           </h4>
-          {training?.isRecommendedToDay && (
-            <Badge variant="warning">Recomendado</Badge>
-          )}
+          <div className="flex gap-4">
+            {training?.isRecommendedToDay && (
+              <Badge variant="warning">Recomendado</Badge>
+            )}
+            {training?.isInProgress && (
+              <Badge variant="success">Em andamento</Badge>
+            )}
+          </div>
         </div>
       </div>
-      <div className="flex">
-        <Button onClick={handleStartTraining}>Iniciar treino</Button>
-      </div>
+      {!hideStartTrainingButton && (
+        <Button className="ml-auto" onClick={handleStartTraining}>
+          Iniciar treino
+        </Button>
+      )}
+      {training?.isInProgress && (
+        <Button asChild className="ml-auto">
+          <Link href={traningPath}>Ir para treino</Link>
+        </Button>
+      )}
     </div>
   );
 }

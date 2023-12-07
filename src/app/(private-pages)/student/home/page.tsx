@@ -130,7 +130,13 @@ export default function StudentPage() {
         </Card.Header>
         <Card.Body className="flex-col space-y-2">
           {loggedUser?.trainingPlan?.trainings?.map((training) => (
-            <TrainingCard key={training?.id} training={training} />
+            <TrainingCard
+              hideStartTrainingButton={
+                loggedUser?.trainingPlan?.hasSomeTrainingInProgress
+              }
+              key={training?.id}
+              training={training}
+            />
           ))}
         </Card.Body>
       </Card>

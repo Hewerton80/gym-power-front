@@ -11,7 +11,6 @@ import Cookies from "js-cookie";
 import { CONSTANTS } from "@/shared/constants";
 import { removeAllCookies } from "@/lib/cookie";
 import { useAxios } from "@/hooks/utils/useAxios";
-import { User } from "@prisma/client";
 import { LoginCredentials } from "@/dtos/loginCredentials";
 import { UserWithComputedFields } from "@/types/User";
 
