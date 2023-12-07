@@ -21,6 +21,8 @@ export default function TrainingPage() {
     ExerciseWithComputedFields[]
   >([]);
 
+  const [indexExerciseIsLoading, setIndexExerciseIsLoading] = useState(-1);
+
   useEffect(() => {
     if (Array.isArray(training?.exercises)) {
       setExercisesState(training?.exercises || []);
@@ -28,7 +30,7 @@ export default function TrainingPage() {
   }, [training?.exercises]);
 
   const exercisesElement = useMemo(() => {
-    return exercisesState?.map((exercise) => (
+    return exercisesState?.map((exercise, i) => (
       <div
         key={exercise?.id}
         className={twMerge(
@@ -61,6 +63,7 @@ export default function TrainingPage() {
                 className="ml-auto"
                 leftIcon={<BsFillPlayFill />}
                 variantStyle="primary"
+                isLoading={indexExerciseIsLoading === i}
                 // onClick={handleStartExercise}
                 // isLoading={isLoading}
               >
@@ -72,6 +75,7 @@ export default function TrainingPage() {
                 className="ml-auto"
                 leftIcon={<BsStopCircle />}
                 variantStyle="danger"
+                isLoading={indexExerciseIsLoading === i}
                 // onClick={handleFinishExercise}
                 // isLoading={isLoading}
               >
@@ -87,7 +91,7 @@ export default function TrainingPage() {
         </div>
       </div>
     ));
-  }, [exercisesState]);
+  }, [exercisesState, indexExerciseIsLoading]);
 
   const handleContent = useMemo(() => {
     if (trainingError) {

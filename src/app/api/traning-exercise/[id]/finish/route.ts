@@ -4,8 +4,8 @@ import { CONSTANTS } from "@/shared/constants";
 
 const {
   TRAINING_NOT_FOUND,
-  EXERCISE_ALWREADY_PROGRESS,
   EXERCISE_ALWREADY_FINISHED,
+  EXERCISE_WAS_NOT_STARTED,
 } = CONSTANTS.API_RESPONSE_MENSSAGES;
 
 export async function PATCH(
@@ -19,9 +19,9 @@ export async function PATCH(
   if (!traingExercise) {
     return NextResponse.json({ message: TRAINING_NOT_FOUND }, { status: 404 });
   }
-  if (traingExercise?.status === "IN_PROGRESS") {
+  if (traingExercise?.status === "READY_TO_START") {
     return NextResponse.json(
-      { message: EXERCISE_ALWREADY_PROGRESS },
+      { message: EXERCISE_WAS_NOT_STARTED },
       { status: 409 }
     );
   }
@@ -33,14 +33,23 @@ export async function PATCH(
   }
   await prisma.trainingExercise.update({
     where: { id: traingExercise?.id },
-    data: { status: "IN_PROGRESS" },
-  });
-  await prisma.trainingExerciseHistory.create({
-    data: { trainingExerciseId: traingExercise?.id, startDate: new Date() },
+    data: { status: "FINISHED" },
   });
 
-  //   const foundTraningWithComputedFields =
-  //     getTrainingWithComputedFields(foundTraning);
+  const trainingExerciseHistory =
+    await prisma.trainingExerciseHistory.findFirst({
+      where: {
+        trainingExerciseId: traingExercise?.id,
+        exerciseId: traingExercise?.exerciseId,
+        endDate: null,
+      },
+    });
+  if (trainingExerciseHistory) {
+    await prisma.trainingExerciseHistory.update({
+      where: { id: trainingExerciseHistory?.id },
+      data: { endDate: new Date() },
+    });
+  }
 
   return NextResponse.json({}, { status: 201 });
 }
