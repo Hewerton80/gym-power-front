@@ -7,6 +7,5 @@ export interface ITrainingPlans {
 }
 
 export interface TrainingPlanWithComputedFields extends TrainingPlan {
-  trainings?: TrainingWithComputedFields[];
-  hasSomeTrainingInProgress?: boolean;
+  // trainings?: TrainingWithComputedFields[];
 }

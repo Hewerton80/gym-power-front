@@ -38,6 +38,7 @@ export async function PATCH(
 
   const trainingExerciseHistory =
     await prisma.trainingExerciseHistory.findFirst({
+      orderBy: { startDate: "desc" },
       where: {
         trainingExerciseId: traingExercise?.id,
         exerciseId: traingExercise?.exerciseId,

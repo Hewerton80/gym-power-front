@@ -17,9 +17,10 @@ export const CONSTANTS = {
     TRAINING_ALWREADY_PROGRESS: "Treino já está em andamento",
     ALWREADY_HAS_TRAINING_IN_PROGRESS: "Já existe um treino em andamento",
     TRAINING_ALWREADY_NOT_PROGRESS: "Treino já não está em andamento",
-    EXERCISE_ALWREADY_PROGRESS: "Exercicio já está em andamento",
-    EXERCISE_ALWREADY_FINISHED: "Exercicio já está finalizado",
-    EXERCISE_WAS_NOT_STARTED: "Exercicio não foi iniciado",
+    EXERCISE_ALWREADY_PROGRESS: "Exercício já está em andamento",
+    EXERCISE_ALWREADY_FINISHED: "Exercício já está finalizado",
+    EXERCISE_WAS_NOT_STARTED: "Exercício não foi iniciado",
+    THERE_IS_EXERCISES_NOT_FINISHED: "Há exercícios que não foram finalizados",
   },
   COOKIES_KEYS: {
     TOKEN: "TOKEN",

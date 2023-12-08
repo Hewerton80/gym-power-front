@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { CONSTANTS } from "@/shared/constants";
+import { tr } from "date-fns/locale";
 
-const { TRAINING_NOT_FOUND, TRAINING_ALWREADY_NOT_PROGRESS } =
-  CONSTANTS.API_RESPONSE_MENSSAGES;
+const {
+  TRAINING_NOT_FOUND,
+  TRAINING_ALWREADY_NOT_PROGRESS,
+  THERE_IS_EXERCISES_NOT_FINISHED,
+} = CONSTANTS.API_RESPONSE_MENSSAGES;
 
 export async function PATCH(
   _: unknown,
@@ -11,8 +15,9 @@ export async function PATCH(
 ) {
   const { id } = params;
   const foundTraning = await prisma.training.findUnique({
-    where: { id: id },
+    where: { id },
     include: {
+      trainingExercises: true,
       trainingPlan: { include: { trainings: { orderBy: { order: "asc" } } } },
     },
   });
@@ -23,9 +28,18 @@ export async function PATCH(
 
   if (!foundTraning.isInProgress) {
     return NextResponse.json(
-      {
-        message: TRAINING_ALWREADY_NOT_PROGRESS,
-      },
+      { message: TRAINING_ALWREADY_NOT_PROGRESS },
+      { status: 409 }
+    );
+  }
+
+  const thereIsExercisesNotFinished = foundTraning?.trainingExercises?.some(
+    (trainingExercise) => trainingExercise?.status !== "FINISHED"
+  );
+
+  if (thereIsExercisesNotFinished) {
+    return NextResponse.json(
+      { message: THERE_IS_EXERCISES_NOT_FINISHED },
       { status: 409 }
     );
   }
@@ -33,6 +47,11 @@ export async function PATCH(
   await prisma.training.update({
     where: { id: foundTraning?.id },
     data: { isInProgress: false },
+  });
+
+  await prisma.trainingExercise.updateMany({
+    where: { treiningId: foundTraning?.id },
+    data: { status: "READY_TO_START" },
   });
 
   const trainings = foundTraning?.trainingPlan?.trainings;
@@ -46,6 +65,7 @@ export async function PATCH(
         ? 0
         : currentTraningIndex + 1;
     const nextTrainig = trainings?.[nextTraningIndex];
+
     await prisma.training.update({
       where: { id: nextTrainig?.id },
       data: { isRecommendedToDay: true },

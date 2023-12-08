@@ -32,8 +32,9 @@ export const getTrainingWithComputedFields = (
   const exercises = (
     training?.trainingExercises as TrainingExerciseWithComputedFields[]
   )?.map((trainingExercise) => ({
-    ...trainingExercise?.exercise,
+    ...(trainingExercise?.exercise || {}),
     status: trainingExercise?.status,
+    intervalInSeconds: trainingExercise?.intervalInSeconds,
     trainingExerciseId: trainingExercise?.id,
   }));
 

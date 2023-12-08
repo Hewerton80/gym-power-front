@@ -9,6 +9,7 @@ import { useMutateTraning } from "@/hooks/api/useTraining";
 import { getErrorMessage } from "@/shared/getErrorMenssage";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { FaDumbbell } from "react-icons/fa6";
 
 interface TrainingCardProps {
   training?: TrainingWithComputedFields;
@@ -59,7 +60,7 @@ export function TrainingCard({
   return (
     <div
       className={twMerge(
-        "flex flex-col xl:flex-row items-start xl:items-center gap-4 p-4",
+        "flex flex-col xl:flex-row items-start xl:items-center gap-2 sm:gap-4 p-2 sm:p-4",
         "border-b-border dark:border-dark-border border-b rounded-[1.25rem]"
       )}
     >
@@ -67,7 +68,7 @@ export function TrainingCard({
         <div
           className={twMerge(
             "flex justify-center items-center",
-            "w-[3.75rem] h-[3.75rem] md:w-16 md:h-16 aspect-square",
+            "w-12 h-12 md:w-16 md:h-16 aspect-square",
             "bg-primary/20 rounded-[0.625rem]"
           )}
         >
@@ -76,10 +77,20 @@ export function TrainingCard({
           </strong>
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm md:text-lg font-medium text-heading dark:text-light">
+          <h4 className="text-xs md:text-lg font-medium text-heading dark:text-light">
             {training?.title?.split(" - ")?.[1]}
           </h4>
-          <div className="flex gap-4">
+          <div className="flex gap-2 sm:gap-4">
+            <Badge variant="primary">
+              {Number(training?.exercicesCount) > 0 ? (
+                <>
+                  <FaDumbbell className="mr-1" />{" "}
+                  {`${training?.exercicesCount} Exercícios`}
+                </>
+              ) : (
+                "Não há exercícios"
+              )}
+            </Badge>
             {training?.isRecommendedToDay && (
               <Badge variant="warning">Recomendado</Badge>
             )}

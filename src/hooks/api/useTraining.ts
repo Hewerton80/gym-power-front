@@ -3,14 +3,23 @@ import { useMemo } from "react";
 import { useAxios } from "../utils/useAxios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-export function useGetMyTrainings(trainings?: TrainingWithComputedFields[]) {
-  const recommendedTraingToDay = useMemo(() => {
-    const index =
-      trainings?.findIndex((training) => training.isRecommendedToDay) || [];
-    return trainings?.[Number(index)];
-  }, [trainings]);
+export function useGetMyTrainings() {
+  const { apiBase } = useAxios();
 
-  return { recommendedTraingToDay };
+  const {
+    data: trainings,
+    isFetching: isloadingTrainings,
+    error: trainingsError,
+    refetch: refetchTrainings,
+  } = useQuery({
+    queryKey: [],
+    queryFn: () =>
+      apiBase
+        .get<TrainingWithComputedFields[]>("/me/trainings")
+        .then((res) => res.data || []),
+  });
+
+  return { trainings, isloadingTrainings, trainingsError, refetchTrainings };
 }
 
 export function useGetTraining(id: string) {
@@ -18,7 +27,7 @@ export function useGetTraining(id: string) {
 
   const {
     data: training,
-    isFetching: isTrainingLoading,
+    isFetching: isLoadingTraining,
     error: trainingError,
     refetch: refetchTraining,
   } = useQuery({
@@ -26,20 +35,30 @@ export function useGetTraining(id: string) {
 
     queryFn: () =>
       apiBase
-        .get<TrainingWithComputedFields>(`/training/${id}`)
+        .get<TrainingWithComputedFields>(`/trainings/${id}`)
         .then((res) => res.data),
   });
 
-  return { training, isTrainingLoading, trainingError, refetchTraining };
+  return { training, isLoadingTraining, trainingError, refetchTraining };
 }
 
 export function useMutateTraning() {
   const { apiBase } = useAxios();
 
   const { mutate: startTraining, isPending: isStartingTraning } = useMutation({
-    mutationFn: (id: string) =>
-      apiBase.patch(`/training/${id}/activate-progress`),
+    mutationFn: (id: string) => apiBase.patch(`/trainings/${id}/start`),
   });
 
-  return { startTraining, isStartingTraning };
+  const { mutate: finishTraining, isPending: isFinishingTraning } = useMutation(
+    {
+      mutationFn: (id: string) => apiBase.patch(`/trainings/${id}/finish`),
+    }
+  );
+
+  return {
+    startTraining,
+    finishTraining,
+    isStartingTraning,
+    isFinishingTraning,
+  };
 }

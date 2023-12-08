@@ -20,7 +20,7 @@ export const Badge = ({
     <span
       className={twMerge(
         "inline-flex items-center justify-center py-1 px-2 w-fit",
-        "text-xs font-semibold rounded-[0.625rem] ",
+        "text-[0.625rem] sm:text-xs font-semibold rounded-[0.625rem] ",
         variants[variant],
         className
       )}

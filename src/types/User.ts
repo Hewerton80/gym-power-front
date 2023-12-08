@@ -53,13 +53,10 @@ export const getUserWithComputedFields = (
   if (user?.trainingPlans?.length > 0) {
     computedFuelds.trainingPlan = user
       .trainingPlans[0] as TrainingPlanWithComputedFields;
-    const trainings = computedFuelds.trainingPlan?.trainings;
-    computedFuelds.trainingPlan.hasSomeTrainingInProgress = trainings?.some(
-      (training) => training?.isInProgress
-    );
-    computedFuelds.trainingPlan.trainings = getTrainingsWithComputedFields(
-      trainings || []
-    );
+    // const trainings = computedFuelds.trainingPlan?.trainings;
+    // computedFuelds.trainingPlan.trainings = getTrainingsWithComputedFields(
+    //   trainings || []
+    // );
   }
   delete (computedFuelds as any)?.password;
   delete (computedFuelds as any)?.trainingPlans;

@@ -3,19 +3,30 @@ import { Button } from "@/components/ui/buttons/Button";
 import { Card } from "@/components/ui/cards/Card";
 import { FeedBackError } from "@/components/ui/feedback/FeedBackError";
 import { FeedBackLoading } from "@/components/ui/feedback/FeedBackLoading";
-import { useGetTraining } from "@/hooks/api/useTraining";
+import { useGetTraining, useMutateTraning } from "@/hooks/api/useTraining";
 import { isUndefined } from "@/shared/isType";
 import { ExerciseWithComputedFields } from "@/types/Exercise";
 import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import Image from "next/image";
 import { BsFillPlayFill, BsStopCircle } from "react-icons/bs";
+import { useMudateExercise } from "@/hooks/api/useExercise";
+import { useAlertModal } from "@/hooks/utils/useAlertModal";
+import { getErrorMessage } from "@/shared/getErrorMenssage";
+import { ExerciseStatus } from "@prisma/client";
+import { useRouter } from "next/navigation";
 
 export default function TrainingPage() {
   const params = useParams<{ id: string }>();
-  const { isTrainingLoading, training, trainingError, refetchTraining } =
+  const router = useRouter();
+  const { showAlert } = useAlertModal();
+  const { isLoadingTraining, training, trainingError, refetchTraining } =
     useGetTraining(params?.id);
+
+  const { finishTraining, isFinishingTraning } = useMutateTraning();
+
+  const { startExercise, finishExercise } = useMudateExercise();
 
   const [exercisesState, setExercisesState] = useState<
     ExerciseWithComputedFields[]
@@ -23,11 +34,85 @@ export default function TrainingPage() {
 
   const [indexExerciseIsLoading, setIndexExerciseIsLoading] = useState(-1);
 
+  const allExercisesFinished = useMemo(() => {
+    return exercisesState.every((exercise) => exercise?.status === "FINISHED");
+  }, [exercisesState]);
+
   useEffect(() => {
     if (Array.isArray(training?.exercises)) {
       setExercisesState(training?.exercises || []);
     }
   }, [training?.exercises]);
+
+  const handleUpdateExerciseStatus = useCallback(
+    (index: number, status: ExerciseStatus) => {
+      setIndexExerciseIsLoading(index);
+      const exercise = exercisesState[index];
+
+      const onSuccess = () => {
+        setIndexExerciseIsLoading(-1);
+        setExercisesState((oldState) => {
+          const newState = [...oldState];
+          newState[index] = { ...newState[index], status };
+          return newState;
+        });
+      };
+
+      let titleError = "";
+      if (status === "IN_PROGRESS") {
+        titleError = "Erro ao iniciar exercício";
+      }
+      if (status === "FINISHED") {
+        titleError = "Erro ao finalizar exercício";
+      }
+
+      const onError = (error: any) => {
+        setIndexExerciseIsLoading(-1);
+        showAlert({
+          title: titleError,
+          description: getErrorMessage(error),
+          variant: "danger",
+        });
+      };
+
+      if (status === "IN_PROGRESS") {
+        startExercise(String(exercise?.trainingExerciseId), {
+          onSuccess,
+          onError,
+        });
+      }
+      if (status === "FINISHED") {
+        finishExercise(String(exercise?.trainingExerciseId), {
+          onSuccess,
+          onError,
+        });
+      }
+    },
+    [exercisesState, showAlert, startExercise, finishExercise]
+  );
+
+  const handleFinishTraining = useCallback(() => {
+    if (!allExercisesFinished) {
+      return;
+    }
+    const onSuccess = () => {
+      showAlert({
+        title: "Treino finalizadocom sucesso",
+        variant: "default",
+        onClose: () => {
+          router.replace("/student/home");
+        },
+      });
+    };
+    const onError = (error: any) => {
+      showAlert({
+        title: "Erro ao finalizar treino",
+        description: getErrorMessage(error),
+        variant: "danger",
+      });
+    };
+    finishTraining(String(training?.id), { onSuccess, onError });
+  }, [training, router, allExercisesFinished, showAlert, finishTraining]);
 
   const exercisesElement = useMemo(() => {
     return exercisesState?.map((exercise, i) => (
@@ -49,9 +134,19 @@ export default function TrainingPage() {
             {exercise?.name}
           </h3>
 
-          {exercise?.description && (
-            <p className="line-clamp-3 text-sm mb-1">{exercise?.description}</p>
-          )}
+          {/* {exercise?.description && ( */}
+          <p className="line-clamp-3 text-xs sm:text-sm mb-1">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit
+            magni, dolorem laboriosam commodi natus sed, incidunt quibusdam
+            accusamus id omnis praesentium rem amet facilis iure voluptatibus
+            suscipit officia obcaecati dicta!
+          </p>
+          <div className="flex flex-col">
+            <strong className="text-xs sm:text-sm">
+              Descanso: {exercise?.intervalInSeconds}s
+            </strong>
+          </div>
+          {/* )} */}
 
           <div
             className={twMerge(
@@ -64,8 +159,7 @@ export default function TrainingPage() {
                 leftIcon={<BsFillPlayFill />}
                 variantStyle="primary"
                 isLoading={indexExerciseIsLoading === i}
-                // onClick={handleStartExercise}
-                // isLoading={isLoading}
+                onClick={() => handleUpdateExerciseStatus(i, "IN_PROGRESS")}
               >
                 Iniciar exercício
               </Button>
@@ -76,8 +170,7 @@ export default function TrainingPage() {
                 leftIcon={<BsStopCircle />}
                 variantStyle="danger"
                 isLoading={indexExerciseIsLoading === i}
-                // onClick={handleFinishExercise}
-                // isLoading={isLoading}
+                onClick={() => handleUpdateExerciseStatus(i, "FINISHED")}
               >
                 Finalizar exercício
               </Button>
@@ -91,13 +184,13 @@ export default function TrainingPage() {
         </div>
       </div>
     ));
-  }, [exercisesState, indexExerciseIsLoading]);
+  }, [exercisesState, indexExerciseIsLoading, handleUpdateExerciseStatus]);
 
   const handleContent = useMemo(() => {
     if (trainingError) {
       return <FeedBackError onTryAgain={refetchTraining} />;
     }
-    if (isTrainingLoading || isUndefined(training)) {
+    if (isLoadingTraining || isUndefined(training)) {
       return <FeedBackLoading />;
     }
     return (
@@ -106,14 +199,27 @@ export default function TrainingPage() {
           <Card.Title>{training?.title}</Card.Title>
         </Card.Header>
         <Card.Body className="space-y-4">{exercisesElement}</Card.Body>
+        <Card.Footer>
+          <Button
+            disabled={!allExercisesFinished}
+            isLoading={isFinishingTraning}
+            onClick={handleFinishTraining}
+            fullWidth
+          >
+            Finalizar treino
+          </Button>
+        </Card.Footer>
       </>
     );
   }, [
+    isFinishingTraning,
     trainingError,
-    isTrainingLoading,
+    isLoadingTraining,
     exercisesElement,
     training,
+    allExercisesFinished,
     refetchTraining,
+    handleFinishTraining,
   ]);
 
   return <Card>{handleContent}</Card>;

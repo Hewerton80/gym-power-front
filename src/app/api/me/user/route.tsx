@@ -12,39 +12,9 @@ export async function GET(request: NextRequest) {
   const user = await prisma.user.findUnique({
     where: { id: payload?.sub },
     include: {
-      trainingPlans: {
-        include: {
-          trainings: {
-            orderBy: { order: "asc" },
-            include: {
-              trainingExercises: {
-                orderBy: { order: "asc" },
-                include: { exercise: { include: { muscle: true } } },
-              },
-            },
-          },
-        },
-      },
+      trainingPlans: { where: { isActive: true } },
     },
   });
-  // const user = await prisma.user.findUnique({
-  //   where: { id: payload?.sub },
-  //   include: {
-  //     trainingPlans: {
-  //       include: {
-  //         trainings: {
-  //           orderBy: { order: "asc" },
-  //           include: {
-  //             trainingExercises: {
-  //               orderBy: { order: "asc" },
-  //               include: { exercise: { include: { muscle: true } } },
-  //             },
-  //           },
-  //         },
-  //       },
-  //     },
-  //   },
-  // });
   if (!user) {
     return NextResponse.json(
       { message: CONSTANTS.API_RESPONSE_MENSSAGES.USER_NOT_FOUND },

@@ -23,4 +23,5 @@ export interface ExerciseWithComputedFields extends Exercise {
   muscle?: MuscleWithComputedFields;
   status?: ExerciseStatus;
   trainingExerciseId?: string;
+  intervalInSeconds?: number;
 }

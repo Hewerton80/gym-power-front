@@ -18,17 +18,14 @@ import { statusTrainingBadge } from "@/shared/statusTrainingBadge";
 import { useAuth } from "@/hooks/api/useAuth";
 import { useGetMyTrainings } from "@/hooks/api/useTraining";
 import { TrainingCard } from "@/components/ui/cards/TrainingCard";
+import { isUndefined } from "@/shared/isType";
+import { FeedBackError } from "@/components/ui/feedback/FeedBackError";
+import { FeedBackLoading } from "@/components/ui/feedback/FeedBackLoading";
 
 export default function StudentPage() {
   const { loggedUser } = useAuth();
-  const {
-    // trainings,
-    // isloadingTrainings,
-    // trainingsError,
-    // refetchTrainings,
-    // getRecommendedTraingToDay,
-    recommendedTraingToDay,
-  } = useGetMyTrainings(loggedUser?.trainingPlan?.trainings);
+  const { trainings, isloadingTrainings, trainingsError, refetchTrainings } =
+    useGetMyTrainings();
 
   // const cols = useMemo<IColmunDataTable[]>(
   //   () => [
@@ -109,6 +106,25 @@ export default function StudentPage() {
   //   console.log({ trainings });
   // }, [trainings]);
 
+  const handleTrainingsContent = useMemo(() => {
+    if (trainingsError) {
+      return <FeedBackError onTryAgain={refetchTrainings} />;
+    }
+    if (isloadingTrainings || isUndefined(trainings)) {
+      return <FeedBackLoading />;
+    }
+    const hasSomeTrainingInProgress = trainings?.some(
+      (training) => training?.isInProgress
+    );
+    return trainings?.map((training) => (
+      <TrainingCard
+        hideStartTrainingButton={hasSomeTrainingInProgress}
+        key={training?.id}
+        training={training}
+      />
+    ));
+  }, [trainings, isloadingTrainings, trainingsError, refetchTrainings]);
+
   return (
     <div className="grid grid-cols-12 gap-7">
       <WidgetCard
@@ -129,15 +145,7 @@ export default function StudentPage() {
           <Card.Title>Meus treinos</Card.Title>
         </Card.Header>
         <Card.Body className="flex-col space-y-2">
-          {loggedUser?.trainingPlan?.trainings?.map((training) => (
-            <TrainingCard
-              hideStartTrainingButton={
-                loggedUser?.trainingPlan?.hasSomeTrainingInProgress
-              }
-              key={training?.id}
-              training={training}
-            />
-          ))}
+          {handleTrainingsContent}
         </Card.Body>
       </Card>
       {/* <div className="col-span-12 2xl:col-span-6">
