@@ -1,7 +1,5 @@
-import { User } from "@prisma/client";
-import { UserRole } from "@/types/User";
+import { UserRolesNamesType } from "@/types/User";
 import { FaHome, FaUsers } from "react-icons/fa";
-import { FaDumbbell } from "react-icons/fa6";
 import { GiMuscleUp } from "react-icons/gi";
 
 export enum BASE_PATHS {
@@ -12,7 +10,7 @@ export enum BASE_PATHS {
 }
 
 type AvaliablesRoles = {
-  [key in keyof Pick<User, "isAdmin" | "isTeacher">]?: Boolean;
+  [key in UserRolesNamesType]?: Boolean;
 };
 
 export interface INavItem {
@@ -20,7 +18,7 @@ export interface INavItem {
   path: string;
   icon: JSX.Element;
   basePath: BASE_PATHS;
-  avaliablesRoles?: AvaliablesRoles;
+  avaliablesRoles: AvaliablesRoles;
 }
 
 export const navItems: INavItem[] = [
@@ -29,7 +27,7 @@ export const navItems: INavItem[] = [
     path: `/${BASE_PATHS.BASE_ADMIN_PATH}/users`,
     basePath: BASE_PATHS.BASE_ADMIN_PATH,
     icon: <FaUsers />,
-    avaliablesRoles: { isAdmin: true },
+    avaliablesRoles: { ADMIN: true },
   },
   // {
   //   title: "Treinos",
@@ -43,12 +41,13 @@ export const navItems: INavItem[] = [
     path: `/${BASE_PATHS.BASE_TEACHER_PATH}/students`,
     basePath: BASE_PATHS.BASE_TEACHER_PATH,
     icon: <GiMuscleUp />,
-    avaliablesRoles: { isTeacher: true },
+    avaliablesRoles: { TEACHER: true },
   },
   {
     title: "Área do aluno",
     path: `/${BASE_PATHS.BASE_STUDENT_PATH}/home`,
     basePath: BASE_PATHS.BASE_STUDENT_PATH,
     icon: <FaHome />,
+    avaliablesRoles: { TEACHER: true, STUDENT: true, ADMIN: true },
   },
 ];

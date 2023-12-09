@@ -17,15 +17,21 @@ export const Input = forwardRef(
       inputClassName,
       label,
       error,
+      required,
       ...restProps
     }: InputProps,
     ref?: any
   ) => {
     return (
       <div className={twMerge("flex flex-col w-full", formControlClassName)}>
-        {label && <FormLabel htmlFor={restProps?.id}>{label}</FormLabel>}
+        {label && (
+          <FormLabel required={required} htmlFor={restProps?.id}>
+            {label}
+          </FormLabel>
+        )}
         <input
           ref={ref}
+          required={required}
           className={twMerge(
             "px-3 py-1.5 h-11 2xl:h-14 w-full rounded-md bg-white dark:bg-dark-card",
             "text-body-text dark:border-dark-border text-sm shadow-sm autofill:dark:!bg-dark-card",

@@ -33,6 +33,7 @@ export interface SelectProps {
   inputValue?: string;
   placeholder?: string;
   isMulti?: boolean;
+  required?: boolean;
   onChangeSingleOption?: OnchangeSigleValue;
   onchangeMultValue?: OnchangeMultValue;
   onInputChange?: (newValue: string) => void;
@@ -51,6 +52,7 @@ export const Select = forwardRef(
       isAutocomplite = false,
       options = [],
       isMulti,
+      required,
       onChangeSingleOption,
       onchangeMultValue,
       ...restProps
@@ -73,9 +75,14 @@ export const Select = forwardRef(
 
     return (
       <div className={twMerge("flex flex-col w-full", formControlClassName)}>
-        {label && <FormLabel htmlFor={restProps?.id}>{label}</FormLabel>}
+        {label && (
+          <FormLabel required={required} htmlFor={restProps?.id}>
+            {label}
+          </FormLabel>
+        )}
         <ReactSelect
           ref={ref}
+          required={required}
           classNamePrefix="select"
           isDisabled={disabled}
           // menuIsOpen

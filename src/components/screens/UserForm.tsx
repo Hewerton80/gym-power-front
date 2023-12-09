@@ -12,12 +12,13 @@ import { useCallback, useEffect, useMemo } from "react";
 import { toast } from "react-toastify";
 import { useAlertModal } from "@/hooks/utils/useAlertModal";
 import { useRouter } from "next/navigation";
-import { Select } from "@/components/ui/forms/Select";
-import { usersRolesOptions } from "@/shared/userRolesOptions";
-import { UserRole, UserRolesNamesType } from "@/types/User";
+// import { Select } from "@/components/ui/forms/Select";
+// import { usersRolesOptions } from "@/shared/userRolesOptions";
+// import { UserRole, UserRolesNamesType } from "@/types/User";
 import { FeedBackLoading } from "@/components/ui/feedback/FeedBackLoading";
 import { isUndefined } from "@/shared/isType";
 import { FeedBackError } from "@/components/ui/feedback/FeedBackError";
+import { Checkbox } from "@/components/ui/forms/Checkbox";
 
 const { VALIDATION_ERROR_MESSAGES } = CONSTANTS;
 
@@ -26,9 +27,9 @@ const userFormSchema = z
     id: z.string().optional(),
     name: z.string().min(1, VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS),
     email: z.string().optional(),
-    userRolesOptions: z
-      .array(z.any())
-      .min(1, VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS),
+    dateOfBirth: z.string().min(1, VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS),
+    isAdmin: z.boolean().optional(),
+    isTeacher: z.boolean().optional(),
     password: z.string().optional(),
     confirmPassword: z.string().optional(),
     isEditUser: z.boolean().optional(),
@@ -85,9 +86,11 @@ export function UserForm({ userId }: IUserFormProps) {
         id: "",
         name: "",
         email: "",
+        dateOfBirth: "",
         password: "",
         confirmPassword: "",
-        userRolesOptions: [],
+        isAdmin: false,
+        isTeacher: false,
         isEditUser: false,
       },
       mode: "onTouched",
@@ -100,10 +103,12 @@ export function UserForm({ userId }: IUserFormProps) {
         id: currentFormUserData?.id,
         name: currentFormUserData?.name,
         email: currentFormUserData?.email,
-        userRolesOptions: currentFormUserData?.userRoles?.map(({ role }) => ({
-          label: UserRole[role as UserRolesNamesType],
-          value: role,
-        })),
+        isAdmin: currentFormUserData?.roles?.includes("ADMIN"),
+        isTeacher: currentFormUserData?.roles?.includes("TEACHER"),
+        // userRolesOptions: currentFormUserData?.userRoles?.map(({ role }) => ({
+        //   label: UserRole[role as UserRolesNamesType],
+        //   value: role,
+        // })),
         isEditUser: true,
       });
     }
@@ -111,15 +116,14 @@ export function UserForm({ userId }: IUserFormProps) {
 
   const handleUserDataForm = useCallback(
     ({ ...userDataForm }: IUserForm) => {
-      userDataForm.roles = userDataForm?.userRolesOptions?.map(
-        (role) => role.value
-      ) as UserRolesNamesType[];
+      // userDataForm.roles = userDataForm?.userRolesOptions?.map(
+      //   (role) => role.value
+      // ) as UserRolesNamesType[];
       if (isEditUser) {
         delete userDataForm?.password;
         delete userDataForm?.email;
       }
       delete userDataForm?.confirmPassword;
-      delete userDataForm?.userRolesOptions;
       delete userDataForm?.isEditUser;
       return userDataForm;
     },
@@ -134,7 +138,9 @@ export function UserForm({ userId }: IUserFormProps) {
       };
       const onError = (error: any) => {
         if (error?.response?.status === 409) {
-          setError("email", { message: "Email já cadastrado" });
+          setError("email", {
+            message: CONSTANTS.API_RESPONSE_MENSSAGES.USER_ALREADY_EXISTS,
+          });
         } else {
           showAlert({
             title: `Erro ao ${isEditUser ? "editar" : "criar"} usuário`,
@@ -175,12 +181,14 @@ export function UserForm({ userId }: IUserFormProps) {
         onSubmit={handleSubmit(handleSubmitUser)}
         className="flex flex-col gap-8"
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-4">
+        <div className="grid grid-cols-12 gap-x-8 gap-y-4">
           <Controller
             name="name"
             control={control}
             render={({ field, fieldState }) => (
               <Input
+                formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
+                required
                 label="Nome"
                 placeholder="Gymbson da Silva"
                 error={fieldState?.error?.message}
@@ -194,6 +202,8 @@ export function UserForm({ userId }: IUserFormProps) {
             disabled={isEditUser}
             render={({ field, fieldState }) => (
               <Input
+                formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
+                required
                 label="Email"
                 placeholder="Gym@email.com"
                 type="email"
@@ -203,22 +213,22 @@ export function UserForm({ userId }: IUserFormProps) {
             )}
           />
           <Controller
-            name="userRolesOptions"
+            name="dateOfBirth"
             control={control}
-            render={({ field: { onChange, ...restField }, fieldState }) => (
-              <Select
-                isAutocomplite
-                isMulti
-                onchangeMultValue={onChange}
-                label="Funções"
-                placeholder="Funções..."
-                options={usersRolesOptions}
+            disabled={isEditUser}
+            render={({ field, fieldState }) => (
+              <Input
+                formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
+                required
+                label="Data de Nascimento"
+                type="date"
+                max={new Date().toISOString().split("T")[0]}
                 error={fieldState?.error?.message}
-                // error={"nome inválido"}
-                {...restField}
+                {...field}
               />
             )}
           />
+
           {!isEditUser && (
             <>
               <Controller
@@ -226,6 +236,8 @@ export function UserForm({ userId }: IUserFormProps) {
                 control={control}
                 render={({ field, fieldState }) => (
                   <Input
+                    formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
+                    required
                     label="Senha"
                     placeholder="********"
                     type="password"
@@ -239,6 +251,8 @@ export function UserForm({ userId }: IUserFormProps) {
                 control={control}
                 render={({ field, fieldState }) => (
                   <Input
+                    formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
+                    required
                     label="Confirmar senha"
                     placeholder="********"
                     type="password"
@@ -249,6 +263,34 @@ export function UserForm({ userId }: IUserFormProps) {
               />
             </>
           )}
+          <div className="flex items-end gap-4 sm:gap-6 col-span-12">
+            <Controller
+              name="isTeacher"
+              control={control}
+              render={({ field: { value, onChange, ...restField } }) => (
+                <Checkbox
+                  id={restField.name}
+                  label="É Professor?"
+                  onCheckedChange={(checked) => onChange(checked)}
+                  checked={value}
+                  {...restField}
+                />
+              )}
+            />
+            <Controller
+              name="isAdmin"
+              control={control}
+              render={({ field: { value, onChange, ...restField } }) => (
+                <Checkbox
+                  id={restField.name}
+                  label="É Administrador?"
+                  onCheckedChange={(checked) => onChange(checked)}
+                  checked={value}
+                  {...restField}
+                />
+              )}
+            />
+          </div>
         </div>
         <Button
           type="submit"

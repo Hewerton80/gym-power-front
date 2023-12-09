@@ -13,7 +13,7 @@ import Image from "next/image";
 import { BsFillPlayFill, BsStopCircle } from "react-icons/bs";
 import { useMudateExercise } from "@/hooks/api/useExercise";
 import { useAlertModal } from "@/hooks/utils/useAlertModal";
-import { getErrorMessage } from "@/shared/getErrorMenssage";
+import { handleErrorMessage } from "@/shared/handleErrorMessage";
 import { ExerciseStatus } from "@prisma/client";
 import { useRouter } from "next/navigation";
 
@@ -70,7 +70,7 @@ export default function TrainingPage() {
         setIndexExerciseIsLoading(-1);
         showAlert({
           title: titleError,
-          description: getErrorMessage(error),
+          description: handleErrorMessage(error),
           variant: "danger",
         });
       };
@@ -107,7 +107,7 @@ export default function TrainingPage() {
     const onError = (error: any) => {
       showAlert({
         title: "Erro ao finalizar treino",
-        description: getErrorMessage(error),
+        description: handleErrorMessage(error),
         variant: "danger",
       });
     };

@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/api/useAuth";
 import { SplashScreen } from "@/components/ui/feedback/SplashScreen";
 import { useGetMe } from "@/hooks/api/useUser";
 import { useAlertModal } from "@/hooks/utils/useAlertModal";
-import { getErrorMessage } from "@/shared/getErrorMenssage";
+import { handleErrorMessage } from "@/shared/handleErrorMessage";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const { showAlert } = useAlertModal();
@@ -24,7 +24,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     if (meError) {
       showAlert({
         title: "Erro ao recuperar informações",
-        description: getErrorMessage(meError),
+        description: handleErrorMessage(meError),
         variant: "info",
         onClose: logout,
       });

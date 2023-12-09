@@ -6,7 +6,7 @@ import { twMerge } from "tailwind-merge";
 import { useAlertModal } from "@/hooks/utils/useAlertModal";
 import { useCallback, useMemo } from "react";
 import { useMutateTraning } from "@/hooks/api/useTraining";
-import { getErrorMessage } from "@/shared/getErrorMenssage";
+import { handleErrorMessage } from "@/shared/handleErrorMessage";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FaDumbbell } from "react-icons/fa6";
@@ -40,7 +40,7 @@ export function TrainingCard({
       closeAlert();
       showAlert({
         title: "Erro ao iniciar treino",
-        description: getErrorMessage(error),
+        description: handleErrorMessage(error),
         variant: "danger",
       });
     };

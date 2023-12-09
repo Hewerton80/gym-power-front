@@ -42,10 +42,7 @@ export function PrivatePagesTamplate({ children }: IPrivatePagesTamplateProps) {
 
   const avaliableNavItems = useMemo<INavItem[]>(() => {
     return navItems.filter((navItems) =>
-      navItems?.avaliablesRoles
-        ? navItems?.avaliablesRoles.isAdmin === loggedUser?.isAdmin ||
-          navItems?.avaliablesRoles.isTeacher === loggedUser?.isTeacher
-        : true
+      loggedUser?.roles?.some((role) => navItems.avaliablesRoles[role])
     );
   }, [loggedUser]);
 

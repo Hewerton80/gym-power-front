@@ -1,4 +1,3 @@
-import { SelectOption } from "@/components/ui/forms/Select";
 import { IGetUsers, IUser, UserWithComputedFields } from "@/types/User";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
@@ -6,8 +5,9 @@ import { useAxios } from "../utils/useAxios";
 
 export interface IUserForm extends IUser {
   isEditUser?: boolean;
+  isAdmin?: boolean;
+  isTeacher?: boolean;
   confirmPassword?: string;
-  userRolesOptions?: SelectOption[] | null;
 }
 
 export function useGetMe() {

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { CONSTANTS } from "@/shared/constants";
-import { tr } from "date-fns/locale";
 
 const {
   TRAINING_NOT_FOUND,

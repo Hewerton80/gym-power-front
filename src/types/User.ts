@@ -4,7 +4,6 @@ import {
   TrainingPlanWithComputedFields,
 } from "./TrainingPlans";
 import { differenceInYears } from "date-fns";
-import { getTrainingsWithComputedFields } from "./Training";
 
 export enum UserRole {
   ADMIN = "Administrador",
@@ -32,10 +31,11 @@ export interface IUser {
   avatarBgColor?: string;
 }
 export interface UserWithComputedFields
-  extends Omit<User, "password" | "trainingPlans"> {
+  extends Omit<User, "password" | "trainingPlans" | "isAdmin" | "isTeacher"> {
   title?: string;
   age?: number;
   trainingPlan?: TrainingPlanWithComputedFields;
+  roles: UserRolesNamesType[];
 }
 
 export interface IGetUsers extends UserWithComputedFields {}
@@ -43,22 +43,32 @@ export interface IGetUsers extends UserWithComputedFields {}
 export const getUserWithComputedFields = (
   user: any
 ): UserWithComputedFields => {
-  const computedFuelds: UserWithComputedFields = { ...user };
+  const userWitchComputedFields: UserWithComputedFields = { ...user };
+  const roles: UserRolesNamesType[] = ["STUDENT"];
+  if (user?.isAdmin) {
+    roles.push("ADMIN");
+  }
+  if (user?.isTeacher) {
+    roles.push("TEACHER");
+  }
+  userWitchComputedFields.roles = roles;
   if (user?.dateOfBirth) {
-    computedFuelds.age = differenceInYears(
+    userWitchComputedFields.age = differenceInYears(
       new Date(),
       new Date(user.dateOfBirth)
     );
   }
   if (user?.trainingPlans?.length > 0) {
-    computedFuelds.trainingPlan = user
+    userWitchComputedFields.trainingPlan = user
       .trainingPlans[0] as TrainingPlanWithComputedFields;
-    // const trainings = computedFuelds.trainingPlan?.trainings;
-    // computedFuelds.trainingPlan.trainings = getTrainingsWithComputedFields(
+    // const trainings = userWitchComputedFields.trainingPlan?.trainings;
+    // userWitchComputedFields.trainingPlan.trainings = getTrainingsWithComputedFields(
     //   trainings || []
     // );
   }
-  delete (computedFuelds as any)?.password;
-  delete (computedFuelds as any)?.trainingPlans;
-  return computedFuelds;
+  delete (userWitchComputedFields as any)?.isAdmin;
+  delete (userWitchComputedFields as any)?.isTeacher;
+  delete (userWitchComputedFields as any)?.password;
+  delete (userWitchComputedFields as any)?.trainingPlans;
+  return userWitchComputedFields;
 };
