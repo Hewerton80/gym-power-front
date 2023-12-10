@@ -9,6 +9,8 @@ export const CONSTANTS = {
     PASSWORDS_NOT_MATCH: "As senhas não coincidem. Por favor, tente novamente",
     INVALID_EMAIL: "E-mail inválido",
     MUST_BE_BOOLEAN: "Deve ser um valor booleano",
+    PASSWORD_MIN_LENGTH: "Senha deve ter no mínimo 6 caracteres",
+    MUST_BE_VALID: "Deve ser um valor válido",
   },
   API_RESPONSE_MENSSAGES: {
     USER_HAS_NO_PERMISSION: "Usuário não tem permissão para realizar esta ação",
@@ -24,6 +26,7 @@ export const CONSTANTS = {
     EXERCISE_WAS_NOT_STARTED: "Exercício não foi iniciado",
     THERE_IS_EXERCISES_NOT_FINISHED: "Há exercícios que não foram finalizados",
     USER_ALREADY_EXISTS: "Já existe um usuário com este e-mail",
+    INTERNAL_SERVER_ERROR: "Erro interno do servidor",
   },
   COOKIES_KEYS: {
     TOKEN: "TOKEN",

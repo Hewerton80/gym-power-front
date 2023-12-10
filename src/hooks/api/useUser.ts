@@ -3,15 +3,12 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useAxios } from "../utils/useAxios";
 import { SelectOption } from "@/components/ui/forms/Select";
+import { Prisma } from "@prisma/client";
 
-export interface IUserForm extends Omit<UserWithComputedFields, "dateOfBirth"> {
+export interface IUserForm extends Prisma.UserCreateInput {
   isEditUser?: boolean;
   confirmPassword?: string;
   genderOption?: SelectOption[] | null;
-  password?: string;
-  isAdmin?: boolean;
-  isTeacher?: boolean;
-  dateOfBirth?: string;
 }
 
 export function useGetMe() {

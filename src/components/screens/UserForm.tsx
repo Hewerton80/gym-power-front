@@ -23,6 +23,7 @@ import { REGEX } from "@/shared/regex";
 import { Select, SelectOption } from "@/components/ui/forms/Select";
 import { Gender } from "@prisma/client";
 import { genderOptions } from "@/shared/genderOptions";
+import { isValid as isValidDate } from "date-fns";
 
 const { VALIDATION_ERROR_MESSAGES } = CONSTANTS;
 
@@ -35,7 +36,9 @@ const userFormSchema = z
       .string()
       .min(1, VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS)
       .refine(
-        (dateOfBirth) => dateOfBirth.match(REGEX.isoDate),
+        (dateOfBirth) =>
+          dateOfBirth.match(REGEX.isoDate) &&
+          isValidDate(new Date(dateOfBirth)),
         VALIDATION_ERROR_MESSAGES.INVALID_DATE
       ),
     genderOption: z
@@ -122,9 +125,10 @@ export function UserForm({ userId }: IUserFormProps) {
         id: currentFormUserData?.id,
         name: currentFormUserData?.name,
         email: currentFormUserData?.email,
+        // genderOption: [{label:'',value:currentFormUserData?.gender}]
         isAdmin: currentFormUserData?.roles?.includes("ADMIN"),
         isTeacher: currentFormUserData?.roles?.includes("TEACHER"),
-        // userRolesOptions: currentFormUserData?.userRoles?.map(({ role }) => ({
+        // userRolesOptions: currentFormUserData?.roles?.map(( role ) => ({
         //   label: UserRole[role as UserRolesNamesType],
         //   value: role,
         // })),
