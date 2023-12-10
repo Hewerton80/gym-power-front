@@ -13,25 +13,10 @@ export enum UserRole {
 
 export type UserRolesNamesType = keyof typeof UserRole;
 
-export interface IUser {
-  id?: string;
-  email?: string;
-  name?: string;
-  password?: string;
-  userId?: string;
-  isActive?: boolean;
-  dateOfBirth?: string;
-  gender?: string;
-  heightInMt?: number;
-  weightInKg?: number;
-  createdAt?: string;
-  userRoles?: { role: UserRolesNamesType }[];
-  roles: UserRolesNamesType[];
-  trainingPlans?: ITrainingPlans[];
-  avatarBgColor?: string;
-}
 export interface UserWithComputedFields
-  extends Omit<User, "password" | "trainingPlans" | "isAdmin" | "isTeacher"> {
+  extends Partial<
+    Omit<User, "password" | "trainingPlans" | "isAdmin" | "isTeacher">
+  > {
   title?: string;
   age?: number;
   trainingPlan?: TrainingPlanWithComputedFields;

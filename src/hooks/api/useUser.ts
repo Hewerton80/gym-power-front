@@ -1,13 +1,17 @@
-import { IGetUsers, IUser, UserWithComputedFields } from "@/types/User";
+import { IGetUsers, UserWithComputedFields } from "@/types/User";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useAxios } from "../utils/useAxios";
+import { SelectOption } from "@/components/ui/forms/Select";
 
-export interface IUserForm extends IUser {
+export interface IUserForm extends Omit<UserWithComputedFields, "dateOfBirth"> {
   isEditUser?: boolean;
+  confirmPassword?: string;
+  genderOption?: SelectOption[] | null;
+  password?: string;
   isAdmin?: boolean;
   isTeacher?: boolean;
-  confirmPassword?: string;
+  dateOfBirth?: string;
 }
 
 export function useGetMe() {
@@ -65,7 +69,9 @@ export function useGetUser(userId?: string) {
     refetch: refetchUser,
   } = useQuery({
     queryFn: () =>
-      apiBase.get<IUser>(`/users/${userId}`).then((res) => res.data),
+      apiBase
+        .get<UserWithComputedFields>(`/users/${userId}`)
+        .then((res) => res.data),
     queryKey: [],
     enabled: Boolean(userId),
     retry: 1,
@@ -84,11 +90,15 @@ export function useMutateUser() {
 
   const { mutate: createUser, isPending: isCreatingUser } = useMutation({
     mutationFn: (user: IUserForm) =>
-      apiBase.post<IUser>("/users", user).then((res) => res.data),
+      apiBase
+        .post<UserWithComputedFields>("/users", user)
+        .then((res) => res.data),
   });
   const { mutate: updateUser, isPending: isUpdataTingUser } = useMutation({
     mutationFn: ({ id, ...user }: IUserForm) =>
-      apiBase.patch<IUser>(`/users/${id}`, user).then((res) => res.data),
+      apiBase
+        .patch<UserWithComputedFields>(`/users/${id}`, user)
+        .then((res) => res.data),
   });
 
   const isSubmitingUser = useMemo(

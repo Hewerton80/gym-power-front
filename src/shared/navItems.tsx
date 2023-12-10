@@ -1,6 +1,7 @@
 import { UserRolesNamesType } from "@/types/User";
 import { FaHome, FaUsers } from "react-icons/fa";
 import { GiMuscleUp } from "react-icons/gi";
+import { CgGym } from "react-icons/cg";
 
 export enum BASE_PATHS {
   BASE_AUTH_PATH = "auth",
@@ -47,7 +48,7 @@ export const navItems: INavItem[] = [
     title: "Área do aluno",
     path: `/${BASE_PATHS.BASE_STUDENT_PATH}/home`,
     basePath: BASE_PATHS.BASE_STUDENT_PATH,
-    icon: <FaHome />,
+    icon: <CgGym />,
     avaliablesRoles: { TEACHER: true, STUDENT: true, ADMIN: true },
   },
 ];

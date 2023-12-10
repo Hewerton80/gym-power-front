@@ -19,6 +19,10 @@ import { FeedBackLoading } from "@/components/ui/feedback/FeedBackLoading";
 import { isUndefined } from "@/shared/isType";
 import { FeedBackError } from "@/components/ui/feedback/FeedBackError";
 import { Checkbox } from "@/components/ui/forms/Checkbox";
+import { REGEX } from "@/shared/regex";
+import { Select, SelectOption } from "@/components/ui/forms/Select";
+import { Gender } from "@prisma/client";
+import { genderOptions } from "@/shared/genderOptions";
 
 const { VALIDATION_ERROR_MESSAGES } = CONSTANTS;
 
@@ -27,7 +31,21 @@ const userFormSchema = z
     id: z.string().optional(),
     name: z.string().min(1, VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS),
     email: z.string().optional(),
-    dateOfBirth: z.string().min(1, VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS),
+    dateOfBirth: z
+      .string()
+      .min(1, VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS)
+      .refine(
+        (dateOfBirth) => dateOfBirth.match(REGEX.isoDate),
+        VALIDATION_ERROR_MESSAGES.INVALID_DATE
+      ),
+    genderOption: z
+      .array(
+        z.object<ToZodObjectSchema<SelectOption>>({
+          label: z.string(),
+          value: z.string(),
+        })
+      )
+      .min(1, VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS),
     isAdmin: z.boolean().optional(),
     isTeacher: z.boolean().optional(),
     password: z.string().optional(),
@@ -87,6 +105,7 @@ export function UserForm({ userId }: IUserFormProps) {
         name: "",
         email: "",
         dateOfBirth: "",
+        genderOption: [],
         password: "",
         confirmPassword: "",
         isAdmin: false,
@@ -225,6 +244,22 @@ export function UserForm({ userId }: IUserFormProps) {
                 max={new Date().toISOString().split("T")[0]}
                 error={fieldState?.error?.message}
                 {...field}
+              />
+            )}
+          />
+          <Controller
+            name="genderOption"
+            control={control}
+            disabled={isEditUser}
+            render={({ field: { onChange, ...restField }, fieldState }) => (
+              <Select
+                formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
+                required
+                onChangeSingleOption={(option) => onChange(option)}
+                label="Sexo"
+                options={genderOptions}
+                error={fieldState?.error?.message}
+                {...restField}
               />
             )}
           />
