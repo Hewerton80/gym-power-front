@@ -6,6 +6,7 @@ import { Prisma } from "@/prisma/generated/client";
 import { getRandomRGBColor } from "@/shared/colors";
 import { createUserSchema } from "@/lib/apiZodSchemas.ts/userSchemas";
 import { handleZodValidationError } from "@/lib/zodHelpers";
+import { getUsersWithComputedFields } from "@/types/User";
 
 const { USER_HAS_NO_PERMISSION, USER_ALREADY_EXISTS, INTERNAL_SERVER_ERROR } =
   CONSTANTS.API_RESPONSE_MENSSAGES;
@@ -18,7 +19,8 @@ export async function GET(request: NextRequest) {
     );
   }
   const users = await prisma.user.findMany();
-  return NextResponse.json(users, { status: 200 });
+  const usersWithComputedFields = getUsersWithComputedFields(users);
+  return NextResponse.json(usersWithComputedFields, { status: 200 });
 }
 
 export async function POST(request: NextRequest) {

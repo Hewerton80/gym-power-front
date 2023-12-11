@@ -8,8 +8,7 @@ import {
   IRowDataTable,
 } from "@/components/ui/dataDisplay/DataTable";
 import { useGetUsers } from "@/hooks/api/useUser";
-import { UserRole } from "@/types/User";
-import { getUserTextRoles } from "@/shared/getUserTextRoles";
+import { UserRole, UserRolesNamesType } from "@/types/User";
 import { isUndefined } from "@/shared/isType";
 import Link from "next/link";
 import { useCallback, useMemo } from "react";
@@ -37,7 +36,9 @@ export default function UsersPage() {
             contents: [
               user?.name,
               user?.email,
-              getUserTextRoles(user),
+              user?.roles
+                ?.map((role) => UserRole[role as UserRolesNamesType])
+                ?.join(", "),
               user?.isActive ? "Ativo" : "Inativo",
               <div className="flex" key={`${i}-action`}>
                 {user?.id && (

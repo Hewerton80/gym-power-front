@@ -20,60 +20,9 @@ import { REGEX } from "@/shared/regex";
 import { Select, SelectOption } from "@/components/ui/forms/Select";
 import { Gender } from "@/prisma/generated/client";
 import { genderOptions } from "@/shared/genderOptions";
-import { isValid as isValidDate } from "date-fns";
-
-const { VALIDATION_ERROR_MESSAGES } = CONSTANTS;
-
-const userFormSchema = z
-  .object<ToZodObjectSchema<IUserForm>>({
-    id: z.string().optional(),
-    name: z.string().min(1, VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS),
-    email: z.string().optional(),
-    dateOfBirth: z
-      .string()
-      .min(1, VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS)
-      .refine(
-        (dateOfBirth) =>
-          dateOfBirth.match(REGEX.isoDate) &&
-          isValidDate(new Date(dateOfBirth)),
-        VALIDATION_ERROR_MESSAGES.INVALID_DATE
-      ),
-    genderOption: z
-      .object<ToZodObjectSchema<SelectOption>>({
-        label: z.string(),
-        value: z.string(),
-      })
-      .nullable(),
-
-    isAdmin: z.boolean().optional(),
-    isTeacher: z.boolean().optional(),
-    password: z.string().optional(),
-    confirmPassword: z.string().optional(),
-    isEditUser: z.boolean().optional(),
-  })
-  .refine(
-    ({ email, isEditUser }) =>
-      isEditUser ? true : Boolean(String(email)?.trim()),
-    { message: VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS, path: ["email"] }
-  )
-  .refine(
-    ({ password, isEditUser }) =>
-      isEditUser ? true : Boolean(String(password)?.trim()),
-    { message: VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS, path: ["password"] }
-  )
-  .refine(
-    ({ confirmPassword, isEditUser }) =>
-      isEditUser ? true : Boolean(String(confirmPassword)?.trim()),
-    {
-      message: VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS,
-      path: ["confirmPassword"],
-    }
-  )
-  .refine(
-    ({ password, confirmPassword, isEditUser }) =>
-      isEditUser ? true : password === confirmPassword,
-    { message: "As senhas não coincidem", path: ["confirmPassword"] }
-  );
+import { isValid as isValidDate, format as formatDate } from "date-fns";
+import { GenderPtBr } from "@/types/User";
+import { handleErrorMessage } from "@/shared/handleErrorMessage";
 
 interface IUserFormProps {
   userId?: string;
@@ -83,7 +32,26 @@ export function UserForm({ userId }: IUserFormProps) {
   const router = useRouter();
   const { showAlert } = useAlertModal();
 
-  const { createUser, updateUser, isSubmitingUser } = useMutateUser();
+  const {
+    createUser,
+    updateUser,
+    isSubmitingUser,
+    control,
+    formState,
+    reset,
+    setError,
+    handleSubmit,
+    getValues,
+  } = useMutateUser();
+
+  useEffect(() => {
+    console.log({ error: formState.error });
+  }, [formState.error]);
+
+  useEffect(() => {
+    console.log({ getValues: getValues() });
+  }, [getValues]);
+
   const {
     isLoadingUser,
     userError,
@@ -97,41 +65,25 @@ export function UserForm({ userId }: IUserFormProps) {
     [isEditUser, isLoadingUser]
   );
 
-  const { control, formState, reset, setError, handleSubmit } =
-    useForm<IUserForm>({
-      defaultValues: {
-        id: "",
-        name: "",
-        email: "",
-        dateOfBirth: "",
-        genderOption: null,
-        password: "",
-        confirmPassword: "",
-        isAdmin: false,
-        isTeacher: false,
-        isEditUser: false,
-      },
-      mode: "onTouched",
-      resolver: zodResolver(userFormSchema),
-    });
-
-  useEffect(() => {
-    console.log({ valuessasss: formState.values });
-  }, [formState.values]);
-
   useEffect(() => {
     if (isEditUser && currentFormUserData) {
       reset({
         id: currentFormUserData?.id,
         name: currentFormUserData?.name,
         email: currentFormUserData?.email,
-        // genderOption: [{label:'',value:currentFormUserData?.gender}]
+        dateOfBirth: currentFormUserData?.dateOfBirth
+          ? formatDate(
+              new Date(String(currentFormUserData?.dateOfBirth)),
+              "yyyy-MM-dd"
+            )
+          : "",
+        genderOption: {
+          label: GenderPtBr?.[currentFormUserData?.gender as Gender],
+          value: currentFormUserData?.gender,
+        },
+
         isAdmin: currentFormUserData?.roles?.includes("ADMIN"),
         isTeacher: currentFormUserData?.roles?.includes("TEACHER"),
-        // userRolesOptions: currentFormUserData?.roles?.map(( role ) => ({
-        //   label: UserRole[role as UserRolesNamesType],
-        //   value: role,
-        // })),
         isEditUser: true,
       });
     }
@@ -139,15 +91,19 @@ export function UserForm({ userId }: IUserFormProps) {
 
   const handleUserDataForm = useCallback(
     ({ ...userDataForm }: IUserForm) => {
+      console.log({ userDataForm });
       // userDataForm.roles = userDataForm?.userRolesOptions?.map(
       //   (role) => role.value
       // ) as UserRolesNamesType[];
+      userDataForm.gender = userDataForm.genderOption?.value as Gender;
       if (isEditUser) {
         delete userDataForm?.password;
-        delete userDataForm?.email;
+        delete (userDataForm as any)?.email;
       }
       delete userDataForm?.confirmPassword;
       delete userDataForm?.isEditUser;
+      delete userDataForm?.genderOption;
+
       return userDataForm;
     },
     [isEditUser]
@@ -167,11 +123,12 @@ export function UserForm({ userId }: IUserFormProps) {
         } else {
           showAlert({
             title: `Erro ao ${isEditUser ? "editar" : "criar"} usuário`,
-            description: error?.message,
+            description: handleErrorMessage(error),
             variant: "danger",
           });
         }
       };
+      console.log({ handleSubmitUser: userDataForm });
       const handledUserDataForm = handleUserDataForm(userDataForm);
       if (isEditUser) {
         updateUser(handledUserDataForm, { onSuccess, onError });
@@ -222,52 +179,53 @@ export function UserForm({ userId }: IUserFormProps) {
           <Controller
             name="email"
             control={control}
-            disabled={isEditUser}
+            // disabled={isEditUser}
             render={({ field, fieldState }) => (
               <Input
+                {...field}
+                disabled={isEditUser}
                 formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
                 required
                 label="Email"
                 placeholder="Gym@email.com"
                 type="email"
                 error={fieldState?.error?.message}
-                {...field}
               />
             )}
           />
           <Controller
             name="dateOfBirth"
             control={control}
-            disabled={isEditUser}
-            render={({ field: { value, ...restField }, fieldState }) => (
-              <Input
-                value={value || ""}
-                formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
-                required
-                label="Data de Nascimento"
-                type="date"
-                max={new Date().toISOString().split("T")[0]}
-                error={fieldState?.error?.message}
-                {...restField}
-              />
-            )}
+            // disabled={isEditUser}
+            render={({ field: { value, ...restField }, fieldState }) => {
+              return (
+                <Input
+                  value={value || ""}
+                  formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
+                  required
+                  label="Data de Nascimento"
+                  type="date"
+                  max={new Date().toISOString().split("T")[0]}
+                  error={fieldState?.error?.message}
+                  {...restField}
+                />
+              );
+            }}
           />
           <Controller
             name="genderOption"
             control={control}
-            disabled={isEditUser}
+            // disabled={isEditUser}
             render={({
               field: { onChange, value, ...restField },
               fieldState,
             }) => {
-              console.log({ value });
               return (
                 <Select
                   value={value}
                   required
                   formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
                   onChangeSingleOption={(option) => {
-                    console.log({ option });
                     onChange(option);
                   }}
                   label="Sexo"

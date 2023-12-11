@@ -7,10 +7,9 @@ import { useAuth } from "@/hooks/api/useAuth";
 import { FiLogOut, FiUser } from "react-icons/fi";
 import assets from "../../../../../assets.json";
 import slideAndFadeANimation from "@/components/helpers/slideAndFade.module.css";
-import { getUserTextRoles } from "@/shared/getUserTextRoles";
-import { User } from "@/prisma/generated/client";
 import { getContrastColor } from "@/shared/colors";
 import colors from "tailwindcss/colors";
+import { UserRole } from "@/types/User";
 
 const menuItemClasseName = twMerge(
   "flex items-center px-6 py-2 text-sm sm:text-base cursor-pointer gap-3",
@@ -41,7 +40,7 @@ export function ProfilePopover() {
               {loggedUser?.name}
             </strong>
             <p className="text-xs text-body-text dark:text-white">
-              {getUserTextRoles(loggedUser)}
+              {loggedUser?.roles?.map((role) => UserRole[role]).join(", ")}
             </p>
           </div>
         </div>

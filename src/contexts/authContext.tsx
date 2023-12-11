@@ -54,9 +54,9 @@ export function AuthContextProvider({ children }: IAuthContextProviderProps) {
   const onLoginSuccess = useCallback(
     async ({ user, token }: IResponseLogin) => {
       Cookies.set(CONSTANTS.COOKIES_KEYS.TOKEN, token);
-      if (user?.isAdmin) {
+      if (user?.roles?.includes("ADMIN")) {
         router.replace("/admin/users");
-      } else if (user?.isTeacher) {
+      } else if (user?.roles?.includes("TEACHER")) {
         router.replace("/teacher/students");
       } else {
         router.replace("/student/home");

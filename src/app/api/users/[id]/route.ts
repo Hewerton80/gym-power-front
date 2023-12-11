@@ -55,3 +55,23 @@ export async function PATCH(
     return NextResponse.json({ email: INTERNAL_SERVER_ERROR }, { status: 500 });
   }
 }
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  if (!(await verifyIfUserIsAdmin(request))) {
+    return NextResponse.json(
+      { message: USER_HAS_NO_PERMISSION },
+      { status: 401 }
+    );
+  }
+  const { id } = params;
+  const foundUser = await prisma.user.findUnique({ where: { id } });
+
+  if (!foundUser) {
+    return NextResponse.json({ message: USER_NOT_FOUND }, { status: 404 });
+  }
+
+  return NextResponse.json(foundUser, { status: 200 });
+}

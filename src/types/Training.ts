@@ -49,7 +49,7 @@ export const getTrainingWithComputedFields = (
 };
 
 export const getTrainingsWithComputedFields = (trainings: any[]) => {
-  return trainings.map((training) => {
+  return trainings?.map((training) => {
     const trainingWithComputedFields = getTrainingWithComputedFields(training);
     trainingWithComputedFields.exercicesCount =
       trainingWithComputedFields?.exercises?.length || 0;

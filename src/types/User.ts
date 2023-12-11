@@ -64,3 +64,6 @@ export const getUserWithComputedFields = (
   delete (userWitchComputedFields as any)?.trainingPlans;
   return userWitchComputedFields;
 };
+
+export const getUsersWithComputedFields = (users: any[]) =>
+  users.map((user) => getUserWithComputedFields(user));

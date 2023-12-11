@@ -4,6 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { compareSync } from "bcrypt";
 import { signJWT } from "@/lib/auth";
 import { CONSTANTS } from "@/shared/constants";
+import { getUserWithComputedFields } from "@/types/User";
 
 export async function POST(request: NextRequest) {
   const loginCredentials = (await request.json()) as LoginCredentials;
@@ -11,9 +12,7 @@ export async function POST(request: NextRequest) {
   const foundUser = await prisma.user.findUnique({
     where: { email: loginCredentials?.email?.trim() },
     include: {
-      trainingPlans: {
-        include: { trainings: { include: { trainingExercises: true } } },
-      },
+      trainingPlans: { where: { isActive: true } },
     },
   });
 
@@ -29,6 +28,9 @@ export async function POST(request: NextRequest) {
     );
   }
   const token = await signJWT({ sub: foundUser?.id });
-  delete (foundUser as any)?.password;
-  return NextResponse.json({ token, user: foundUser }, { status: 201 });
+  const userWithComputedFields = getUserWithComputedFields(foundUser);
+  return NextResponse.json(
+    { token, user: userWithComputedFields },
+    { status: 201 }
+  );
 }
