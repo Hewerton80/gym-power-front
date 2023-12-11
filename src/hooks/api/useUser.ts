@@ -2,13 +2,14 @@ import { IGetUsers, UserWithComputedFields } from "@/types/User";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useAxios } from "../utils/useAxios";
-import { SelectOption } from "@/components/ui/forms/Select";
-import { Prisma } from "@prisma/client";
+import { SingleValue } from "@/components/ui/forms/Select";
+import { Prisma } from "@/prisma/generated/client";
+import { SingleValue } from "react-select";
 
 export interface IUserForm extends Prisma.UserCreateInput {
   isEditUser?: boolean;
   confirmPassword?: string;
-  genderOption?: SelectOption[] | null;
+  genderOption?: SingleValue<SelectOption> | null;
 }
 
 export function useGetMe() {

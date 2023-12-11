@@ -8,7 +8,7 @@ import { FiLogOut, FiUser } from "react-icons/fi";
 import assets from "../../../../../assets.json";
 import slideAndFadeANimation from "@/components/helpers/slideAndFade.module.css";
 import { getUserTextRoles } from "@/shared/getUserTextRoles";
-import { User } from "@prisma/client";
+import { User } from "@/prisma/generated/client";
 import { getContrastColor } from "@/shared/colors";
 import colors from "tailwindcss/colors";
 

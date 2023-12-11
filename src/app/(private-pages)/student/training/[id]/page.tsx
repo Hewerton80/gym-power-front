@@ -14,7 +14,7 @@ import { BsFillPlayFill, BsStopCircle } from "react-icons/bs";
 import { useMudateExercise } from "@/hooks/api/useExercise";
 import { useAlertModal } from "@/hooks/utils/useAlertModal";
 import { handleErrorMessage } from "@/shared/handleErrorMessage";
-import { ExerciseStatus } from "@prisma/client";
+import { ExerciseStatus } from "@/prisma/generated/client";
 import { useRouter } from "next/navigation";
 
 export default function TrainingPage() {

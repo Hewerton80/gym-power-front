@@ -18,7 +18,7 @@ import { FeedBackError } from "@/components/ui/feedback/FeedBackError";
 import { Checkbox } from "@/components/ui/forms/Checkbox";
 import { REGEX } from "@/shared/regex";
 import { Select, SelectOption } from "@/components/ui/forms/Select";
-import { Gender } from "@prisma/client";
+import { Gender } from "@/prisma/generated/client";
 import { genderOptions } from "@/shared/genderOptions";
 import { isValid as isValidDate } from "date-fns";
 
@@ -39,13 +39,12 @@ const userFormSchema = z
         VALIDATION_ERROR_MESSAGES.INVALID_DATE
       ),
     genderOption: z
-      .array(
-        z.object<ToZodObjectSchema<SelectOption>>({
-          label: z.string(),
-          value: z.string(),
-        })
-      )
-      .min(1, VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS),
+      .object<ToZodObjectSchema<SelectOption>>({
+        label: z.string(),
+        value: z.string(),
+      })
+      .nullable(),
+
     isAdmin: z.boolean().optional(),
     isTeacher: z.boolean().optional(),
     password: z.string().optional(),
@@ -105,7 +104,7 @@ export function UserForm({ userId }: IUserFormProps) {
         name: "",
         email: "",
         dateOfBirth: "",
-        genderOption: [],
+        genderOption: null,
         password: "",
         confirmPassword: "",
         isAdmin: false,
@@ -115,6 +114,10 @@ export function UserForm({ userId }: IUserFormProps) {
       mode: "onTouched",
       resolver: zodResolver(userFormSchema),
     });
+
+  useEffect(() => {
+    console.log({ valuessasss: formState.values });
+  }, [formState.values]);
 
   useEffect(() => {
     if (isEditUser && currentFormUserData) {
@@ -236,15 +239,16 @@ export function UserForm({ userId }: IUserFormProps) {
             name="dateOfBirth"
             control={control}
             disabled={isEditUser}
-            render={({ field, fieldState }) => (
+            render={({ field: { value, ...restField }, fieldState }) => (
               <Input
+                value={value || ""}
                 formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
                 required
                 label="Data de Nascimento"
                 type="date"
                 max={new Date().toISOString().split("T")[0]}
                 error={fieldState?.error?.message}
-                {...field}
+                {...restField}
               />
             )}
           />
@@ -252,17 +256,27 @@ export function UserForm({ userId }: IUserFormProps) {
             name="genderOption"
             control={control}
             disabled={isEditUser}
-            render={({ field: { onChange, ...restField }, fieldState }) => (
-              <Select
-                formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
-                required
-                onChangeSingleOption={(option) => onChange(option)}
-                label="Sexo"
-                options={genderOptions}
-                error={fieldState?.error?.message}
-                {...restField}
-              />
-            )}
+            render={({
+              field: { onChange, value, ...restField },
+              fieldState,
+            }) => {
+              console.log({ value });
+              return (
+                <Select
+                  value={value}
+                  required
+                  formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
+                  onChangeSingleOption={(option) => {
+                    console.log({ option });
+                    onChange(option);
+                  }}
+                  label="Sexo"
+                  options={genderOptions}
+                  error={fieldState?.error?.message}
+                  {...restField}
+                />
+              );
+            }}
           />
 
           {!isEditUser && (

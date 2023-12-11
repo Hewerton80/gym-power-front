@@ -1,8 +1,5 @@
-import { User } from "@prisma/client";
-import {
-  ITrainingPlans,
-  TrainingPlanWithComputedFields,
-} from "./TrainingPlans";
+import { User, Gender } from "@/prisma/generated/client";
+import { TrainingPlanWithComputedFields } from "./TrainingPlans";
 import { differenceInYears } from "date-fns";
 
 export enum UserRole {
@@ -11,11 +8,15 @@ export enum UserRole {
   STUDENT = "Estudante",
 }
 
-type GenderType = {
-  [key in keyof typeof Gende]: string;
+type GenderMap = {
+  [key in keyof typeof Gender]: string;
 };
 
-export const GenderPtBr: GenderType = {};
+export const GenderPtBr: GenderMap = {
+  M: "Masculino",
+  F: "Feminino",
+  O: "Outro",
+};
 
 export type UserRolesNamesType = keyof typeof UserRole;
 

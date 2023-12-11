@@ -1,4 +1,4 @@
-import { TrainingExerciseHistory } from "@prisma/client";
+import { TrainingExerciseHistory } from "@/prisma/generated/client";
 
 export interface ExerciseHistoryWithComputedFields
   extends TrainingExerciseHistory {}

@@ -55,6 +55,7 @@ export const Select = forwardRef(
       required,
       onChangeSingleOption,
       onchangeMultValue,
+      placeholder = "Selecione...",
       ...restProps
     }: SelectProps,
     ref?: any
@@ -67,6 +68,7 @@ export const Select = forwardRef(
         if (isMulti) {
           onchangeMultValue?.(newValue as SelectOption[], actionMeta);
         } else {
+          console.log({ newValue });
           onChangeSingleOption?.(newValue as SingleValue<SelectOption>);
         }
       },
@@ -83,6 +85,7 @@ export const Select = forwardRef(
         <ReactSelect
           ref={ref}
           required={required}
+          placeholder={placeholder}
           classNamePrefix="select"
           isDisabled={disabled}
           // menuIsOpen

@@ -1,5 +1,5 @@
 import { ExerciseWithComputedFields } from "@/types/Exercise";
-import { Training } from "@prisma/client";
+import { Training } from "@/prisma/generated/client";
 import { TrainingHistoryWithComputedFields } from "./trainingHistory";
 import { TrainingExerciseWithComputedFields } from "./trainingExercise";
 import { removeElementsRepeated } from "@/shared/array";
