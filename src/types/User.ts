@@ -11,6 +11,12 @@ export enum UserRole {
   STUDENT = "Estudante",
 }
 
+type GenderType = {
+  [key in keyof typeof Gende]: string;
+};
+
+export const GenderPtBr: GenderType = {};
+
 export type UserRolesNamesType = keyof typeof UserRole;
 
 export interface UserWithComputedFields
