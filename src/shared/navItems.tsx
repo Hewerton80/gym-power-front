@@ -1,5 +1,5 @@
 import { UserRolesNamesType } from "@/types/User";
-import { FaHome, FaUsers } from "react-icons/fa";
+import { FaUsers } from "react-icons/fa";
 import { GiMuscleUp } from "react-icons/gi";
 import { CgGym } from "react-icons/cg";
 

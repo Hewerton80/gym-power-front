@@ -1,8 +1,8 @@
 "use client";
-import { TrainingPlans } from "@/components/screens/TrainingPlans";
+import { UserTrainingPlans } from "@/components/screens/UserTrainingPlans";
 import { useParams } from "next/navigation";
 
-export default function TrainingPlansPage() {
+export default function UserTrainingPlansPage() {
   const params = useParams<{ id: string }>();
-  return <TrainingPlans studendId={params?.id} />;
+  return <UserTrainingPlans studendId={params?.id} />;
 }

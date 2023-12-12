@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { verifyJWT } from "@/lib/auth";
-import { getUserWithComputedFields } from "@/types/User";
 import { CONSTANTS } from "@/shared/constants";
 import { getTrainingsWithComputedFields } from "@/types/Training";
 
@@ -35,9 +34,11 @@ export async function GET(request: NextRequest) {
       { status: 404 }
     );
   }
-  const trainingsWichComputedfields = getTrainingsWithComputedFields(
-    user?.trainingPlans?.[0]?.trainings as any[]
-  );
+  const trainingsWichComputedfields = user?.trainingPlans?.length
+    ? getTrainingsWithComputedFields(
+        user?.trainingPlans?.[0]?.trainings as any[]
+      )
+    : [];
 
   //   const userWichComputedfields = getUserWithComputedFields(user);
   return NextResponse.json(trainingsWichComputedfields, { status: 200 });

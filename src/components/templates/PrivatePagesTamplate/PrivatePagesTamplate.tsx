@@ -1,7 +1,7 @@
 "use client";
 import { ProfilePopover } from "@/components/ui/overlay/ProfilePopover";
 import { useAuth } from "@/hooks/api/useAuth";
-import { INavItem, navItems } from "@/shared/navItems";
+import { BASE_PATHS, INavItem, navItems } from "@/shared/navItems";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -99,17 +99,25 @@ export function PrivatePagesTamplate({ children }: IPrivatePagesTamplateProps) {
               priority
             />
           </div>
-          <nav className="flex w-full">
+          <nav className="flex w-full h-full">
             <ul
               className={twMerge(
-                "flex flex-col w-full pt-4 space-y-2.5",
+                "flex flex-col w-full py-4 gap-y-2.5",
                 showOnlyIcons ? "pt-4 pr-3.5 pl-3.5" : "pl-6 pr-0"
               )}
             >
               {avaliableNavItems.map(({ title, icon, path, basePath }, i) => {
-                const isActive = currentPath.includes(`/${basePath}`);
+                const isActive = currentPath.startsWith(`/${basePath}`);
                 return (
-                  <li key={`${title}-${i}`} className="flex w-full">
+                  <li
+                    key={`${title}-${i}`}
+                    className={twMerge(
+                      "flex w-full",
+                      basePath === BASE_PATHS.BASE_STUDENT_PATH &&
+                        avaliableNavItems.length > 1 &&
+                        "mt-auto"
+                    )}
+                  >
                     <Link
                       onClick={() => setShowSideBar(false)}
                       href={path}

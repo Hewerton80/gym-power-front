@@ -1,4 +1,4 @@
-import { Gender, Prisma } from "@/prisma/generated/client";
+import { Gender, Prisma } from "@prisma/client";
 import { ToZodObjectSchema } from "../zodHelpers";
 import { z } from "zod";
 import { CONSTANTS } from "@/shared/constants";

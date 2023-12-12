@@ -14,7 +14,7 @@ import { BsFillPlayFill, BsStopCircle } from "react-icons/bs";
 import { useMudateExercise } from "@/hooks/api/useExercise";
 import { useAlertModal } from "@/hooks/utils/useAlertModal";
 import { handleErrorMessage } from "@/shared/handleErrorMessage";
-import { ExerciseStatus } from "@/prisma/generated/client";
+import { ExerciseStatus } from "@prisma/client";
 import { useRouter } from "next/navigation";
 
 export default function TrainingPage() {
@@ -161,7 +161,7 @@ export default function TrainingPage() {
                 isLoading={indexExerciseIsLoading === i}
                 onClick={() => handleUpdateExerciseStatus(i, "IN_PROGRESS")}
               >
-                Iniciar exercício
+                Iniciar
               </Button>
             )}
             {exercise?.status === "IN_PROGRESS" && (
@@ -172,7 +172,7 @@ export default function TrainingPage() {
                 isLoading={indexExerciseIsLoading === i}
                 onClick={() => handleUpdateExerciseStatus(i, "FINISHED")}
               >
-                Finalizar exercício
+                Finalizar
               </Button>
             )}
             {exercise?.status === "FINISHED" && (

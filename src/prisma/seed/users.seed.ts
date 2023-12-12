@@ -1,5 +1,5 @@
 import prisma from "../../src/lib/prisma";
-import { Gender } from "@/prisma/generated/client";
+import { Gender } from "@prisma/client";
 import { faker } from "@faker-js/faker";
 import { hash } from "bcrypt";
 import { getRange } from "../../src/shared/getRange";

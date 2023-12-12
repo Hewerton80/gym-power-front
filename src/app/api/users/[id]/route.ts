@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { verifyIfUserIsAdmin } from "@/lib/auth";
 import { CONSTANTS } from "@/shared/constants";
-import { Prisma } from "@/prisma/generated/client";
+import { Prisma } from "@prisma/client";
 import { updateUserSchema } from "@/lib/apiZodSchemas.ts/userSchemas";
 import { handleZodValidationError } from "@/lib/zodHelpers";
 

@@ -57,3 +57,11 @@ export const verifyIfUserIsAdmin = async (request: NextRequest) => {
   }
   return true;
 };
+
+export const verifyIfUserIsTeacher = async (request: NextRequest) => {
+  const { loggedUser, error } = await getLoggedUser(request);
+  if (error || !loggedUser?.isTeacher) {
+    return false;
+  }
+  return true;
+};

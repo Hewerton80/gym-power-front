@@ -2,7 +2,7 @@ import { IGetUsers, UserWithComputedFields } from "@/types/User";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useAxios } from "../utils/useAxios";
-import { Prisma } from "@/prisma/generated/client";
+import { Prisma } from "@prisma/client";
 import { SingleValue } from "react-select";
 import { SelectOption } from "@/components/ui/forms/Select";
 import { useForm, Controller } from "react-hook-form";
@@ -14,7 +14,6 @@ import { isValid as isValidDate } from "date-fns";
 import { CONSTANTS } from "@/shared/constants";
 
 const { VALIDATION_ERROR_MESSAGES } = CONSTANTS;
-
 export interface IUserForm extends Prisma.UserCreateInput {
   isEditUser?: boolean;
   confirmPassword?: string;
@@ -140,6 +139,57 @@ export function useGetUser(userId?: string) {
     isLoadingUser,
     userError,
     refetchUser,
+  };
+}
+
+export function useGetStudents() {
+  const { apiBase } = useAxios();
+
+  const {
+    data: students,
+    isFetching: isLoadingStudents,
+    error: studentsError,
+    refetch: refetchStudents,
+  } = useQuery({
+    queryFn: () =>
+      apiBase
+        .get<UserWithComputedFields[]>("/students")
+        .then((res) => res.data || []),
+    queryKey: [],
+    retry: 1,
+  });
+
+  return {
+    students,
+    isLoadingStudents,
+    studentsError,
+    refetchStudents,
+  };
+}
+
+export function useGetStudent(studentId?: string) {
+  const { apiBase } = useAxios();
+
+  const {
+    data: student,
+    isFetching: isLoadingStudent,
+    error: studentError,
+    refetch: refetchStudent,
+  } = useQuery({
+    queryFn: () =>
+      apiBase
+        .get<UserWithComputedFields>(`/students/${studentId}`)
+        .then((res) => res.data),
+    queryKey: [],
+    enabled: Boolean(studentId),
+    retry: 1,
+  });
+
+  return {
+    student,
+    isLoadingStudent,
+    studentError,
+    refetchStudent,
   };
 }
 

@@ -1,4 +1,4 @@
-import { TrainingPlan } from "@/prisma/generated/client";
+import { TrainingPlan } from "@prisma/client";
 import { TrainingWithComputedFields } from "./Training";
 
 export interface ITrainingPlans {
@@ -7,5 +7,5 @@ export interface ITrainingPlans {
 }
 
 export interface TrainingPlanWithComputedFields extends TrainingPlan {
-  // trainings?: TrainingWithComputedFields[];
+  trainings?: TrainingWithComputedFields[];
 }

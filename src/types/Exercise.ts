@@ -1,4 +1,4 @@
-import { Exercise, ExerciseStatus } from "@/prisma/generated/client";
+import { Exercise, ExerciseStatus } from "@prisma/client";
 import { MuscleWithComputedFields } from "./Muscle";
 
 type ExerciseStatusMap = {

@@ -18,7 +18,7 @@ import { FeedBackError } from "@/components/ui/feedback/FeedBackError";
 import { Checkbox } from "@/components/ui/forms/Checkbox";
 import { REGEX } from "@/shared/regex";
 import { Select, SelectOption } from "@/components/ui/forms/Select";
-import { Gender } from "@/prisma/generated/client";
+import { Gender } from "@prisma/client";
 import { genderOptions } from "@/shared/genderOptions";
 import { isValid as isValidDate, format as formatDate } from "date-fns";
 import { GenderPtBr } from "@/types/User";

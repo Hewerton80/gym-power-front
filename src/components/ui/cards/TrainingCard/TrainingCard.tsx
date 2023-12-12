@@ -4,7 +4,7 @@ import { Button } from "../../buttons/Button";
 import { Badge } from "../../dataDisplay/Badge";
 import { twMerge } from "tailwind-merge";
 import { useAlertModal } from "@/hooks/utils/useAlertModal";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, forwardRef } from "react";
 import { useMutateTraning } from "@/hooks/api/useTraining";
 import { handleErrorMessage } from "@/shared/handleErrorMessage";
 import { useRouter } from "next/navigation";
@@ -14,102 +14,110 @@ import { FaDumbbell } from "react-icons/fa6";
 interface TrainingCardProps {
   training?: TrainingWithComputedFields;
   hideStartTrainingButton?: boolean;
+  hideGoToTrainingButton?: boolean;
 }
 
-export function TrainingCard({
-  training,
-  hideStartTrainingButton,
-}: TrainingCardProps) {
-  const router = useRouter();
-  const { showAlert, closeAlert } = useAlertModal();
+export const TrainingCard = forwardRef(
+  (
+    {
+      training,
+      hideStartTrainingButton,
+      hideGoToTrainingButton,
+    }: TrainingCardProps,
+    ref?: any
+  ) => {
+    const router = useRouter();
+    const { showAlert, closeAlert } = useAlertModal();
 
-  const { startTraining } = useMutateTraning();
+    const { startTraining } = useMutateTraning();
 
-  const traningPath = useMemo(
-    () => `/student/training/${training?.id}`,
-    [training]
-  );
+    const traningPath = useMemo(
+      () => `/student/training/${training?.id}`,
+      [training]
+    );
 
-  const handleStartTraining = useCallback(() => {
-    const onSuccess = () => {
-      closeAlert();
-      router.push(traningPath);
-    };
+    const handleStartTraining = useCallback(() => {
+      const onSuccess = () => {
+        closeAlert();
+        router.push(traningPath);
+      };
 
-    const onError = (error: any) => {
-      closeAlert();
+      const onError = (error: any) => {
+        closeAlert();
+        showAlert({
+          title: "Erro ao iniciar treino",
+          description: handleErrorMessage(error),
+          variant: "danger",
+        });
+      };
+
       showAlert({
-        title: "Erro ao iniciar treino",
-        description: handleErrorMessage(error),
-        variant: "danger",
+        title: "Tem certeza que deseja iniciar treino?",
+        showCancelButton: true,
+        confirmButtonText: "Sim, iniciar treino",
+        cancelButtonText: "Depois",
+        isAsync: true,
+        onClickConfirmButton: () => {
+          startTraining(training?.id || "", { onSuccess, onError });
+        },
       });
-    };
+    }, [training, showAlert, startTraining, closeAlert, router, traningPath]);
 
-    showAlert({
-      title: "Tem certeza que deseja iniciar treino?",
-      showCancelButton: true,
-      confirmButtonText: "Sim, iniciar treino",
-      cancelButtonText: "Depois",
-      isAsync: true,
-      onClickConfirmButton: () => {
-        startTraining(training?.id || "", { onSuccess, onError });
-      },
-    });
-  }, [training, showAlert, startTraining, closeAlert, router, traningPath]);
-
-  return (
-    <div
-      className={twMerge(
-        "flex flex-col xl:flex-row items-start xl:items-center gap-2 sm:gap-4 p-2 sm:p-4",
-        "border-b-border dark:border-dark-border border-b rounded-[1.25rem]"
-      )}
-    >
-      <div className="flex gap-4">
-        <div
-          className={twMerge(
-            "flex justify-center items-center",
-            "w-12 h-12 md:w-16 md:h-16 aspect-square",
-            "bg-primary/20 rounded-[0.625rem]"
-          )}
-        >
-          <strong className="text-primary text-lg">
-            {training?.title?.split(" - ")?.[0]}
-          </strong>
-        </div>
-        <div className="flex flex-col gap-1">
-          <h4 className="text-xs md:text-lg font-medium text-heading dark:text-light">
-            {training?.title?.split(" - ")?.[1]}
-          </h4>
-          <div className="flex gap-2 sm:gap-4">
-            <Badge variant="primary">
-              {Number(training?.exercicesCount) > 0 ? (
-                <>
-                  <FaDumbbell className="mr-1" />{" "}
-                  {`${training?.exercicesCount} Exercícios`}
-                </>
-              ) : (
-                "Não há exercícios"
+    return (
+      <div
+        ref={ref}
+        className={twMerge(
+          "flex flex-col xl:flex-row items-start xl:items-center gap-2 sm:gap-4 p-2 sm:p-4 w-full",
+          "border-b-border dark:border-dark-border border-b rounded-[1.25rem]"
+        )}
+      >
+        <div className="flex gap-4">
+          <div
+            className={twMerge(
+              "flex justify-center items-center",
+              "w-12 h-12 md:w-16 md:h-16 aspect-square",
+              "bg-primary/20 rounded-[0.625rem]"
+            )}
+          >
+            <strong className="text-primary text-lg">
+              {training?.title?.split(" - ")?.[0]}
+            </strong>
+          </div>
+          <div className="flex flex-col gap-1">
+            <h4 className="text-xs md:text-lg font-medium text-heading dark:text-light">
+              {training?.title?.split(" - ")?.[1]}
+            </h4>
+            <div className="flex gap-2 sm:gap-4">
+              <Badge variant="primary">
+                {Number(training?.exercicesCount) > 0 ? (
+                  <>
+                    <FaDumbbell className="mr-1" />{" "}
+                    {`${training?.exercicesCount} Exercícios`}
+                  </>
+                ) : (
+                  "Não há exercícios"
+                )}
+              </Badge>
+              {training?.isRecommendedToDay && (
+                <Badge variant="warning">Recomendado</Badge>
               )}
-            </Badge>
-            {training?.isRecommendedToDay && (
-              <Badge variant="warning">Recomendado</Badge>
-            )}
-            {training?.isInProgress && (
-              <Badge variant="success">Em andamento</Badge>
-            )}
+              {training?.isInProgress && (
+                <Badge variant="success">Em andamento</Badge>
+              )}
+            </div>
           </div>
         </div>
+        {!hideStartTrainingButton && (
+          <Button className="ml-auto" onClick={handleStartTraining}>
+            Iniciar treino
+          </Button>
+        )}
+        {!hideGoToTrainingButton && training?.isInProgress && (
+          <Button asChild className="ml-auto">
+            <Link href={traningPath}>Ir para treino</Link>
+          </Button>
+        )}
       </div>
-      {!hideStartTrainingButton && (
-        <Button className="ml-auto" onClick={handleStartTraining}>
-          Iniciar treino
-        </Button>
-      )}
-      {training?.isInProgress && (
-        <Button asChild className="ml-auto">
-          <Link href={traningPath}>Ir para treino</Link>
-        </Button>
-      )}
-    </div>
-  );
-}
+    );
+  }
+);

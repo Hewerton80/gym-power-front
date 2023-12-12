@@ -1,6 +1,7 @@
-import { TrainingExercise } from "@/prisma/generated/client";
+import { TrainingExercise } from "@prisma/client";
 import { ExerciseWithComputedFields } from "./Exercise";
 
-export interface TrainingExerciseWithComputedFields extends TrainingExercise {
+export interface TrainingExerciseWithComputedFields
+  extends Partial<TrainingExercise> {
   exercise?: ExerciseWithComputedFields;
 }

@@ -1,5 +1,4 @@
 "use client";
-import { Button } from "@/components/ui/buttons/Button";
 import { IconButton } from "@/components/ui/buttons/IconButton";
 import { Card } from "@/components/ui/cards/Card";
 import {
@@ -7,15 +6,11 @@ import {
   IColmunDataTable,
   IRowDataTable,
 } from "@/components/ui/dataDisplay/DataTable";
-import { useGetStudents } from "@/hooks/api/useStudent";
-import { useGetUsers } from "@/hooks/api/useUser";
-import { UserRole } from "@/types/User";
+import { useGetStudents } from "@/hooks/api/useUser";
 import { isUndefined } from "@/shared/isType";
 import Link from "next/link";
 import { useMemo } from "react";
 import { AiOutlineEye } from "react-icons/ai";
-import { MdEdit } from "react-icons/md";
-import { differenceInYears } from "date-fns";
 export default function StudensPage() {
   const { students, isLoadingStudents, studentsError, refetchStudents } =
     useGetStudents();
@@ -33,11 +28,11 @@ export default function StudensPage() {
   );
 
   const rows = useMemo<IRowDataTable[]>(() => {
-    if (!Array.isArray(students?.data)) {
+    if (!Array.isArray(students)) {
       return [];
     }
     return (
-      students?.data?.map((student, i) => ({
+      students?.map((student, i) => ({
         value: String(i),
         contents: [
           <div key={`${i}-name`} className="flex flex-col">
@@ -45,12 +40,7 @@ export default function StudensPage() {
             <span className="text-xs">{student?.email}</span>
           </div>,
           `${student?.heightInMt}m / ${student?.weightInKg}kg`,
-          student?.dateOfBirth
-            ? `${differenceInYears(
-                new Date(),
-                new Date(student?.dateOfBirth)
-              )} anos`
-            : "-",
+          student?.age ? `${student?.age} anos` : "-",
           student?.gender,
           student?.isActive ? "Ativo" : "Inativo",
           <div className="flex" key={`${i}-action`}>

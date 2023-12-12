@@ -1,4 +1,4 @@
-import { User, Gender } from "@/prisma/generated/client";
+import { User, Gender } from "@prisma/client";
 import { TrainingPlanWithComputedFields } from "./TrainingPlans";
 import { differenceInYears } from "date-fns";
 
@@ -20,10 +20,7 @@ export const GenderPtBr: GenderMap = {
 
 export type UserRolesNamesType = keyof typeof UserRole;
 
-export interface UserWithComputedFields
-  extends Partial<
-    Omit<User, "password" | "trainingPlans" | "isAdmin" | "isTeacher">
-  > {
+export interface UserWithComputedFields extends Partial<User> {
   title?: string;
   age?: number;
   trainingPlan?: TrainingPlanWithComputedFields;

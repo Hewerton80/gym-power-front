@@ -1,3 +1,3 @@
-import { Muscle } from "@/prisma/generated/client";
+import { Muscle } from "@prisma/client";
 
 export interface MuscleWithComputedFields extends Muscle {}
