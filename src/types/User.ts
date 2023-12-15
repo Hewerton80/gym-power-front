@@ -27,8 +27,6 @@ export interface UserWithComputedFields extends Partial<User> {
   roles: UserRolesNamesType[];
 }
 
-export interface IGetUsers extends UserWithComputedFields {}
-
 export const getUserWithComputedFields = (
   user: any
 ): UserWithComputedFields => {

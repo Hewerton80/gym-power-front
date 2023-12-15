@@ -2,16 +2,11 @@ import { verifyIfUserIsTeacher } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { CONSTANTS } from "@/shared/constants";
-import {
-  getUserWithComputedFields,
-  getUsersWithComputedFields,
-} from "@/types/User";
-import {
-  getTrainingsWithComputedFields,
-  getTrainingWithComputedFields,
-} from "@/types/Training";
+import { getUserWithComputedFields } from "@/types/User";
+import { getTrainingWithComputedFields } from "@/types/Training";
+import { sleep } from "@/shared/sleep";
 
-const { USER_HAS_NO_PERMISSION, INTERNAL_SERVER_ERROR, USER_NOT_FOUND } =
+const { USER_HAS_NO_PERMISSION, USER_NOT_FOUND } =
   CONSTANTS.API_RESPONSE_MENSSAGES;
 export async function GET(
   request: NextRequest,

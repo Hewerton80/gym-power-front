@@ -11,6 +11,8 @@ export const CONSTANTS = {
     MUST_BE_BOOLEAN: "Deve ser um valor booleano",
     PASSWORD_MIN_LENGTH: "Senha deve ter no mínimo 6 caracteres",
     MUST_BE_VALID: "Deve ser um valor válido",
+    MUST_BE_NUMBER: "Deve ser um número",
+    MUST_BE_POSITIVE: "Deve ser um número positivo",
   },
   API_RESPONSE_MENSSAGES: {
     USER_HAS_NO_PERMISSION: "Usuário não tem permissão para realizar esta ação",

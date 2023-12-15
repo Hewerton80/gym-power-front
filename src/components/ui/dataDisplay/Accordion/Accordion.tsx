@@ -35,20 +35,19 @@ const AccordionTrigger = forwardRef(
     }: ComponentProps<typeof RadixAccordion.Trigger>,
     forwardedRef: any
   ) => (
-    // <RadixAccordion.Header className="flex">
     <RadixAccordion.Trigger
-      className={twMerge("relative", className)}
+      className={twMerge("relative group", className)}
       {...props}
       ref={forwardedRef}
     >
       {children}
       <FaChevronDown
         className={twMerge(
-          "absolute right-4 top-1/2 -translate-y1/2 transition-transform duration-200 ease-linear"
+          "absolute right-4 top-1/2 -translate-y1/2 text-xs sm:text-base",
+          "transition-transform duration-200 ease-linear group-data-[state=open]:rotate-180"
         )}
       />
     </RadixAccordion.Trigger>
-    // </RadixAccordion.Header>
   )
 );
 

@@ -1,7 +1,7 @@
-import prisma from "../../src/lib/prisma";
+import prisma from "../../lib/prisma";
 import { faker } from "@faker-js/faker";
 
-export async function seedTraingigs() {
+export async function seedTrainings() {
   const exercises = await prisma.exercise.findMany();
   const exercisesTrainigsA = [...exercises].splice(0, 7).map((exercise) => ({
     exerciseId: exercise.id,

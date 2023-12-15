@@ -24,7 +24,6 @@ export async function PATCH(
   //   console.log({ data: await request.json() });
 
   const userDate = (await request.json()) as Prisma.UserUpdateInput;
-  console.log({ userDate });
 
   let userDateToCrate = {};
   try {

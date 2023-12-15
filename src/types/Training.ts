@@ -12,8 +12,6 @@ export interface TrainingWithComputedFields extends Training {
   exercicesCount: number;
 }
 
-export interface IGetTraining extends TrainingWithComputedFields {}
-
 const getExerciseTitle = (exercise: any) => {
   const letter = String.fromCharCode(exercise.order + 64);
   const musclesNames = exercise?.trainingExercises?.map(

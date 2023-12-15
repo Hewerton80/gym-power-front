@@ -84,10 +84,10 @@ export const TrainingCard = forwardRef(
             </strong>
           </div>
           <div className="flex flex-col gap-1">
-            <h4 className="text-xs md:text-lg font-medium text-heading dark:text-light">
+            <h4 className="text-xs md:text-lg text-left font-medium text-heading dark:text-light">
               {training?.title?.split(" - ")?.[1]}
             </h4>
-            <div className="flex gap-2 sm:gap-4">
+            <div className="flex flex-wrap gap-2 sm:gap-4">
               <Badge variant="primary">
                 {Number(training?.exercicesCount) > 0 ? (
                   <>

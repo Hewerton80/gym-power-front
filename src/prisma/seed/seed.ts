@@ -1,12 +1,12 @@
 import prisma from "../../src/lib/prisma";
 import { seedExercisesAndMuscles } from "./exercises-muscles.seed";
-import { seedTraingigs } from "./trainings.seed";
+import { seedTrainings } from "./trainings.seed";
 import { seedUser } from "./users.seed";
 
 async function main() {
   await seedExercisesAndMuscles();
   await seedUser();
-  await seedTraingigs();
+  await seedTrainings();
 }
 
 main()
