@@ -30,9 +30,15 @@ export async function GET(
       trainingPlans: {
         include: {
           trainings: {
+            orderBy: { order: "asc" },
             include: {
               trainingExercises: {
-                include: { exercise: { include: { muscle: true } } },
+                orderBy: { order: "asc" },
+                include: {
+                  exercise: {
+                    include: { muscle: true },
+                  },
+                },
               },
             },
           },

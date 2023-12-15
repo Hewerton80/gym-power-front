@@ -5,7 +5,7 @@ import { useAxios } from "../utils/useAxios";
 import { Prisma } from "@prisma/client";
 import { SingleValue } from "react-select";
 import { SelectOption } from "@/components/ui/forms/Select";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ToZodObjectSchema } from "@/lib/zodHelpers";
 import { z } from "zod";
@@ -81,16 +81,12 @@ export function useGetMe() {
   } = useQuery({
     queryFn: () =>
       apiBase.get<UserWithComputedFields>("/me/user").then((res) => res.data),
-    queryKey: [],
+    queryKey: [{ me: "todo" }],
     retryOnMount: false,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
   });
-  return {
-    me,
-    isLoadingMe,
-    meError,
-  };
+  return { me, isLoadingMe, meError };
 }
 
 export function useGetUsers() {

@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/cards/Card";
 import { differenceInYears } from "date-fns";
 import { TrainingCard } from "../ui/cards/TrainingCard";
 import { Accordion } from "../ui/dataDisplay/Accordion";
+import { Badge } from "../ui/dataDisplay/Badge";
 
 interface IUserTrainingPlansProps {
   studendId: string;
@@ -58,22 +59,18 @@ export function UserTrainingPlans({ studendId }: IUserTrainingPlansProps) {
                   />
                 </Accordion.Trigger>
                 <Accordion.Content>
-                  <div className="flex flex-col gap-4">
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                    Unde porro ipsa, quae praesentium dolore, tenetur optio
-                    fugiat suscipit numquam recusandae adipisci, incidunt
-                    deleniti reiciendis dolor sunt dolorem laudantium odit
-                    temporibus!
-                    {/* <div className="flex flex-col">
-                      <b>Objetivo:</b> {training?.}
-                    </div>
-                    <div className="flex flex-col">
-                      <b>Descrição:</b> {training?.description}
-                    </div>
-                    <div className="flex flex-col">
-                      <b>Observações:</b> {training?.observations}
-                    </div> */}
-                  </div>
+                  <ul className="flex flex-col">
+                    {training?.exercises?.map((exercise, j) => (
+                      <li
+                        className={
+                          "text-xs sm:text-sm border-b border-border dark:border-dark py-1"
+                        }
+                        key={`${exercise?.id}-${i}-${j}`}
+                      >
+                        {exercise?.name}
+                      </li>
+                    ))}
+                  </ul>
                 </Accordion.Content>
               </Accordion.Item>
             ))}

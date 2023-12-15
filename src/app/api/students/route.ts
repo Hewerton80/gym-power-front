@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { verifyIfUserIsAdmin, verifyIfUserIsTeacher } from "@/lib/auth";
+import { verifyIfUserIsTeacher } from "@/lib/auth";
 import { CONSTANTS } from "@/shared/constants";
 import { getUsersWithComputedFields } from "@/types/User";
 
