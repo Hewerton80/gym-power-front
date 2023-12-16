@@ -23,6 +23,7 @@ export async function GET(
     where: { id },
     include: {
       trainingPlans: {
+        where: { isActive: true },
         include: {
           trainings: {
             orderBy: { order: "asc" },

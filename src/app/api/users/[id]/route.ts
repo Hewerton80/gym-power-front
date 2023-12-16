@@ -51,7 +51,10 @@ export async function PATCH(
         return NextResponse.json({ message: USER_NOT_FOUND }, { status: 404 });
       }
     }
-    return NextResponse.json({ email: INTERNAL_SERVER_ERROR }, { status: 500 });
+    return NextResponse.json(
+      { message: INTERNAL_SERVER_ERROR },
+      { status: 500 }
+    );
   }
 }
 

@@ -15,6 +15,7 @@ interface TrainingCardProps {
   training?: TrainingWithComputedFields;
   hideStartTrainingButton?: boolean;
   hideGoToTrainingButton?: boolean;
+  customActionButton?: React.ReactNode;
 }
 
 export const TrainingCard = forwardRef(
@@ -23,6 +24,7 @@ export const TrainingCard = forwardRef(
       training,
       hideStartTrainingButton,
       hideGoToTrainingButton,
+      customActionButton,
     }: TrainingCardProps,
     ref?: any
   ) => {
@@ -107,16 +109,22 @@ export const TrainingCard = forwardRef(
             </div>
           </div>
         </div>
-        {!hideStartTrainingButton && (
-          <Button className="ml-auto" onClick={handleStartTraining}>
-            Iniciar treino
-          </Button>
-        )}
-        {!hideGoToTrainingButton && training?.isInProgress && (
-          <Button asChild className="ml-auto">
-            <Link href={traningPath}>Ir para treino</Link>
-          </Button>
-        )}
+        <div className="ml-auto">
+          {customActionButton ? (
+            customActionButton
+          ) : (
+            <>
+              {!hideStartTrainingButton && (
+                <Button onClick={handleStartTraining}>Iniciar treino</Button>
+              )}
+              {!hideGoToTrainingButton && training?.isInProgress && (
+                <Button asChild>
+                  <Link href={traningPath}>Ir para treino</Link>
+                </Button>
+              )}
+            </>
+          )}
+        </div>
       </div>
     );
   }

@@ -58,7 +58,7 @@ const AlertModal = forwardRef(() => {
     },
   } = useContext(AlertContext);
   return (
-    <Modal
+    <Modal.Root
       show={show}
       onClose={() => !isSubmiting && !isLoading && onClose?.()}
       className=" shadow-gray-100"
@@ -106,7 +106,7 @@ const AlertModal = forwardRef(() => {
           </Button>
         </Modal.Footer>
       )}
-    </Modal>
+    </Modal.Root>
   );
 });
 

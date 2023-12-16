@@ -12,9 +12,9 @@ export interface TrainingWithComputedFields extends Training {
   exercicesCount: number;
 }
 
-const getExerciseTitle = (exercise: any) => {
-  const letter = String.fromCharCode(exercise.order + 64);
-  const musclesNames = exercise?.trainingExercises?.map(
+const getTrainingTitle = (training: any) => {
+  const letter = String.fromCharCode(training.order + 64);
+  const musclesNames = training?.trainingExercises?.map(
     (trainingExercise: any) => trainingExercise?.exercise?.muscle?.name
   );
   return `${letter} - ${removeElementsRepeated(musclesNames || [])?.join(
@@ -25,7 +25,7 @@ const getExerciseTitle = (exercise: any) => {
 export const getTrainingWithComputedFields = (
   training: any
 ): TrainingWithComputedFields => {
-  const title = getExerciseTitle(training);
+  const title = getTrainingTitle(training);
 
   const exercises = (
     training?.trainingExercises as TrainingExerciseWithComputedFields[]

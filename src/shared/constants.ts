@@ -15,6 +15,7 @@ export const CONSTANTS = {
     MUST_BE_POSITIVE: "Deve ser um número positivo",
   },
   API_RESPONSE_MENSSAGES: {
+    VALIDATION_ERROR: "Erro de validação",
     USER_HAS_NO_PERMISSION: "Usuário não tem permissão para realizar esta ação",
     INVALID_TOKEN: "Token inválido",
     INVALID_CREDENTIALS: "Usuário ou senha inválidos",
@@ -26,9 +27,13 @@ export const CONSTANTS = {
     EXERCISE_ALWREADY_PROGRESS: "Exercício já está em andamento",
     EXERCISE_ALWREADY_FINISHED: "Exercício já está finalizado",
     EXERCISE_WAS_NOT_STARTED: "Exercício não foi iniciado",
+    EXERCISE_NOT_FOUND: "Exercício não encontrado",
     THERE_IS_EXERCISES_NOT_FINISHED: "Há exercícios que não foram finalizados",
     USER_ALREADY_EXISTS: "Já existe um usuário com este e-mail",
     INTERNAL_SERVER_ERROR: "Erro interno do servidor",
+    STUDENT_ALREADY_HAS_TRAINING_PLAN:
+      "O aluno já possui um plano de treino ativo",
+    PLAN_NOT_FOUND: "Plano de treino não encontrado",
   },
   COOKIES_KEYS: {
     TOKEN: "TOKEN",

@@ -21,7 +21,7 @@ export interface ModalTitleProps extends ComponentPropsWithoutRef<"div"> {}
 export interface ModalBodyProps extends CardBodyProps {}
 export interface ModalFooterProps extends CardFooterProps {}
 
-const Modal = ({
+const Root = ({
   children,
   className,
   show,
@@ -85,9 +85,9 @@ const Body = ({ children, ...restProps }: ModalBodyProps) => {
 function Footer({ children, ...restProps }: ModalFooterProps) {
   return <Card.Footer {...restProps}>{children}</Card.Footer>;
 }
-
-Modal.Title = Title;
-Modal.Body = Body;
-Modal.Footer = Footer;
+const Modal = { Root, Title, Body, Footer };
+// Modal.Title = Title;
+// Modal.Body = Body;
+// Modal.Footer = Footer;
 
 export { Modal };

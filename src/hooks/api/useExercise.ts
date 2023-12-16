@@ -1,5 +1,6 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useAxios } from "../utils/useAxios";
+import { ExerciseWithComputedFields } from "@/types/Exercise";
 
 export function useMudateExercise() {
   const { apiBase } = useAxios();
@@ -18,5 +19,27 @@ export function useMudateExercise() {
     isStartingExercise,
     startExercise,
     finishExercise,
+  };
+}
+
+export function useGetExercises() {
+  const { apiBase } = useAxios();
+  const {
+    data: exercises,
+    refetch: refetchExercises,
+    isFetching: isFetchingExercises,
+    error: exercisesError,
+  } = useQuery({
+    queryFn: () =>
+      apiBase
+        .get<ExerciseWithComputedFields[]>(`/exercises`)
+        .then((res) => res.data),
+    queryKey: ["exercises"],
+  });
+  return {
+    exercises,
+    exercisesError,
+    isFetchingExercises,
+    refetchExercises,
   };
 }
