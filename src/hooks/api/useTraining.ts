@@ -9,61 +9,41 @@ const { REQUIRED_FIELDS, MUST_BE_NUMBER, MUST_BE_POSITIVE, MUST_BE_ARRAY } =
   CONSTANTS.VALIDATION_ERROR_MESSAGES;
 
 export const trainingSchema = z.object({
-  exercises: z
-    .array(
-      z.object({
-        exerciseOption: z
-          .object({
-            label: z.string().min(1, REQUIRED_FIELDS).trim(),
-            value: z.string().min(1, REQUIRED_FIELDS).trim(),
-          })
-          .nullable()
-          .refine((exerciseOption) => Boolean(exerciseOption?.value?.trim()), {
-            message: REQUIRED_FIELDS,
-          }),
-        order: z
-          .string()
-          .min(1, MUST_BE_POSITIVE)
-          .refine(
-            (order) => {
-              const orderNumber = Number(order);
-              return !isNaN(orderNumber) && orderNumber > 0;
-            },
-            { message: MUST_BE_POSITIVE }
-          ),
-        intervalInSeconds: z
-          .string()
-          .min(1, MUST_BE_POSITIVE)
-          .refine(
-            (intervalInSeconds) => {
-              const intervalInSecondsNumber = Number(intervalInSeconds);
-              return (
-                !isNaN(intervalInSecondsNumber) && intervalInSecondsNumber > 0
-              );
-            },
-            { message: MUST_BE_POSITIVE }
-          ),
-      }),
-      { required_error: REQUIRED_FIELDS, invalid_type_error: MUST_BE_ARRAY }
-    )
-    .min(1, REQUIRED_FIELDS)
+  exerciseOption: z
+    .object({
+      label: z.string().min(1, REQUIRED_FIELDS).trim(),
+      value: z.string().min(1, REQUIRED_FIELDS).trim(),
+    })
+    .nullable()
+    .refine((exerciseOption) => Boolean(exerciseOption?.value?.trim()), {
+      message: REQUIRED_FIELDS,
+    }),
+  exerciseId: z.string().min(1, REQUIRED_FIELDS).optional(),
+  order: z
+    .string()
+    .min(1, MUST_BE_POSITIVE)
     .refine(
-      (exercises: any[]) => {
-        const exercisesIds = exercises.map((exercise) => exercise.exerciseId);
-        return new Set(exercisesIds).size === exercises.length;
+      (order) => {
+        const orderNumber = Number(order);
+        return !isNaN(orderNumber) && orderNumber > 0;
       },
-      { message: "Há valores repetidos para exercícios" }
-    )
+      { message: MUST_BE_POSITIVE }
+    ),
+  intervalInSeconds: z
+    .string()
+    .min(1, MUST_BE_POSITIVE)
     .refine(
-      (exercises: any[]) => {
-        const exercisesOrders = exercises.map((exercise) => exercise.order);
-        return new Set(exercisesOrders).size === exercises.length;
+      (intervalInSeconds) => {
+        const intervalInSecondsNumber = Number(intervalInSeconds);
+        return !isNaN(intervalInSecondsNumber) && intervalInSecondsNumber > 0;
       },
-      { message: "Há valores repetidos para ordenação" }
+      { message: MUST_BE_POSITIVE }
     ),
 });
 
-export interface ITrainingForm extends z.infer<typeof trainingSchema> {}
+export interface ITrainingForm {
+  trainings: z.infer<typeof trainingSchema>[];
+}
 
 export function useGetMyTrainings() {
   const { apiBase } = useAxios();

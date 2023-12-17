@@ -13,10 +13,10 @@ export const ExercisePtBrStatus: ExerciseStatusMap = {
 
 export type ExerciseNamesType = keyof typeof ExercisePtBrStatus;
 
-
-export interface ExerciseWithComputedFields extends Exercise {
+export interface ExerciseWithComputedFields extends Partial<Exercise> {
   muscle?: MuscleWithComputedFields;
   status?: ExerciseStatus;
   trainingExerciseId?: string;
   intervalInSeconds?: number;
+  order?: number;
 }

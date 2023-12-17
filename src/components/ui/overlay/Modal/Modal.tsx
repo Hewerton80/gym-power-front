@@ -15,6 +15,7 @@ export interface ModalProps {
   className?: string;
   show?: boolean;
   hideCloseIcon?: boolean;
+  disableBackdropClick?: boolean;
   onClose?: () => void;
 }
 export interface ModalTitleProps extends ComponentPropsWithoutRef<"div"> {}
@@ -26,6 +27,7 @@ const Root = ({
   className,
   show,
   hideCloseIcon,
+  disableBackdropClick,
   onClose,
   ...restProps
 }: ModalProps) => {
@@ -34,13 +36,13 @@ const Root = ({
       <Dialog.Portal>
         <Dialog.Overlay
           className="z-[10000] fixed inset-0 bg-black/30"
-          onClick={onClose}
+          onClick={() => !disableBackdropClick && onClose?.()}
         />
         <Card
           asChild
           className={twMerge(
             "fixed z-[10001] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]",
-            "w-[calc(100vw-2rem)] max-h-[calc(100vh-2rem)] max-w-xl",
+            "w-[calc(100vw-2rem)] max-h-[calc(100vh-2rem)] max-w-xl overflow-visible",
             className
           )}
         >

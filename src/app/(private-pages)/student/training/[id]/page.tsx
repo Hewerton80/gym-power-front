@@ -16,6 +16,7 @@ import { useAlertModal } from "@/hooks/utils/useAlertModal";
 import { handleErrorMessage } from "@/shared/handleErrorMessage";
 import { ExerciseStatus } from "@prisma/client";
 import { useRouter } from "next/navigation";
+import { ExerciseCard } from "@/components/ui/cards/ExerciseCard";
 
 export default function TrainingPage() {
   const params = useParams<{ id: string }>();
@@ -116,43 +117,11 @@ export default function TrainingPage() {
 
   const exercisesElement = useMemo(() => {
     return exercisesState?.map((exercise, i) => (
-      <div
+      <ExerciseCard
         key={exercise?.id}
-        className={twMerge(
-          "flex flex-col lg:flex-row items-center lg:items-start gap-4 pb-4 border-b border-border"
-        )}
-      >
-        <Image
-          className="w-[7.5rem]"
-          width={120}
-          height={135}
-          alt="exercice"
-          src={exercise?.image || ""}
-        />
-        <div className="flex flex-col h-full w-full">
-          <h3 className="font-semibold text-sm md:text-base text-heading dark:text-white mb-2">
-            {exercise?.name}
-          </h3>
-
-          {/* {exercise?.description && ( */}
-          <p className="line-clamp-3 text-xs sm:text-sm mb-1">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit
-            magni, dolorem laboriosam commodi natus sed, incidunt quibusdam
-            accusamus id omnis praesentium rem amet facilis iure voluptatibus
-            suscipit officia obcaecati dicta!
-          </p>
-          <div className="flex flex-col">
-            <strong className="text-xs sm:text-sm">
-              Descanso: {exercise?.intervalInSeconds}s
-            </strong>
-          </div>
-          {/* )} */}
-
-          <div
-            className={twMerge(
-              "flex flex-col sm:flex-row items-center  gap-1 w-full h-full"
-            )}
-          >
+        exercise={exercise}
+        actionButtonElement={
+          <>
             {exercise?.status === "READY_TO_START" && (
               <Button
                 className="ml-auto"
@@ -180,9 +149,9 @@ export default function TrainingPage() {
                 Finalizado
               </Button>
             )}
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
     ));
   }, [exercisesState, indexExerciseIsLoading, handleUpdateExerciseStatus]);
 

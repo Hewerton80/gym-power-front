@@ -240,7 +240,7 @@ export default function UserTrainingPlansPage() {
               )}
             />
 
-            <div className="flex gap-4 ml-auto">
+            <div className="flex gap-4 justify-end">
               <Button
                 variantStyle="light"
                 onClick={handleCloseTrainingPlanModal}
