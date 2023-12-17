@@ -12,7 +12,9 @@ export async function GET(request: NextRequest) {
       { status: 401 }
     );
   }
-  const exercises = await prisma.exercise.findMany();
+  const exercises = await prisma.exercise.findMany({
+    orderBy: { name: "asc" },
+  });
   //   const usersWithComputedFields = getUsersWithComputedFields(users);
   return NextResponse.json(exercises, { status: 200 });
 }

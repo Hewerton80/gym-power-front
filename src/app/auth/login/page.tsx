@@ -4,19 +4,13 @@ import { twMerge } from "tailwind-merge";
 import styled from "./side.module.css";
 import { Input } from "@/components/ui/forms/Input";
 import { Button } from "@/components/ui/buttons/Button";
-import { useAuth } from "@/hooks/api/useAuth";
+import { useAuth, loginFormSchema } from "@/hooks/api/useAuth";
 import { useCallback, useEffect } from "react";
-import { z } from "zod";
-import { ToZodObjectSchema } from "@/lib/zodHelpers";
+
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginCredentials } from "@/dtos/loginCredentials";
 import { handleErrorMessage } from "@/shared/handleErrorMessage";
-
-const loginFormSchema = z.object<ToZodObjectSchema<LoginCredentials>>({
-  email: z.string().min(1, { message: "Um email deve ser informado" }),
-  password: z.string().min(1, { message: "Uma senha deve ser informada" }),
-});
 
 export default function LoginPage() {
   const { login, loginError, isLoging } = useAuth();

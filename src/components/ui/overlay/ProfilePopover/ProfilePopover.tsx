@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/hooks/api/useAuth";
 import { FiLogOut, FiUser } from "react-icons/fi";
 import assets from "../../../../../assets.json";
-import slideAndFadeANimation from "@/components/helpers/slideAndFade.module.css";
+import slideAndFadeANimation from "@/components/sharedStyles/slideAndFade.module.css";
 import { getContrastColor } from "@/shared/colors";
 import colors from "tailwindcss/colors";
 import { UserRole } from "@/types/User";

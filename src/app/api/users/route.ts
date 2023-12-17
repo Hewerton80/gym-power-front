@@ -4,7 +4,7 @@ import { verifyIfUserIsAdmin } from "@/lib/auth";
 import { CONSTANTS } from "@/shared/constants";
 import { Prisma } from "@prisma/client";
 import { getRandomRGBColor } from "@/shared/colors";
-import { createUserSchema } from "@/lib/apiZodSchemas.ts/userSchemas";
+import { createUserSchema } from "@/lib/apiZodSchemas/userSchemas";
 import { handleZodValidationError } from "@/lib/zodHelpers";
 import { getUsersWithComputedFields } from "@/types/User";
 

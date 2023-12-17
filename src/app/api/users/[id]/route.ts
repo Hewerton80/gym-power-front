@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { verifyIfUserIsAdmin } from "@/lib/auth";
 import { CONSTANTS } from "@/shared/constants";
 import { Prisma } from "@prisma/client";
-import { updateUserSchema } from "@/lib/apiZodSchemas.ts/userSchemas";
+import { updateUserSchema } from "@/lib/apiZodSchemas/userSchemas";
 import { handleZodValidationError } from "@/lib/zodHelpers";
 
 const { USER_HAS_NO_PERMISSION, INTERNAL_SERVER_ERROR, USER_NOT_FOUND } =

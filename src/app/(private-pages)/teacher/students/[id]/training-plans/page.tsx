@@ -18,7 +18,7 @@ import {
   ITrainingPlanForm,
   useMudateTrainingPlan,
 } from "@/hooks/api/useTrainingPlan";
-import { trainingPlanSchema } from "@/lib/apiZodSchemas.ts/trainingPlanSchema";
+import { trainingPlanSchema } from "@/lib/apiZodSchemas/trainingPlanSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Modal } from "@/components/ui/overlay/Modal";
 import { Input } from "@/components/ui/forms/Input";
@@ -135,44 +135,46 @@ export default function UserTrainingPlansPage() {
           ))}
         </div>
         {hasTrainingPlan ? (
-          <div className="flex flex-col space-y-2">
-            {student?.trainingPlan?.trainings?.map((training, i) => (
-              <div className="flex flex-col" key={training?.id}>
-                <TrainingCard
-                  hideStartTrainingButton
-                  hideGoToTrainingButton
-                  training={training}
-                  customActionButton={
-                    <IconButton
-                      icon={
-                        <Link href="/#">
-                          <FaPen className="text-base" />
-                        </Link>
-                      }
-                      asChild
-                    />
-                  }
-                />
-                <ul className="flex flex-col">
-                  {training?.exercises?.map((exercise, j) => (
-                    <li
-                      className={
-                        "text-xs sm:text-sm border-b border-border dark:border-dark py-1"
-                      }
-                      key={`${exercise?.id}-${i}-${j}`}
-                    >
-                      {exercise?.name}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-            <Button fullWidth asChild>
+          <>
+            <div className="flex flex-col space-y-2">
+              {student?.trainingPlan?.trainings?.map((training, i) => (
+                <div className="flex flex-col" key={training?.id}>
+                  <TrainingCard
+                    hideStartTrainingButton
+                    hideGoToTrainingButton
+                    training={training}
+                    customActionButton={
+                      <IconButton
+                        icon={
+                          <Link href="/#">
+                            <FaPen className="text-base" />
+                          </Link>
+                        }
+                        asChild
+                      />
+                    }
+                  />
+                  <ul className="flex flex-col">
+                    {training?.exercises?.map((exercise, j) => (
+                      <li
+                        className={
+                          "text-xs sm:text-sm border-b border-border dark:border-dark py-1"
+                        }
+                        key={`${exercise?.id}-${i}-${j}`}
+                      >
+                        {exercise?.name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <Button fullWidth asChild className="mt-8">
               <Link href={`/teacher/students/${student?.id}/create-training`}>
                 Adicionar treino
               </Link>
             </Button>
-          </div>
+          </>
         ) : (
           <div className="flex flex-col space-y-4">
             <Callout variant="info">Não há plano de treino cadastrado</Callout>

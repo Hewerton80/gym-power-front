@@ -13,6 +13,7 @@ export const CONSTANTS = {
     MUST_BE_VALID: "Deve ser um valor válido",
     MUST_BE_NUMBER: "Deve ser um número",
     MUST_BE_POSITIVE: "Deve ser um número positivo",
+    MUST_BE_ARRAY: "Deve ser um array",
   },
   API_RESPONSE_MENSSAGES: {
     VALIDATION_ERROR: "Erro de validação",
@@ -21,6 +22,7 @@ export const CONSTANTS = {
     INVALID_CREDENTIALS: "Usuário ou senha inválidos",
     USER_NOT_FOUND: "Usuário não encontrado",
     TRAINING_NOT_FOUND: "Treino não encontrado",
+    TRAINING_PLAN_NOT_FOUND: "Plano de treino não encontrado",
     TRAINING_ALWREADY_PROGRESS: "Treino já está em andamento",
     ALWREADY_HAS_TRAINING_IN_PROGRESS: "Já existe um treino em andamento",
     TRAINING_ALWREADY_NOT_PROGRESS: "Treino já não está em andamento",

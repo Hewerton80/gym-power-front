@@ -2,7 +2,7 @@ import { verifyIfUserIsTeacher, verifyJWT } from "@/lib/auth";
 import { CONSTANTS } from "@/shared/constants";
 import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
-import { trainingPlanSchema } from "@/lib/apiZodSchemas.ts/trainingPlanSchema";
+import { trainingPlanSchema } from "@/lib/apiZodSchemas/trainingPlanSchema";
 import { handleZodValidationError } from "@/lib/zodHelpers";
 import prisma from "@/lib/prisma";
 import { z } from "zod";

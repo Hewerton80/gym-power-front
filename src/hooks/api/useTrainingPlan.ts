@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useAxios } from "../utils/useAxios";
-import { trainingPlanSchema } from "@/lib/apiZodSchemas.ts/trainingPlanSchema";
+import { trainingPlanSchema } from "@/lib/apiZodSchemas/trainingPlanSchema";
 import { z } from "zod";
 import { useMemo } from "react";
 
