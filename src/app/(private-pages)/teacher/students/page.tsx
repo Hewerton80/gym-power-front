@@ -65,7 +65,7 @@ export default function StudensPage() {
   }, [students]);
 
   return (
-    <Card>
+    <Card.Root>
       <Card.Header>
         <Card.Title>Alunos</Card.Title>
       </Card.Header>
@@ -78,6 +78,6 @@ export default function StudensPage() {
           isLoading={isLoadingStudents || isUndefined(students)}
         />
       </Card.Body>
-    </Card>
+    </Card.Root>
   );
 }

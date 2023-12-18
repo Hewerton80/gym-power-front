@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/forms/Input";
 import { toast } from "react-toastify";
 import { useAlertModal } from "@/hooks/utils/useAlertModal";
 import { handleErrorMessage } from "@/shared/handleErrorMessage";
+
 export default function UserTrainingPlansPage() {
   const { id: studentId } = useParams<{ id: string }>();
   const { showAlert } = useAlertModal();
@@ -146,7 +147,9 @@ export default function UserTrainingPlansPage() {
                     customActionButton={
                       <IconButton
                         icon={
-                          <Link href="/#">
+                          <Link
+                            href={`/teacher/students/${studentId}/update-training/${training?.id}`}
+                          >
                             <FaPen className="text-base" />
                           </Link>
                         }
@@ -190,6 +193,7 @@ export default function UserTrainingPlansPage() {
     hasTrainingPlan,
     isLoadingStudent,
     student,
+    studentId,
     personalInfosList,
     handleOpenTrainingPlanModal,
     refetchStudent,
@@ -197,7 +201,7 @@ export default function UserTrainingPlansPage() {
 
   return (
     <>
-      <Card>
+      <Card.Root>
         <Card.Header>
           <Card.Title>{student?.name}</Card.Title>
           {/*<Card.Actions>
@@ -213,7 +217,7 @@ export default function UserTrainingPlansPage() {
         </Card.Actions>*/}
         </Card.Header>
         <Card.Body>{handledContent}</Card.Body>
-      </Card>
+      </Card.Root>
       <Modal.Root
         show={openTrainingPlanModal}
         onClose={handleCloseTrainingPlanModal}

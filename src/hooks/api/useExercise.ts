@@ -27,7 +27,7 @@ export function useGetExercises() {
   const {
     data: exercises,
     refetch: refetchExercises,
-    isFetching: isFetchingExercises,
+    isFetching: isLoadingExercises,
     error: exercisesError,
   } = useQuery({
     queryFn: () =>
@@ -39,7 +39,7 @@ export function useGetExercises() {
   return {
     exercises,
     exercisesError,
-    isFetchingExercises,
+    isLoadingExercises,
     refetchExercises,
   };
 }

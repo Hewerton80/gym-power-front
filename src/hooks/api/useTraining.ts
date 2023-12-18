@@ -15,34 +15,21 @@ export const trainingSchema = z.object({
       value: z.string().min(1, REQUIRED_FIELDS).trim(),
     })
     .nullable()
+    .optional()
     .refine((exerciseOption) => Boolean(exerciseOption?.value?.trim()), {
       message: REQUIRED_FIELDS,
     }),
   exerciseId: z.string().min(1, REQUIRED_FIELDS).optional(),
-  order: z
-    .string()
-    .min(1, MUST_BE_POSITIVE)
-    .refine(
-      (order) => {
-        const orderNumber = Number(order);
-        return !isNaN(orderNumber) && orderNumber > 0;
-      },
-      { message: MUST_BE_POSITIVE }
-    ),
-  intervalInSeconds: z
-    .string()
-    .min(1, MUST_BE_POSITIVE)
-    .refine(
-      (intervalInSeconds) => {
-        const intervalInSecondsNumber = Number(intervalInSeconds);
-        return !isNaN(intervalInSecondsNumber) && intervalInSecondsNumber > 0;
-      },
-      { message: MUST_BE_POSITIVE }
-    ),
+  order: z.number().min(1, MUST_BE_POSITIVE).optional(),
+  intervalInSeconds: z.number().min(1, MUST_BE_POSITIVE),
 });
 
+export type TrainingFormSchemaType = z.infer<typeof trainingSchema>;
+
 export interface ITrainingForm {
-  trainings: z.infer<typeof trainingSchema>[];
+  exercises: TrainingFormSchemaType[];
+  trainingPlanId?: string;
+  trainingId?: string;
 }
 
 export function useGetMyTrainings() {
@@ -64,7 +51,7 @@ export function useGetMyTrainings() {
   return { trainings, isloadingTrainings, trainingsError, refetchTrainings };
 }
 
-export function useGetTraining(id: string) {
+export function useGetTraining(id?: string) {
   const { apiBase } = useAxios();
 
   const {
@@ -73,12 +60,14 @@ export function useGetTraining(id: string) {
     error: trainingError,
     refetch: refetchTraining,
   } = useQuery({
-    queryKey: [],
+    queryKey: ["training"],
 
-    queryFn: () =>
-      apiBase
+    queryFn: () => {
+      return apiBase
         .get<TrainingWithComputedFields>(`/trainings/${id}`)
-        .then((res) => res.data),
+        .then((res) => res.data);
+    },
+    enabled: Boolean(id),
   });
 
   return { training, isLoadingTraining, trainingError, refetchTraining };
@@ -97,10 +86,35 @@ export function useMutateTraning() {
     }
   );
 
+  const { mutate: createTraining, isPending: isCreatingTraining } = useMutation(
+    {
+      mutationFn: ({ trainingPlanId, ...trainingForm }: ITrainingForm) =>
+        apiBase.post(
+          `/trainings/training-plan/${trainingPlanId}`,
+          trainingForm
+        ),
+    }
+  );
+
+  const { mutate: updateTraining, isPending: isUpdatingTraining } = useMutation(
+    {
+      mutationFn: ({ trainingId, ...trainingForm }: ITrainingForm) =>
+        apiBase.patch(`/trainings/${trainingId}`, trainingForm),
+    }
+  );
+
+  const isSubmitingTraining = useMemo(
+    () => isCreatingTraining || isUpdatingTraining,
+    [isCreatingTraining, isUpdatingTraining]
+  );
+
   return {
-    startTraining,
-    finishTraining,
     isStartingTraning,
     isFinishingTraning,
+    isSubmitingTraining,
+    updateTraining,
+    startTraining,
+    finishTraining,
+    createTraining,
   };
 }

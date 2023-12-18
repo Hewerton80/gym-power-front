@@ -38,7 +38,7 @@ const Root = ({
           className="z-[10000] fixed inset-0 bg-black/30"
           onClick={() => !disableBackdropClick && onClose?.()}
         />
-        <Card
+        <Card.Root
           asChild
           className={twMerge(
             "fixed z-[10001] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]",
@@ -54,7 +54,7 @@ const Root = ({
             {!hideCloseIcon && (
               <Dialog.Close
                 asChild
-                className="absolute top-5 right-6 p-1 cursor-pointer text-black"
+                className="absolute top-5 right-6 p-1 cursor-pointer text-black dark:text-light"
                 onClick={onClose}
                 role="button"
                 aria-label="Close"
@@ -65,7 +65,7 @@ const Root = ({
               </Dialog.Close>
             )}
           </Dialog.Content>
-        </Card>
+        </Card.Root>
       </Dialog.Portal>
     </Dialog.Root>
   );
@@ -73,9 +73,7 @@ const Root = ({
 const Title = ({ children, ...restProps }: ModalTitleProps) => {
   return (
     <Card.Header>
-      <Card.Title asChild {...restProps}>
-        <Dialog.Title>{children}</Dialog.Title>
-      </Card.Title>
+      <Card.Title {...restProps}>{children}</Card.Title>
     </Card.Header>
   );
 };

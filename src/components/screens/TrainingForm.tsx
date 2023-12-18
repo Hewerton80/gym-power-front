@@ -6,7 +6,7 @@ import { FeedBackError } from "../ui/feedback/FeedBackError";
 import { FeedBackLoading } from "../ui/feedback/FeedBackLoading";
 import { isUndefined } from "@/shared/isType";
 import { Input } from "../ui/forms/Input";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useGetExercises } from "@/hooks/api/useExercise";
 import { Select } from "../ui/forms/Select";
@@ -15,15 +15,36 @@ import { z } from "zod";
 import { Modal } from "../ui/overlay/Modal";
 import { ExerciseCard } from "../ui/cards/ExerciseCard";
 import { ExerciseWithComputedFields } from "@/types/Exercise";
-import { trainingSchema } from "@/hooks/api/useTraining";
-import { FaPen } from "react-icons/fa";
+import {
+  ITrainingForm,
+  TrainingFormSchemaType,
+  trainingSchema,
+  useGetTraining,
+  useMutateTraning,
+} from "@/hooks/api/useTraining";
+import {
+  FaPen,
+  FaTrash,
+  FaLongArrowAltUp,
+  FaLongArrowAltDown,
+  FaPlus,
+} from "react-icons/fa";
 import { IconButton } from "../ui/buttons/IconButton";
+import { Dropdown } from "../ui/overlay/Dropdown/Dropdown";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { useAlertModal } from "@/hooks/utils/useAlertModal";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { handleErrorMessage } from "@/shared/handleErrorMessage";
 
 interface ITrainingFormProps {
   studentId: string;
+  trainingId?: string;
 }
 
-export const TrainingForm = ({ studentId }: ITrainingFormProps) => {
+export const TrainingForm = ({ studentId, trainingId }: ITrainingFormProps) => {
+  const { showAlert } = useAlertModal();
+  const router = useRouter();
   const {
     studentError,
     isLoadingStudent,
@@ -32,28 +53,52 @@ export const TrainingForm = ({ studentId }: ITrainingFormProps) => {
     refetchStudent,
   } = useGetStudent(studentId);
 
-  const { exercises, exercisesError, isFetchingExercises, refetchExercises } =
+  const { createTraining, updateTraining, isSubmitingTraining } =
+    useMutateTraning();
+
+  const { exercises, exercisesError, isLoadingExercises, refetchExercises } =
     useGetExercises();
 
-  const defaultTrainigFormValues = useMemo<z.infer<typeof trainingSchema>>(
+  const {
+    isLoadingTraining,
+    trainingError,
+    training: currentTraining,
+    refetchTraining,
+  } = useGetTraining(trainingId);
+
+  const isEditTraining = useMemo(() => Boolean(trainingId), [trainingId]);
+
+  const defaultTrainigFormValues = useMemo<TrainingFormSchemaType>(
     () => ({
       exerciseOption: null,
-      intervalInSeconds: "60",
-      order: "1",
+      intervalInSeconds: 60,
     }),
     []
   );
 
-  const { control, reset, handleSubmit } = useForm<
-    z.infer<typeof trainingSchema>
-  >({
-    defaultValues: defaultTrainigFormValues,
-    mode: "onTouched",
-    resolver: zodResolver(trainingSchema),
-  });
+  useEffect(() => {
+    if (isEditTraining && currentTraining) {
+      setStateTrainings(
+        currentTraining?.exercises?.map((exercise) => ({
+          exerciseOption: {
+            value: exercise?.id || "",
+            label: exercise?.name || "",
+          },
+          intervalInSeconds: Number(exercise?.intervalInSeconds),
+        })) || []
+      );
+    }
+  }, [currentTraining, isEditTraining]);
+
+  const { control, formState, reset, handleSubmit } =
+    useForm<TrainingFormSchemaType>({
+      defaultValues: defaultTrainigFormValues,
+      mode: "onTouched",
+      resolver: zodResolver(trainingSchema),
+    });
 
   const [stateExercises, setStateTrainings] = useState<
-    z.infer<typeof trainingSchema>[]
+    TrainingFormSchemaType[]
   >([]);
 
   const [stateExerciseIndexToEdit, setStateExerciseIndexToEdit] = useState(-1);
@@ -65,8 +110,8 @@ export const TrainingForm = ({ studentId }: ITrainingFormProps) => {
   }, [student?.trainingPlan]);
 
   const isLoadingForm = useMemo(
-    () => isLoadingStudent || isFetchingExercises,
-    [isLoadingStudent, isFetchingExercises]
+    () => isLoadingStudent || isLoadingExercises || isLoadingTraining,
+    [isLoadingStudent, isLoadingExercises, isLoadingTraining]
   );
 
   const exercisesMapped = useMemo<{
@@ -81,10 +126,10 @@ export const TrainingForm = ({ studentId }: ITrainingFormProps) => {
   }, [exercises]);
 
   const stateExercisesMapped = useMemo<{
-    [key: string]: z.infer<typeof trainingSchema>;
+    [key: string]: TrainingFormSchemaType;
   }>(() => {
     const stateExercisesMappedTmp: {
-      [key: string]: z.infer<typeof trainingSchema>;
+      [key: string]: TrainingFormSchemaType;
     } = {};
     stateExercises?.forEach((exercise) => {
       stateExercisesMappedTmp[String(exercise?.exerciseOption?.value)] =
@@ -111,7 +156,6 @@ export const TrainingForm = ({ studentId }: ITrainingFormProps) => {
       reset({
         exerciseOption: stateExercise?.exerciseOption,
         intervalInSeconds: stateExercise?.intervalInSeconds,
-        order: stateExercise?.order,
       });
     }
   }, [stateExerciseIndexToEdit, stateExercises, reset]);
@@ -123,7 +167,7 @@ export const TrainingForm = ({ studentId }: ITrainingFormProps) => {
   }, [defaultTrainigFormValues, reset]);
 
   const handleSubmitiExercise = useCallback(
-    (exerviseFormValues: z.infer<typeof trainingSchema>) => {
+    (exerviseFormValues: TrainingFormSchemaType) => {
       console.log({ exerviseFormValues });
       if (stateExerciseIndexToEdit >= 0) {
         setStateTrainings(([...prev]) => {
@@ -132,7 +176,7 @@ export const TrainingForm = ({ studentId }: ITrainingFormProps) => {
         });
       } else {
         setStateTrainings(([...prev]) => {
-          prev.push({ ...exerviseFormValues, order: String(prev.length + 1) });
+          prev.push(exerviseFormValues);
           return prev;
         });
       }
@@ -141,6 +185,66 @@ export const TrainingForm = ({ studentId }: ITrainingFormProps) => {
     [stateExerciseIndexToEdit, handleCloseExerciseFormModal]
   );
 
+  const handleRemoveExercise = useCallback((index: number) => {
+    setStateTrainings((prev) => prev.filter((_, i) => i !== index));
+  }, []);
+
+  const hamdleChangeExercisePosition = useCallback(
+    (fromIndex: number, toIndex: number) => {
+      setStateTrainings(([...prev]) => {
+        const fromExercise = prev[fromIndex];
+        const toExercise = prev[toIndex];
+        prev[fromIndex] = toExercise;
+        prev[toIndex] = fromExercise;
+        return prev;
+      });
+    },
+    []
+  );
+
+  const handleSubmitTraining = useCallback(() => {
+    if (stateExercises.length === 0) return;
+    const training: ITrainingForm = {
+      exercises:
+        stateExercises.map((exercise, i) => ({
+          exerciseId: exercise.exerciseOption?.value || "",
+          intervalInSeconds: exercise?.intervalInSeconds,
+          order: i + 1,
+        })) || [],
+    };
+    const onSuccess = () => {
+      toast.success(
+        `Treino ${isEditTraining ? "criado" : "editado"} com sucesso!`
+      );
+      router.push(`/teacher/students/${studentId}/training-plans`);
+    };
+    const onError = (error: any) => {
+      showAlert({
+        title: `Erro ao ${isEditTraining ? "criar" : "editar"} treino!`,
+        description: handleErrorMessage(error),
+        variant: "danger",
+      });
+    };
+    if (isEditTraining) {
+      updateTraining({ ...training, trainingId }, { onSuccess, onError });
+    } else {
+      createTraining(
+        { ...training, trainingPlanId: student?.trainingPlan?.id || "" },
+        { onSuccess, onError }
+      );
+    }
+  }, [
+    studentId,
+    trainingId,
+    router,
+    student,
+    stateExercises,
+    isEditTraining,
+    showAlert,
+    createTraining,
+    updateTraining,
+  ]);
+
   const exercisesElement = useMemo(() => {
     if (stateExercises.length === 0) return <></>;
     return (
@@ -148,25 +252,71 @@ export const TrainingForm = ({ studentId }: ITrainingFormProps) => {
         <span className="text-xs sm:text-base">
           <b>Exercícios adicionados:</b>
         </span>
-        {stateExercises?.map((exercise, i) => (
-          <ExerciseCard
-            key={`${i}-exercise-card`}
-            exercise={{
-              ...exercisesMapped[String(exercise.exerciseOption?.value)],
-              intervalInSeconds: Number(exercise.intervalInSeconds),
-              order: Number(exercise.order),
-            }}
-            actionButtonElement={
-              <IconButton
-                onClick={() => setStateExerciseIndexToEdit(i)}
-                icon={<FaPen />}
-              />
-            }
-          />
-        ))}
+        {stateExercises?.map((exercise, i) => {
+          const isFirstIndex = i === 0;
+          const isLastIndex = i === stateExercises.length - 1;
+          return (
+            <ExerciseCard
+              key={`${i}-exercise-card`}
+              exercise={{
+                ...exercisesMapped[String(exercise.exerciseOption?.value)],
+                intervalInSeconds: Number(exercise.intervalInSeconds),
+              }}
+              actionButtonElement={
+                <Dropdown>
+                  <Dropdown.Toogle asChild>
+                    <IconButton
+                      variantStyle="info"
+                      icon={<BsThreeDotsVertical />}
+                    />
+                  </Dropdown.Toogle>
+                  <Dropdown.Menu>
+                    <Dropdown.Item
+                      className="gap-2"
+                      onClick={() => setStateExerciseIndexToEdit(i)}
+                    >
+                      <FaPen />
+                      editar
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      className="gap-2"
+                      onClick={() => handleRemoveExercise(i)}
+                    >
+                      <FaTrash />
+                      remover
+                    </Dropdown.Item>
+                    {!isFirstIndex && (
+                      <Dropdown.Item
+                        className="gap-2"
+                        onClick={() => hamdleChangeExercisePosition(i, i - 1)}
+                      >
+                        <FaLongArrowAltUp />
+                        Mover para cima
+                      </Dropdown.Item>
+                    )}
+                    {!isLastIndex && (
+                      <Dropdown.Item
+                        className="gap-2"
+                        onClick={() => hamdleChangeExercisePosition(i, i + 1)}
+                      >
+                        <FaLongArrowAltDown />
+                        Mover para baixo
+                      </Dropdown.Item>
+                    )}
+                  </Dropdown.Menu>
+                </Dropdown>
+              }
+            />
+          );
+        })}
       </>
     );
-  }, [stateExercises, exercisesMapped]);
+  }, [
+    stateExercises,
+    exercisesMapped,
+    handleRemoveExercise,
+    hamdleChangeExercisePosition,
+  ]);
 
   const handledContent = useMemo(() => {
     if (studentError) {
@@ -174,6 +324,9 @@ export const TrainingForm = ({ studentId }: ITrainingFormProps) => {
     }
     if (exercisesError) {
       return <FeedBackError onTryAgain={refetchExercises} />;
+    }
+    if (trainingError) {
+      return <FeedBackError onTryAgain={refetchTraining} />;
     }
     if (isLoadingForm || isUndefined(student) || isUndefined(exercises)) {
       return <FeedBackLoading />;
@@ -201,7 +354,12 @@ export const TrainingForm = ({ studentId }: ITrainingFormProps) => {
         </div>
         <div className="border border-border dark:border-dark-border" />
         <div className="flex flex-col space-y-4">{exercisesElement}</div>
-        <Button onClick={handleOpenExerciseFormModal} fullWidth>
+        <Button
+          className="ml-auto"
+          onClick={handleOpenExerciseFormModal}
+          rightIcon={<FaPlus />}
+          variantStyle="info"
+        >
           Adicionar Exercício
         </Button>
       </div>
@@ -210,11 +368,13 @@ export const TrainingForm = ({ studentId }: ITrainingFormProps) => {
     studentError,
     exercisesError,
     isLoadingForm,
+    trainingError,
     student,
     exercises,
     hasTrainingPlan,
     personalInfosList,
     exercisesElement,
+    refetchTraining,
     refetchStudent,
     refetchExercises,
     handleOpenExerciseFormModal,
@@ -228,12 +388,24 @@ export const TrainingForm = ({ studentId }: ITrainingFormProps) => {
 
   return (
     <>
-      <Card>
-        <Card.Header>
-          <Card.Title>Criar treino</Card.Title>
-        </Card.Header>
-        <Card.Body>{handledContent}</Card.Body>
-      </Card>
+      <div className="flex flex-col space-y-8">
+        <Card.Root>
+          <Card.Header>
+            <Card.Title>
+              {isEditTraining ? "Editar" : "Criar"} treino
+            </Card.Title>
+          </Card.Header>
+          <Card.Body>{handledContent}</Card.Body>
+        </Card.Root>
+        <Button
+          fullWidth
+          disabled={stateExercises.length === 0}
+          isLoading={isSubmitingTraining}
+          onClick={handleSubmitTraining}
+        >
+          {isEditTraining ? "Editar" : "Criar"} treino
+        </Button>
+      </div>
       <Modal.Root
         show={openExerciseFormModal}
         onClose={handleCloseExerciseFormModal}
@@ -266,14 +438,19 @@ export const TrainingForm = ({ studentId }: ITrainingFormProps) => {
             <Controller
               control={control}
               name="intervalInSeconds"
-              render={({ field, fieldState }) => (
+              render={({
+                field: { value, onChange, ...restField },
+                fieldState,
+              }) => (
                 <Input
                   formControlClassName="col-span-1"
+                  value={String(value)}
+                  onChange={(e) => onChange(Number(e.target.value))}
                   required
                   label="Descanso entre séries (s)"
                   error={fieldState.error?.message}
                   type="number"
-                  {...field}
+                  {...restField}
                 />
               )}
             />
@@ -284,7 +461,11 @@ export const TrainingForm = ({ studentId }: ITrainingFormProps) => {
               >
                 Fechar
               </Button>
-              <Button type="submit" variantStyle="primary">
+              <Button
+                type="submit"
+                variantStyle="primary"
+                disabled={!formState.isDirty}
+              >
                 {stateExerciseIndexToEdit >= 0 ? "Editar" : "Adicionar"}
               </Button>
             </div>

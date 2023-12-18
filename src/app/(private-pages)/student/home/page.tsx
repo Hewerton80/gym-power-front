@@ -147,7 +147,7 @@ export default function StudentPage() {
         <Card.Body className="flex-col space-y-2">
           {handleTrainingsContent}
         </Card.Body>
-      </Card>
+      </Card.Root>
       {/* <div className="col-span-12 2xl:col-span-6">
         {recommendedTraingToDay && (
           <WidgetCard
@@ -194,7 +194,7 @@ export default function StudentPage() {
               numSkeletonRows={3}
             />
           </Card.Body>
-        </Card>
+        </Card.Root>
       </div> */}
     </div>
   );

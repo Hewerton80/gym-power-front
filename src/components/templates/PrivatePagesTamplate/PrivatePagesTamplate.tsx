@@ -49,7 +49,7 @@ export function PrivatePagesTamplate({ children }: IPrivatePagesTamplateProps) {
   const toogleSideBarButtonElement = useMemo(() => {
     return (
       <span className="items-center justify-center cursor-pointer">
-        <FaBarsStaggered className="text-primary text-3xl" />
+        <FaBarsStaggered className="text-primary dark:text-light text-3xl" />
       </span>
     );
   }, []);
@@ -58,14 +58,14 @@ export function PrivatePagesTamplate({ children }: IPrivatePagesTamplateProps) {
     return (
       <aside
         className={twMerge(
-          "bg-white dark:bg-dark-card shadow-sm",
+          "bg-card dark:bg-dark-card shadow-sm",
           "duration-100 ease-linear overflow-hidden"
         )}
       >
         <Resizable
           className={twMerge(
             "flex flex-col duration-100 ease-linear overflow-hidden",
-            " border-white dark:border-dark-card"
+            " border-card dark:border-dark-card"
           )}
           enable={{ right: !showOnlyIcons }}
           size={{ width: showOnlyIcons ? 80 : sideBarWidth, height: "100vh" }}
@@ -174,7 +174,7 @@ export function PrivatePagesTamplate({ children }: IPrivatePagesTamplateProps) {
           {sideBarElement}
         </Slot>
         <div className="flex flex-col flex-1 overflow-x-hidden">
-          <header className="bg-white dark:bg-dark-card h-20 shadow-sm">
+          <header className="bg-card dark:bg-dark-card h-20 shadow-sm">
             <div className="flex items-center h-full px-4 sm:px-8">
               <Slot
                 className="flex md:hidden"
@@ -196,6 +196,7 @@ export function PrivatePagesTamplate({ children }: IPrivatePagesTamplateProps) {
               </Slot>
               <div className="flex gap-4 items-center ml-auto">
                 <IconButton
+                  variantStyle="primary-ghost"
                   icon={theme === "dark" ? <FaMoon /> : <FaSun />}
                   onClick={() => toggleTheme()}
                 />

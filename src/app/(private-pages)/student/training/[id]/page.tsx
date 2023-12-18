@@ -191,5 +191,5 @@ export default function TrainingPage() {
     handleFinishTraining,
   ]);
 
-  return <Card>{handleContent}</Card>;
+  return <Card.Root>{handleContent}</Card.Root>;
 }

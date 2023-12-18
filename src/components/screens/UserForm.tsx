@@ -326,11 +326,11 @@ export function UserForm({ userId }: IUserFormProps) {
   ]);
 
   return (
-    <Card>
+    <Card.Root>
       <Card.Header>
         <Card.Title>{isEditUser ? "Editar" : "Criar"} Usuário</Card.Title>
       </Card.Header>
       <Card.Body>{handleFormContent}</Card.Body>
-    </Card>
+    </Card.Root>
   );
 }

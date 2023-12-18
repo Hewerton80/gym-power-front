@@ -72,6 +72,6 @@ export function WidgetCard({
           variants[variant].bg
         )}
       />
-    </Card>
+    </Card.Root>
   );
 }

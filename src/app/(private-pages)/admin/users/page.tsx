@@ -11,7 +11,7 @@ import { useGetUsers } from "@/hooks/api/useUser";
 import { UserRole, UserRolesNamesType } from "@/types/User";
 import { isUndefined } from "@/shared/isType";
 import Link from "next/link";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { MdEdit } from "react-icons/md";
 
 export default function UsersPage() {
@@ -61,7 +61,7 @@ export default function UsersPage() {
   );
 
   return (
-    <Card>
+    <Card.Root>
       <Card.Header>
         <Card.Title>Usuários</Card.Title>
         <Card.Actions>
@@ -79,6 +79,6 @@ export default function UsersPage() {
           isLoading={isLoadingUsers || isUndefined(users)}
         />
       </Card.Body>
-    </Card>
+    </Card.Root>
   );
 }
