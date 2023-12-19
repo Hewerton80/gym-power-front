@@ -172,10 +172,7 @@ export function useGetStudents() {
   );
 
   const goToPage = useCallback((page: number) => {
-    setStudentsQueryParams((prev) => ({
-      ...prev,
-      currentPage: page,
-    }));
+    setStudentsQueryParams((prev) => ({ ...prev, currentPage: page }));
   }, []);
 
   return {
