@@ -1,6 +1,7 @@
 import { User, Gender } from "@prisma/client";
 import { TrainingPlanWithComputedFields } from "./TrainingPlans";
 import { differenceInYears } from "date-fns";
+import { IPaginateArgs } from "@/shared/prismaPagination";
 
 export enum UserRole {
   ADMIN = "Administrador",
@@ -25,6 +26,10 @@ export interface UserWithComputedFields extends Partial<User> {
   age?: number;
   trainingPlan?: TrainingPlanWithComputedFields;
   roles: UserRolesNamesType[];
+}
+
+export interface IGetStudentsQueryParams extends IPaginateArgs {
+  keyword?: string;
 }
 
 export const getUserWithComputedFields = (

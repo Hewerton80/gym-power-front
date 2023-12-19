@@ -1,6 +1,6 @@
-import { UserWithComputedFields } from "@/types/User";
+import { IGetStudentsQueryParams, UserWithComputedFields } from "@/types/User";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { use, useCallback, useEffect, useMemo, useState } from "react";
 import { useAxios } from "../utils/useAxios";
 import { Prisma } from "@prisma/client";
 import { SingleValue } from "react-select";
@@ -11,6 +11,7 @@ const { VALIDATION_ERROR_MESSAGES } = CONSTANTS;
 import { CONSTANTS } from "@/shared/constants";
 import { ToZodObjectSchema } from "@/lib/zodHelpers";
 import { z } from "zod";
+import { IPaginatedDocs } from "@/shared/prismaPagination";
 export interface IUserForm extends Prisma.UserCreateInput {
   isEditUser?: boolean;
   confirmPassword?: string;
@@ -139,26 +140,51 @@ export function useGetUser(userId?: string) {
 
 export function useGetStudents() {
   const { apiBase } = useAxios();
+  const [studentsQueryParams, setStudentsQueryParams] =
+    useState<IGetStudentsQueryParams>({});
 
   const {
     data: students,
     isFetching: isLoadingStudents,
     error: studentsError,
-    refetch: refetchStudents,
+    refetch,
   } = useQuery({
-    queryFn: () =>
+    queryFn: ({ queryKey }) =>
       apiBase
-        .get<UserWithComputedFields[]>("/students")
-        .then((res) => res.data || []),
-    queryKey: [],
+        .get<IPaginatedDocs<UserWithComputedFields>>("/students", {
+          params: queryKey[0],
+        })
+        .then((res) => res.data || { docs: [] }),
+    queryKey: [studentsQueryParams],
     retry: 1,
+    enabled: false,
   });
+
+  useEffect(() => {
+    refetch();
+  }, [studentsQueryParams, refetch]);
+
+  const refetchStudents = useCallback(
+    (queryParams?: IGetStudentsQueryParams) => {
+      setStudentsQueryParams({ ...(queryParams || {}) });
+    },
+    []
+  );
+
+  const goToPage = useCallback((page: number) => {
+    setStudentsQueryParams((prev) => ({
+      ...prev,
+      currentPage: page,
+    }));
+  }, []);
 
   return {
     students,
     isLoadingStudents,
     studentsError,
+    studentsQueryParams,
     refetchStudents,
+    goToPage,
   };
 }
 

@@ -3,6 +3,10 @@ import React, { ComponentPropsWithRef, ReactNode } from "react";
 import { Table } from "@/components/ui/dataDisplay/Table/Table";
 import { FeedBackError } from "@/components/ui/feedback/FeedBackError";
 import { TableSkeleton } from "@/components/ui/feedback/TableSkeleton";
+import {
+  PaginationBar,
+  PaginationBarProps,
+} from "../../navigation/PaginationBard";
 
 export interface IColmunDataTable<T = any> {
   field: keyof T | "actions";
@@ -20,15 +24,17 @@ export interface DataTableProps
   isError?: boolean;
   numSkeletonRows?: number;
   isLoading?: boolean;
+  paginationConfig?: PaginationBarProps;
   onTryAgainIfError?: () => void;
 }
 
 export function DataTable({
   columns,
-  rows,
+  rows = [],
   isError,
   isLoading,
   numSkeletonRows = 15,
+  paginationConfig,
   onTryAgainIfError,
   ...restProps
 }: DataTableProps) {
@@ -94,6 +100,18 @@ export function DataTable({
           </div>
         ))}
       </div>
+      {paginationConfig && rows.length > 0 && (
+        <div className="flex w-full justify-end mt-8">
+          <PaginationBar
+            currentPage={paginationConfig?.currentPage}
+            onChangePage={paginationConfig?.onChangePage}
+            totalPages={paginationConfig?.totalPages}
+            disabled={isLoading}
+            perPage={paginationConfig?.perPage}
+            totalRecords={paginationConfig?.totalRecords}
+          />
+        </div>
+      )}
     </>
   );
 }

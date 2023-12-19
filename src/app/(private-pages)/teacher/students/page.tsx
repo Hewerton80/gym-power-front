@@ -6,14 +6,26 @@ import {
   IColmunDataTable,
   IRowDataTable,
 } from "@/components/ui/dataDisplay/DataTable";
+import { Input } from "@/components/ui/forms/Input";
 import { useGetStudents } from "@/hooks/api/useUser";
 import { isUndefined } from "@/shared/isType";
 import Link from "next/link";
-import { useMemo } from "react";
+import { ChangeEvent, useCallback, useMemo, useState } from "react";
 import { AiOutlineEye } from "react-icons/ai";
+import { useDebouncedCallback } from "use-debounce";
+
 export default function StudensPage() {
-  const { students, isLoadingStudents, studentsError, refetchStudents } =
-    useGetStudents();
+  const {
+    students,
+    isLoadingStudents,
+    studentsError,
+    studentsQueryParams,
+    refetchStudents,
+    goToPage,
+  } = useGetStudents();
+
+  const [search, setSearch] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
 
   const cols = useMemo<IColmunDataTable[]>(
     () => [
@@ -28,11 +40,11 @@ export default function StudensPage() {
   );
 
   const rows = useMemo<IRowDataTable[]>(() => {
-    if (!Array.isArray(students)) {
+    if (!Array.isArray(students?.docs)) {
       return [];
     }
     return (
-      students?.map((student, i) => ({
+      students?.docs?.map((student, i) => ({
         value: String(i),
         contents: [
           <div key={`${i}-name`} className="flex flex-col">
@@ -64,18 +76,47 @@ export default function StudensPage() {
     );
   }, [students]);
 
+  const handleChangeSearchDebounced = useDebouncedCallback((value: string) => {
+    refetchStudents({ ...studentsQueryParams, keyword: value });
+    setIsSearching(false);
+  }, 1000);
+
+  const handleChangeSearch = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setSearch(value);
+      setIsSearching(true);
+      handleChangeSearchDebounced(value);
+    },
+    [handleChangeSearchDebounced]
+  );
+
   return (
     <Card.Root>
       <Card.Header>
         <Card.Title>Alunos</Card.Title>
+        <Card.Actions>
+          <Input
+            value={search}
+            onChange={handleChangeSearch}
+            placeholder="Pesquisar"
+          />
+        </Card.Actions>
       </Card.Header>
       <Card.Body>
         <DataTable
           columns={cols}
           rows={rows}
-          onTryAgainIfError={refetchStudents}
+          onTryAgainIfError={() => refetchStudents(studentsQueryParams)}
           isError={Boolean(studentsError)}
-          isLoading={isLoadingStudents || isUndefined(students)}
+          isLoading={isLoadingStudents || isUndefined(students) || isSearching}
+          paginationConfig={{
+            currentPage: students?.currentPage || 1,
+            totalPages: students?.lastPage || 1,
+            perPage: students?.perPage || 25,
+            totalRecords: 1,
+            onChangePage: goToPage,
+          }}
         />
       </Card.Body>
     </Card.Root>

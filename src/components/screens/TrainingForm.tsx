@@ -1,19 +1,18 @@
 "use client";
 import { useGetStudent } from "@/hooks/api/useUser";
-import { Card } from "../ui/cards/Card";
+import { Card } from "@/components/ui/cards/Card";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FeedBackError } from "../ui/feedback/FeedBackError";
-import { FeedBackLoading } from "../ui/feedback/FeedBackLoading";
+import { FeedBackError } from "@/components/ui/feedback/FeedBackError";
+import { FeedBackLoading } from "@/components/ui/feedback/FeedBackLoading";
 import { isUndefined } from "@/shared/isType";
-import { Input } from "../ui/forms/Input";
+import { Input } from "@/components/ui/forms/Input";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useGetExercises } from "@/hooks/api/useExercise";
-import { Select } from "../ui/forms/Select";
-import { Button } from "../ui/buttons/Button";
-import { z } from "zod";
-import { Modal } from "../ui/overlay/Modal";
-import { ExerciseCard } from "../ui/cards/ExerciseCard";
+import { Select } from "@/components/ui/forms/Select";
+import { Button } from "@/components/ui/buttons/Button";
+import { Modal } from "@/components/ui/overlay/Modal";
+import { ExerciseCard } from "@/components/ui/cards/ExerciseCard";
 import { ExerciseWithComputedFields } from "@/types/Exercise";
 import {
   ITrainingForm,
@@ -29,8 +28,8 @@ import {
   FaLongArrowAltDown,
   FaPlus,
 } from "react-icons/fa";
-import { IconButton } from "../ui/buttons/IconButton";
-import { Dropdown } from "../ui/overlay/Dropdown/Dropdown";
+import { IconButton } from "@/components/ui/buttons/IconButton";
+import { Dropdown } from "@/components/ui/overlay/Dropdown/Dropdown";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useAlertModal } from "@/hooks/utils/useAlertModal";
 import { toast } from "react-toastify";

@@ -3,6 +3,7 @@ import React, { ComponentPropsWithRef } from "react";
 import * as RadixDropdown from "@radix-ui/react-dropdown-menu";
 import { twMerge } from "tailwind-merge";
 import slideAndFadeANimation from "@/components/sharedStyles/slideAndFade.module.css";
+import { Menu as MenuList } from "@/components/ui/dataDisplay/Menu";
 
 export interface DropdownProps
   extends ComponentPropsWithRef<typeof RadixDropdown.Root> {}
@@ -22,46 +23,34 @@ function Toogle({ children, ...restProps }: DropdowToogleProps) {
   );
 }
 
-function Menu({
-  children,
-  className,
-
-  ...restProps
-}: DropdowMenuProps) {
+function Menu({ children, className, ...restProps }: DropdowMenuProps) {
   return (
     <RadixDropdown.Portal>
       <RadixDropdown.Content
-        className={twMerge(
-          "flex flex-col min-w-[13rem] py-4 z-50",
-          "bg-white dark:bg-dark-body outline-none shadow-lg",
-          "origin-top-right",
-          slideAndFadeANimation.root,
-          "rounded"
-        )}
+        asChild
         sideOffset={6}
         alignOffset={8}
         align="end"
-        role="menu"
         {...restProps}
       >
-        {children}
+        <MenuList.Root
+          className={twMerge(
+            "origin-top-right min-w-[13rem]",
+            slideAndFadeANimation.root,
+            className
+          )}
+        >
+          {children}
+        </MenuList.Root>
       </RadixDropdown.Content>
     </RadixDropdown.Portal>
   );
 }
 
-function Item({ children, className, ...restProps }: DropdowItemProps) {
+function Item({ children, ...restProps }: DropdowItemProps) {
   return (
-    <RadixDropdown.Item
-      className={twMerge(
-        "flex items-center px-6 py-2 text-sm sm:text-base cursor-pointer gap-3",
-        "hover:text-primary hover:bg-light hover:dark:bg-dark-card/60",
-        className
-      )}
-      role="menuitem"
-      {...restProps}
-    >
-      {children}
+    <RadixDropdown.Item asChild {...restProps}>
+      <MenuList.Item>{children}</MenuList.Item>
     </RadixDropdown.Item>
   );
 }

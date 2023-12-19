@@ -10,11 +10,7 @@ import slideAndFadeANimation from "@/components/sharedStyles/slideAndFade.module
 import { getContrastColor } from "@/shared/colors";
 import colors from "tailwindcss/colors";
 import { UserRole } from "@/types/User";
-
-const menuItemClasseName = twMerge(
-  "flex items-center px-6 py-2 text-sm sm:text-base cursor-pointer gap-3",
-  "hover:text-primary hover:bg-light hover:dark:bg-dark-card/60"
-);
+import { Menu } from "@/components/ui/dataDisplay/Menu";
 
 export function ProfilePopover() {
   const { logout, loggedUser } = useAuth();
@@ -47,22 +43,21 @@ export function ProfilePopover() {
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content sideOffset={8} align="end" asChild>
-          <div
+          <Menu.Root
             className={twMerge(
-              "flex flex-col w-52 py-4 z-50",
-              "bg-white dark:bg-dark-body outline-none shadow-lg",
-              "origin-top-right",
-              slideAndFadeANimation.root,
-              "rounded"
+              "origin-top-right w-52",
+              slideAndFadeANimation.root
             )}
           >
-            <Link href="#" className={menuItemClasseName}>
-              <FiUser color={assets.colors.primary} size={20} /> Perfil
-            </Link>
-            <div className={menuItemClasseName} onClick={logout}>
+            <Menu.Item asChild>
+              <Link href="#">
+                <FiUser color={assets.colors.primary} size={20} /> Perfil
+              </Link>
+            </Menu.Item>
+            <Menu.Item onClick={logout}>
               <FiLogOut color={assets.colors.danger} size={20} /> Logout
-            </div>
-          </div>
+            </Menu.Item>
+          </Menu.Root>
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>

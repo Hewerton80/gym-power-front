@@ -37,7 +37,7 @@ export function WidgetCard({
   ...restProps
 }: WidgetCardProps) {
   return (
-    <Card className={twMerge("relative", className)} {...restProps}>
+    <Card.Root className={twMerge("relative", className)} {...restProps}>
       <Card.Body className="flex-row items-center gap-3 sm:gap-6">
         <span
           className={twMerge(

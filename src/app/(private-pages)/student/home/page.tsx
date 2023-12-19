@@ -140,7 +140,7 @@ export default function StudentPage() {
         description={`${loggedUser?.weightInKg}kg`}
         icon={<FaWeight />}
       />
-      <Card className="col-span-12">
+      <Card.Root className="col-span-12">
         <Card.Header>
           <Card.Title>Meus treinos</Card.Title>
         </Card.Header>
