@@ -1,6 +1,6 @@
 "use client";
 import * as Popover from "@radix-ui/react-popover";
-import { Avatar } from "../../dataDisplay/Avatar";
+import { Avatar } from "@/components/ui/dataDisplay/Avatar";
 import { twMerge } from "tailwind-merge";
 import Link from "next/link";
 import { useAuth } from "@/hooks/api/useAuth";

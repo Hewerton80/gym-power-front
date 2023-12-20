@@ -30,6 +30,8 @@ export interface UserWithComputedFields extends Partial<User> {
 
 export interface IGetStudentsQueryParams extends IPaginateArgs {
   keyword?: string;
+  gender?: string;
+  isActive?: string;
 }
 
 export const getUserWithComputedFields = (

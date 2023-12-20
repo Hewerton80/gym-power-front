@@ -4,7 +4,6 @@ import { twMerge } from "tailwind-merge";
 import { FaTimes } from "react-icons/fa";
 import {
   Card,
-  CardProps,
   CardBodyProps,
   CardFooterProps,
 } from "@/components/ui/cards/Card";

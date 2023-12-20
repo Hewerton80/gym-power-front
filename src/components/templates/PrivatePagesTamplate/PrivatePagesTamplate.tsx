@@ -15,7 +15,7 @@ import { FaMoon, FaSun } from "react-icons/fa";
 import { useTheme } from "@/hooks/utils/useTheme";
 
 const minWidth = 218;
-const initialSideBarWidth = 272;
+const initialSideBarWidth = 214;
 
 interface IPrivatePagesTamplateProps {
   children: ReactNode;

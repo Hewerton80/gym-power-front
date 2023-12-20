@@ -7,7 +7,8 @@ import {
   getUsersWithComputedFields,
 } from "@/types/User";
 import { prismaPagination } from "@/shared/prismaPagination";
-import { Prisma } from "@prisma/client";
+import { Gender, Prisma } from "@prisma/client";
+import { stringToBoolean } from "@/shared/stringToBoolean";
 
 const { USER_HAS_NO_PERMISSION } = CONSTANTS.API_RESPONSE_MENSSAGES;
 
@@ -21,6 +22,8 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const keyword = searchParams.get("keyword") || "";
+  const isActive = stringToBoolean(searchParams.get("isActive") || undefined);
+  const gender = (searchParams.get("gender") as Gender) || undefined;
   const currentPage = searchParams.get("currentPage") || 1;
   const perPage = searchParams.get("perPage") || 25;
 
@@ -32,7 +35,10 @@ export async function GET(request: NextRequest) {
     model: prisma.user,
     paginationArgs: { currentPage, perPage },
     orderBy: { name: "asc" },
+
     where: {
+      gender,
+      isActive,
       OR: [{ name: { contains: keyword } }, { email: { contains: keyword } }],
     },
   });

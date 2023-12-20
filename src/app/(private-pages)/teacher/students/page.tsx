@@ -7,8 +7,11 @@ import {
   IRowDataTable,
 } from "@/components/ui/dataDisplay/DataTable";
 import { Input } from "@/components/ui/forms/Input";
+import { Picker } from "@/components/ui/forms/Picker";
 import { useGetStudents } from "@/hooks/api/useUser";
+import { genderOptions } from "@/shared/genderOptions";
 import { isUndefined } from "@/shared/isType";
+import { IGetStudentsQueryParams } from "@/types/User";
 import Link from "next/link";
 import { ChangeEvent, useCallback, useMemo, useState } from "react";
 import { AiOutlineEye } from "react-icons/ai";
@@ -24,6 +27,8 @@ export default function StudensPage() {
     goToPage,
   } = useGetStudents();
 
+  const [genderFilter, setGenderFilter] = useState("");
+  const [isActiveFilter, setIsActiveFilter] = useState("");
   const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
 
@@ -51,7 +56,9 @@ export default function StudensPage() {
             {student?.name}
             <span className="text-xs">{student?.email}</span>
           </div>,
-          `${student?.heightInMt}m / ${student?.weightInKg}kg`,
+          `${student?.heightInMt ? `${student?.heightInMt}m` : "-"} / ${
+            student?.weightInKg ? `${student?.weightInKg}kg` : "-"
+          }`,
           student?.age ? `${student?.age} anos` : "-",
           student?.gender,
           student?.isActive ? "Ativo" : "Inativo",
@@ -76,19 +83,39 @@ export default function StudensPage() {
     );
   }, [students]);
 
-  const handleChangeSearchDebounced = useDebouncedCallback((value: string) => {
-    refetchStudents({ ...studentsQueryParams, keyword: value });
-    setIsSearching(false);
-  }, 1000);
+  const handleChangeFilterDebounced = useDebouncedCallback(
+    (newStudentsQueryParams: IGetStudentsQueryParams) => {
+      refetchStudents({ ...studentsQueryParams, ...newStudentsQueryParams });
+      setIsSearching(false);
+    },
+    0
+  );
 
   const handleChangeSearch = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-      setSearch(value);
       setIsSearching(true);
-      handleChangeSearchDebounced(value);
+      setSearch(value);
+      handleChangeFilterDebounced({ keyword: value });
     },
-    [handleChangeSearchDebounced]
+    [handleChangeFilterDebounced]
+  );
+
+  const handleChangeGenderFilter = useCallback(
+    (value: string) => {
+      setIsSearching(true);
+      setGenderFilter(value);
+      handleChangeFilterDebounced({ gender: value });
+    },
+    [handleChangeFilterDebounced]
+  );
+  const handleChangeIsActiveFilter = useCallback(
+    (value: string) => {
+      setIsSearching(true);
+      setIsActiveFilter(value);
+      handleChangeFilterDebounced({ isActive: value });
+    },
+    [handleChangeFilterDebounced]
   );
 
   return (
@@ -104,6 +131,25 @@ export default function StudensPage() {
         </Card.Actions>
       </Card.Header>
       <Card.Body>
+        <div className="flex gap-2">
+          <Picker
+            value={genderFilter}
+            onChange={handleChangeGenderFilter}
+            hideInput
+            placeholder="Sexo"
+            options={genderOptions}
+          />
+          <Picker
+            value={isActiveFilter}
+            onChange={handleChangeIsActiveFilter}
+            hideInput
+            placeholder="Status"
+            options={[
+              { label: "Ativo", value: "true" },
+              { label: "Inativo", value: "false" },
+            ]}
+          />
+        </div>
         <DataTable
           columns={cols}
           rows={rows}

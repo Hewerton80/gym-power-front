@@ -34,8 +34,14 @@ export interface SelectProps {
   placeholder?: string;
   isMulti?: boolean;
   required?: boolean;
+  menuIsOpen?: boolean;
+  isClariable?: boolean;
+  controlShouldRenderValue?: boolean;
+  hideSelectedOptions?: boolean;
+  tabSelectsValue?: boolean;
+  backspaceRemovesValue?: boolean;
   onChangeSingleOption?: OnchangeSigleValue;
-  onchangeMultValue?: OnchangeMultValue;
+  onChangeMultValue?: OnchangeMultValue;
   onInputChange?: (newValue: string) => void;
   onBlur?: () => void;
   autoFocus?: boolean;
@@ -54,7 +60,7 @@ export const Select = forwardRef(
       isMulti,
       required,
       onChangeSingleOption,
-      onchangeMultValue,
+      onChangeMultValue,
       placeholder = "Selecione...",
       ...restProps
     }: SelectProps,
@@ -66,13 +72,13 @@ export const Select = forwardRef(
         actionMeta: any
       ) => {
         if (isMulti) {
-          onchangeMultValue?.(newValue as SelectOption[], actionMeta);
+          onChangeMultValue?.(newValue as SelectOption[], actionMeta);
         } else {
           console.log({ newValue });
           onChangeSingleOption?.(newValue as SingleValue<SelectOption>);
         }
       },
-      [isMulti, onChangeSingleOption, onchangeMultValue]
+      [isMulti, onChangeSingleOption, onChangeMultValue]
     );
 
     return (

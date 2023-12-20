@@ -158,6 +158,7 @@ export function useGetStudents() {
     queryKey: [studentsQueryParams],
     retry: 1,
     enabled: false,
+    staleTime: 5000,
   });
 
   useEffect(() => {
@@ -166,9 +167,13 @@ export function useGetStudents() {
 
   const refetchStudents = useCallback(
     (queryParams?: IGetStudentsQueryParams) => {
-      setStudentsQueryParams({ ...(queryParams || {}) });
+      if (!queryParams) {
+        setStudentsQueryParams({ ...studentsQueryParams });
+      } else {
+        setStudentsQueryParams({ ...queryParams, currentPage: 1 });
+      }
     },
-    []
+    [studentsQueryParams]
   );
 
   const goToPage = useCallback((page: number) => {
