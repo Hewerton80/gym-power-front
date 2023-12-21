@@ -50,3 +50,17 @@ export const prismaPagination = async <DocsType, WhereInput, OrderInput>({
   };
   return paginatedResult;
 };
+
+export const orderByParser = (orderBy: string | undefined) => {
+  if (!orderBy) {
+    return undefined;
+  }
+  const [field, order] = orderBy.split(" ");
+  if (!field) {
+    return undefined;
+  }
+
+  return {
+    [field]: order ? order.toLocaleLowerCase() : undefined,
+  };
+};

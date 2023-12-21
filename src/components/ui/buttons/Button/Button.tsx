@@ -197,7 +197,7 @@ export const Button = forwardRef(
       <Comp
         ref={ref}
         className={twMerge(
-          "inline-flex items-center justify-center relative",
+          "inline-flex items-center justify-center relative whitespace-nowrap",
           "h-fit w-fit px-3 py-2 sm:px-4 sm:py-2.5",
           "cursor-pointer ease-linear duration-200 border-2 rounded-lg outline-none",
           "text-xs sm:text-sm font-medium leading-none",

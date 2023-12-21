@@ -8,14 +8,39 @@ import {
   IRowDataTable,
 } from "@/components/ui/dataDisplay/DataTable";
 import { useGetUsers } from "@/hooks/api/useUser";
-import { UserRole, UserRolesNamesType } from "@/types/User";
+import {
+  IGetStudentsQueryParams,
+  UserRole,
+  UserRolesNamesType,
+} from "@/types/User";
 import { isUndefined } from "@/shared/isType";
 import Link from "next/link";
-import { useMemo } from "react";
+import { ChangeEvent, useCallback, useMemo, useState } from "react";
 import { MdEdit } from "react-icons/md";
+import { orderByUserOptions, usersRolesOptions } from "@/shared/pickerOptions";
+import { useDebouncedCallback } from "use-debounce";
+import { Picker } from "@/components/ui/forms/Picker";
+import { genderOptions } from "@/shared/pickerOptions";
+import { Input } from "@/components/ui/forms/Input";
 
 export default function UsersPage() {
-  const { users, isLoadingUsers, usersError, refetchUsers } = useGetUsers();
+  const {
+    users,
+    isLoadingUsers,
+    usersError,
+    usersQueryParams,
+    refetchUsers,
+    goToPage,
+  } = useGetUsers();
+
+  const [search, setSearch] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+
+  const [isActiveFilter, setIsActiveFilter] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
+  const [orderByFilter, setOrderByFilter] = useState(
+    orderByUserOptions[0].value
+  );
 
   const cols = useMemo<IColmunDataTable[]>(
     () => [
@@ -30,8 +55,8 @@ export default function UsersPage() {
 
   const rows = useMemo<IRowDataTable[]>(
     () =>
-      Array.isArray(users)
-        ? users?.map((user, i) => ({
+      Array.isArray(users?.docs)
+        ? users?.docs?.map((user, i) => ({
             value: String(i),
             contents: [
               user?.name,
@@ -60,6 +85,54 @@ export default function UsersPage() {
     [users]
   );
 
+  const handleChangeFilterDebounced = useDebouncedCallback(
+    (newStudentsQueryParams: IGetStudentsQueryParams) => {
+      refetchUsers({ ...usersQueryParams, ...newStudentsQueryParams });
+      setIsSearching(false);
+    },
+    0
+  );
+
+  const handleChangeSearch = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setIsSearching(true);
+      setSearch(value);
+      handleChangeFilterDebounced({ keyword: value });
+    },
+    [handleChangeFilterDebounced]
+  );
+
+  const handleChangeIsActiveFilter = useCallback(
+    (value: string) => {
+      setIsSearching(true);
+      setIsActiveFilter(value);
+      handleChangeFilterDebounced({ isActive: value });
+    },
+    [handleChangeFilterDebounced]
+  );
+
+  const handleChangeOrderByFilter = useCallback(
+    (value: string) => {
+      setIsSearching(true);
+      setOrderByFilter(value);
+      handleChangeFilterDebounced({ orderBy: value });
+    },
+    [handleChangeFilterDebounced]
+  );
+  const handleChangeRoleFilter = useCallback(
+    (value: string) => {
+      setIsSearching(true);
+      setRoleFilter(value);
+      const roleValue: UserRolesNamesType = value as UserRolesNamesType;
+      handleChangeFilterDebounced({
+        isTeacher: roleValue === "TEACHER" ? "true" : undefined,
+        isAdmin: roleValue === "ADMIN" ? "true" : undefined,
+      });
+    },
+    [handleChangeFilterDebounced]
+  );
+
   return (
     <Card.Root>
       <Card.Header>
@@ -71,12 +144,53 @@ export default function UsersPage() {
         </Card.Actions>
       </Card.Header>
       <Card.Body>
+        <div className="flex items-center flex-wrap gap-x-1 sm:gap-x-2">
+          <Picker
+            label="Status"
+            value={isActiveFilter}
+            onChange={handleChangeIsActiveFilter}
+            hideInput
+            options={[
+              { label: "Ativo", value: "true" },
+              { label: "Inativo", value: "false" },
+            ]}
+          />
+          <Picker
+            label="Função"
+            value={roleFilter}
+            onChange={handleChangeRoleFilter}
+            hideInput
+            options={usersRolesOptions}
+          />
+          <Picker
+            label="Ordenar por"
+            value={orderByFilter}
+            onChange={handleChangeOrderByFilter}
+            hideInput
+            hideCloseButton
+            options={orderByUserOptions}
+          />
+          <div className="ml-auto">
+            <Input
+              value={search}
+              onChange={handleChangeSearch}
+              placeholder="Pesquisar"
+            />
+          </div>
+        </div>
         <DataTable
           columns={cols}
           rows={rows}
           onTryAgainIfError={refetchUsers}
           isError={Boolean(usersError)}
-          isLoading={isLoadingUsers || isUndefined(users)}
+          isLoading={isLoadingUsers || isUndefined(users) || isSearching}
+          paginationConfig={{
+            currentPage: users?.currentPage || 1,
+            totalPages: users?.lastPage || 1,
+            perPage: users?.perPage || 25,
+            totalRecords: users?.docs?.length || 1,
+            onChangePage: goToPage,
+          }}
         />
       </Card.Body>
     </Card.Root>

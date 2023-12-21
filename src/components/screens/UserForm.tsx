@@ -19,7 +19,7 @@ import { FeedBackError } from "@/components/ui/feedback/FeedBackError";
 import { Checkbox } from "@/components/ui/forms/Checkbox";
 import { Select, SelectOption } from "@/components/ui/forms/Select";
 import { Gender } from "@prisma/client";
-import { genderOptions } from "@/shared/genderOptions";
+import { genderOptions } from "@/shared/pickerOptions";
 import { format as formatDate } from "date-fns";
 import { GenderPtBr } from "@/types/User";
 import { handleErrorMessage } from "@/shared/handleErrorMessage";

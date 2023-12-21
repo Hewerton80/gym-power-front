@@ -1,7 +1,7 @@
-import { User, Gender } from "@prisma/client";
+import { User, Gender, Prisma } from "@prisma/client";
 import { TrainingPlanWithComputedFields } from "./TrainingPlans";
 import { differenceInYears } from "date-fns";
-import { IPaginateArgs } from "@/shared/prismaPagination";
+import { IPaginateArgs } from "@/lib/prismaHelpers";
 
 export enum UserRole {
   ADMIN = "Administrador",
@@ -32,6 +32,7 @@ export interface IGetStudentsQueryParams extends IPaginateArgs {
   keyword?: string;
   gender?: string;
   isActive?: string;
+  orderBy?: string;
 }
 
 export const getUserWithComputedFields = (
@@ -55,10 +56,6 @@ export const getUserWithComputedFields = (
   if (user?.trainingPlans?.length > 0) {
     userWitchComputedFields.trainingPlan = user
       .trainingPlans[0] as TrainingPlanWithComputedFields;
-    // const trainings = userWitchComputedFields.trainingPlan?.trainings;
-    // userWitchComputedFields.trainingPlan.trainings = getTrainingsWithComputedFields(
-    //   trainings || []
-    // );
   }
   delete (userWitchComputedFields as any)?.isAdmin;
   delete (userWitchComputedFields as any)?.isTeacher;

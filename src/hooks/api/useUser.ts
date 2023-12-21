@@ -7,11 +7,14 @@ import { SingleValue } from "react-select";
 import { SelectOption } from "@/components/ui/forms/Select";
 import { REGEX } from "@/shared/regex";
 import { isValid as isValidDate } from "date-fns";
-const { VALIDATION_ERROR_MESSAGES } = CONSTANTS;
 import { CONSTANTS } from "@/shared/constants";
 import { ToZodObjectSchema } from "@/lib/zodHelpers";
 import { z } from "zod";
-import { IPaginatedDocs } from "@/shared/prismaPagination";
+import { IPaginatedDocs } from "@/lib/prismaHelpers";
+import { orderByUserOptions } from "@/shared/pickerOptions";
+
+const { VALIDATION_ERROR_MESSAGES } = CONSTANTS;
+
 export interface IUserForm extends Prisma.UserCreateInput {
   isEditUser?: boolean;
   confirmPassword?: string;
@@ -89,26 +92,53 @@ export function useGetMe() {
 
 export function useGetUsers() {
   const { apiBase } = useAxios();
+  const [usersQueryParams, setStudentsQueryParams] =
+    useState<IGetStudentsQueryParams>({ orderBy: orderByUserOptions[0].value });
 
   const {
     data: users,
     isFetching: isLoadingUsers,
     error: usersError,
-    refetch: refetchUsers,
+    refetch,
   } = useQuery({
-    queryFn: () =>
+    queryFn: ({ queryKey }) =>
       apiBase
-        .get<UserWithComputedFields[]>("/users")
-        .then((res) => res.data || []),
-    queryKey: [],
+        .get<IPaginatedDocs<UserWithComputedFields>>("/users", {
+          params: queryKey[0],
+        })
+        .then((res) => res.data || { docs: [] }),
+    queryKey: [usersQueryParams],
+    enabled: false,
     retry: 1,
   });
+
+  useEffect(() => {
+    refetch();
+    console.log({ usersQueryParams });
+  }, [usersQueryParams, refetch]);
+
+  const refetchUsers = useCallback(
+    (queryParams?: IGetStudentsQueryParams) => {
+      if (!queryParams) {
+        setStudentsQueryParams({ ...usersQueryParams });
+      } else {
+        setStudentsQueryParams({ ...queryParams, currentPage: 1 });
+      }
+    },
+    [usersQueryParams]
+  );
+
+  const goToPage = useCallback((page: number) => {
+    setStudentsQueryParams((prev) => ({ ...prev, currentPage: page }));
+  }, []);
 
   return {
     users,
     isLoadingUsers,
     usersError,
+    usersQueryParams,
     refetchUsers,
+    goToPage,
   };
 }
 
@@ -141,7 +171,7 @@ export function useGetUser(userId?: string) {
 export function useGetStudents() {
   const { apiBase } = useAxios();
   const [studentsQueryParams, setStudentsQueryParams] =
-    useState<IGetStudentsQueryParams>({});
+    useState<IGetStudentsQueryParams>({ orderBy: orderByUserOptions[0].value });
 
   const {
     data: students,
@@ -158,7 +188,6 @@ export function useGetStudents() {
     queryKey: [studentsQueryParams],
     retry: 1,
     enabled: false,
-    staleTime: 5000,
   });
 
   useEffect(() => {

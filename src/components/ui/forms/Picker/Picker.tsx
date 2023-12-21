@@ -12,17 +12,19 @@ import { useCallback, useMemo, useState } from "react";
 import { CloseButton } from "../../buttons/CloseButton";
 interface PickerProps {
   value?: string;
-  placeholder?: string;
+  label: string;
   options?: SelectOption[];
   onChange?: (value: string) => void;
   hideInput?: boolean;
+  hideCloseButton?: boolean;
 }
 
 export function Picker({
   value,
   options,
+  label,
   hideInput,
-  placeholder = "Selecione",
+  hideCloseButton,
   onChange,
 }: PickerProps) {
   const [open, setOpen] = useState(false);
@@ -54,21 +56,28 @@ export function Picker({
   }, [inputValue, options]);
 
   const onSelectOption = useCallback(
-    (value: string) => {
+    (newValue: string) => {
       setOpen(false);
-      onChange?.(value);
       setInputValue("");
+      if (value !== newValue) {
+        onChange?.(newValue);
+      }
     },
-    [onChange]
+    [value, onChange]
   );
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
-        <Button variantStyle="dark-ghost" rightIcon={<FaChevronDown />}>
-          {value ? optionValuesKeysMapped[value] : placeholder}
-          {value && (
-            <CloseButton onClick={() => onChange?.("")} className="ml-4" />
+        <Button
+          className="px-1 sm:px-2"
+          variantStyle="dark-ghost"
+          rightIcon={<FaChevronDown />}
+        >
+          {label}
+          {value && <>: {optionValuesKeysMapped[value]}</>}
+          {value && !hideCloseButton && (
+            <CloseButton onClick={() => onChange?.("")} className="ml-2" />
           )}
         </Button>
       </Popover.Trigger>

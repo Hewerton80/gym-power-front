@@ -9,13 +9,14 @@ import {
 import { Input } from "@/components/ui/forms/Input";
 import { Picker } from "@/components/ui/forms/Picker";
 import { useGetStudents } from "@/hooks/api/useUser";
-import { genderOptions } from "@/shared/genderOptions";
+import { genderOptions } from "@/shared/pickerOptions";
 import { isUndefined } from "@/shared/isType";
 import { IGetStudentsQueryParams } from "@/types/User";
 import Link from "next/link";
 import { ChangeEvent, useCallback, useMemo, useState } from "react";
 import { AiOutlineEye } from "react-icons/ai";
 import { useDebouncedCallback } from "use-debounce";
+import { orderByUserOptions } from "@/shared/pickerOptions";
 
 export default function StudensPage() {
   const {
@@ -27,10 +28,14 @@ export default function StudensPage() {
     goToPage,
   } = useGetStudents();
 
-  const [genderFilter, setGenderFilter] = useState("");
-  const [isActiveFilter, setIsActiveFilter] = useState("");
   const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+
+  const [genderFilter, setGenderFilter] = useState("");
+  const [isActiveFilter, setIsActiveFilter] = useState("");
+  const [orderByFilter, setOrderByFilter] = useState(
+    orderByUserOptions[0].value
+  );
 
   const cols = useMemo<IColmunDataTable[]>(
     () => [
@@ -100,7 +105,6 @@ export default function StudensPage() {
     },
     [handleChangeFilterDebounced]
   );
-
   const handleChangeGenderFilter = useCallback(
     (value: string) => {
       setIsSearching(true);
@@ -114,6 +118,14 @@ export default function StudensPage() {
       setIsSearching(true);
       setIsActiveFilter(value);
       handleChangeFilterDebounced({ isActive: value });
+    },
+    [handleChangeFilterDebounced]
+  );
+  const handleChangeOrderByFilter = useCallback(
+    (value: string) => {
+      setIsSearching(true);
+      setOrderByFilter(value);
+      handleChangeFilterDebounced({ orderBy: value });
     },
     [handleChangeFilterDebounced]
   );
@@ -131,36 +143,44 @@ export default function StudensPage() {
         </Card.Actions>
       </Card.Header>
       <Card.Body>
-        <div className="flex gap-2">
+        <div className="flex items-center flex-wrap gap-x-1 sm:gap-x-2">
           <Picker
+            label="Sexo"
             value={genderFilter}
             onChange={handleChangeGenderFilter}
             hideInput
-            placeholder="Sexo"
             options={genderOptions}
           />
           <Picker
+            label="Status"
             value={isActiveFilter}
             onChange={handleChangeIsActiveFilter}
             hideInput
-            placeholder="Status"
             options={[
               { label: "Ativo", value: "true" },
               { label: "Inativo", value: "false" },
             ]}
           />
+          <Picker
+            label="Ordenar por"
+            value={orderByFilter}
+            onChange={handleChangeOrderByFilter}
+            hideInput
+            hideCloseButton
+            options={orderByUserOptions}
+          />
         </div>
         <DataTable
           columns={cols}
           rows={rows}
-          onTryAgainIfError={() => refetchStudents(studentsQueryParams)}
+          onTryAgainIfError={refetchStudents}
           isError={Boolean(studentsError)}
           isLoading={isLoadingStudents || isUndefined(students) || isSearching}
           paginationConfig={{
             currentPage: students?.currentPage || 1,
             totalPages: students?.lastPage || 1,
             perPage: students?.perPage || 25,
-            totalRecords: 1,
+            totalRecords: students?.docs?.length || 1,
             onChangePage: goToPage,
           }}
         />

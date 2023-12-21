@@ -1,4 +1,4 @@
-export function stringToBoolean(value: string | undefined) {
+export function stringToBoolean(value: any) {
   if (value === "true") {
     return true;
   }

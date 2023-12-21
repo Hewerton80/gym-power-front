@@ -14,8 +14,8 @@ import { IconButton } from "@/components/ui/buttons/IconButton";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { useTheme } from "@/hooks/utils/useTheme";
 
-const minWidth = 218;
 const initialSideBarWidth = 214;
+const minWidth = initialSideBarWidth - 100;
 
 interface IPrivatePagesTamplateProps {
   children: ReactNode;
@@ -91,7 +91,11 @@ export function PrivatePagesTamplate({ children }: IPrivatePagesTamplateProps) {
               priority
             />
             <Image
-              className={twMerge("h-6", showOnlyIcons ? "hidden" : "block")}
+              className={twMerge(
+                "dark:brightness-[35.5]",
+                "h-6",
+                showOnlyIcons ? "hidden" : "block"
+              )}
               src="/images/logo-2.png"
               alt="logo2"
               width={108}

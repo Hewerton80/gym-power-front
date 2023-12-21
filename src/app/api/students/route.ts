@@ -6,7 +6,7 @@ import {
   UserWithComputedFields,
   getUsersWithComputedFields,
 } from "@/types/User";
-import { prismaPagination } from "@/shared/prismaPagination";
+import { orderByParser, prismaPagination } from "@/lib/prismaHelpers";
 import { Gender, Prisma } from "@prisma/client";
 import { stringToBoolean } from "@/shared/stringToBoolean";
 
@@ -26,6 +26,7 @@ export async function GET(request: NextRequest) {
   const gender = (searchParams.get("gender") as Gender) || undefined;
   const currentPage = searchParams.get("currentPage") || 1;
   const perPage = searchParams.get("perPage") || 25;
+  const orderBy = orderByParser(searchParams.get("orderBy") || undefined);
 
   const paginedUsers = await prismaPagination<
     UserWithComputedFields,
@@ -34,8 +35,7 @@ export async function GET(request: NextRequest) {
   >({
     model: prisma.user,
     paginationArgs: { currentPage, perPage },
-    orderBy: { name: "asc" },
-
+    orderBy,
     where: {
       gender,
       isActive,
