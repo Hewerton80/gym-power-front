@@ -33,6 +33,8 @@ export interface IGetStudentsQueryParams extends IPaginateArgs {
   gender?: string;
   isActive?: string;
   orderBy?: string;
+  isTeacher?: string;
+  isAdmin?: string;
 }
 
 export const getUserWithComputedFields = (
