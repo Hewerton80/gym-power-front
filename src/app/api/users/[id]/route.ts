@@ -25,9 +25,9 @@ export async function PATCH(
 
   const userDate = (await request.json()) as Prisma.UserUpdateInput;
 
-  let userDateToCrate = {};
+  let userDateToUpdate = {};
   try {
-    userDateToCrate = updateUserSchema.parse({
+    userDateToUpdate = updateUserSchema.parse({
       name: userDate?.name,
       gender: userDate?.gender,
       dateOfBirth: userDate?.dateOfBirth,
@@ -42,7 +42,7 @@ export async function PATCH(
   try {
     await prisma.user.update({
       where: { id },
-      data: userDateToCrate as Prisma.UserUpdateInput,
+      data: userDateToUpdate as Prisma.UserUpdateInput,
     });
     return NextResponse.json({ message: "ok" }, { status: 201 });
   } catch (error: any) {

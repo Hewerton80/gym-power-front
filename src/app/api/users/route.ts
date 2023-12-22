@@ -25,15 +25,14 @@ export async function GET(request: NextRequest) {
   }
   const { searchParams } = new URL(request.url);
   const keyword = searchParams.get("keyword") || "";
-  const isActive = stringToBoolean(searchParams.get("isActive") || undefined);
-  const isTeacher = stringToBoolean(searchParams.get("isTeacher") || undefined);
-  const isAdmin = stringToBoolean(searchParams.get("isAdmin") || undefined);
+  const isActive = stringToBoolean(searchParams.get("isActive"));
+  const isTeacher = stringToBoolean(searchParams.get("isTeacher"));
+  const isAdmin = stringToBoolean(searchParams.get("isAdmin"));
   const gender = (searchParams.get("gender") as Gender) || undefined;
   const currentPage = searchParams.get("currentPage") || 1;
   const perPage = searchParams.get("perPage") || 25;
   const orderBy = orderByParser(searchParams.get("orderBy") || undefined);
 
-  console.log({ orderBy });
   const paginedUsers = await prismaPagination<
     UserWithComputedFields,
     Prisma.UserWhereInput,

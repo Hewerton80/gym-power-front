@@ -25,52 +25,53 @@ import { GenderPtBr } from "@/types/User";
 import { handleErrorMessage } from "@/shared/handleErrorMessage";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "@/hooks/api/useAuth";
 import { CONSTANTS } from "@/shared/constants";
 
-interface IUserFormProps {
-  userId?: string;
-}
-
-export function UserForm({ userId }: IUserFormProps) {
+export default function ProfilePage() {
   const router = useRouter();
   const { showAlert } = useAlertModal();
+  const { loggedUser: currentFormUserData } = useAuth();
 
-  const { createUser, updateUser, isSubmitingUser } = useMutateUser();
-
-  const { control, formState, reset, setError, handleSubmit } =
-    useForm<IUserForm>({
-      defaultValues: {
-        id: "",
-        name: "",
-        email: "",
-        dateOfBirth: "",
-        genderOption: null,
-        password: "",
-        confirmPassword: "",
-        isAdmin: false,
-        isTeacher: false,
-        isEditUser: false,
-      },
-      mode: "onTouched",
-      resolver: zodResolver(userFormSchema),
-    });
+  const { updateUser, isSubmitingUser } = useMutateUser();
 
   const {
-    isLoadingUser,
-    userError,
-    refetchUser,
-    user: currentFormUserData,
-  } = useGetUser(userId);
+    control: userFormControl,
+    reset: resetUserForm,
+    setError: setUserError,
+    handleSubmit,
+    formState,
+  } = useForm<IUserForm>({
+    defaultValues: {
+      id: "",
+      name: "",
+      email: "",
+      dateOfBirth: "",
+      genderOption: null,
+      password: "",
+      confirmPassword: "",
+      isAdmin: false,
+      isTeacher: false,
+    },
+    mode: "onTouched",
+    resolver: zodResolver(userFormSchema),
+  });
 
-  const isEditUser = useMemo(() => Boolean(userId), [userId]);
-  const isLoadingForm = useMemo(
-    () => isEditUser && isLoadingUser,
-    [isEditUser, isLoadingUser]
-  );
+  //   const {
+  //     isLoadingUser,
+  //     userError,
+  //     refetchUser,
+  //     user: currentFormUserData,
+  //   } = useGetUser(userId);
+
+  //   const isLoadingForm = useMemo(
+  //     () => isEditUser && isLoadingUser,
+  //     [isEditUser, isLoadingUser]
+  //   );
 
   useEffect(() => {
-    if (isEditUser && currentFormUserData) {
-      reset({
+    if (currentFormUserData) {
+      resetUserForm({
         id: currentFormUserData?.id,
         name: currentFormUserData?.name,
         email: currentFormUserData?.email,
@@ -90,42 +91,38 @@ export function UserForm({ userId }: IUserFormProps) {
         isEditUser: true,
       });
     }
-  }, [isEditUser, currentFormUserData, reset]);
+  }, [currentFormUserData, resetUserForm]);
 
-  const handleUserDataForm = useCallback(
-    ({ ...userDataForm }: IUserForm) => {
-      console.log({ userDataForm });
-      // userDataForm.roles = userDataForm?.userRolesOptions?.map(
-      //   (role) => role.value
-      // ) as UserRolesNamesType[];
-      userDataForm.gender = userDataForm.genderOption?.value as Gender;
-      if (isEditUser) {
-        delete userDataForm?.password;
-        delete (userDataForm as any)?.email;
-      }
-      delete userDataForm?.confirmPassword;
-      delete userDataForm?.isEditUser;
-      delete userDataForm?.genderOption;
+  const handleUserDataForm = useCallback(({ ...userDataForm }: IUserForm) => {
+    console.log({ userDataForm });
+    // userDataForm.roles = userDataForm?.userRolesOptions?.map(
+    //   (role) => role.value
+    // ) as UserRolesNamesType[];
+    userDataForm.gender = userDataForm.genderOption?.value as Gender;
+    delete userDataForm?.password;
+    delete (userDataForm as any)?.email;
 
-      return userDataForm;
-    },
-    [isEditUser]
-  );
+    delete userDataForm?.confirmPassword;
+    delete userDataForm?.isEditUser;
+    delete userDataForm?.genderOption;
+
+    return userDataForm;
+  }, []);
 
   const handleSubmitUser = useCallback(
     (userDataForm: IUserForm) => {
       const onSuccess = () => {
-        toast(`Usuário ${isEditUser ? "editado" : "criado"} com sucesso!`);
-        router.push("/admin/users");
+        toast(`Usuário editado com sucesso!`);
+        // router.push("/admin/users");
       };
       const onError = (error: any) => {
         if (error?.response?.status === 409) {
-          setError("email", {
+          setUserError("email", {
             message: CONSTANTS.API_RESPONSE_MENSSAGES.USER_ALREADY_EXISTS,
           });
         } else {
           showAlert({
-            title: `Erro ao ${isEditUser ? "editar" : "criar"} usuário`,
+            title: `Erro ao "editar" usuário`,
             description: handleErrorMessage(error),
             variant: "danger",
           });
@@ -133,32 +130,12 @@ export function UserForm({ userId }: IUserFormProps) {
       };
       console.log({ handleSubmitUser: userDataForm });
       const handledUserDataForm = handleUserDataForm(userDataForm);
-      if (isEditUser) {
-        updateUser(handledUserDataForm, { onSuccess, onError });
-      } else {
-        createUser(handledUserDataForm, { onSuccess, onError });
-      }
+      updateUser(handledUserDataForm, { onSuccess, onError });
     },
-    [
-      router,
-      isEditUser,
-      createUser,
-      updateUser,
-      showAlert,
-      handleUserDataForm,
-      setError,
-    ]
+    [updateUser, showAlert, handleUserDataForm, setUserError]
   );
 
   const handleFormContent = useMemo(() => {
-    if (isEditUser) {
-      if (userError) {
-        return <FeedBackError onTryAgain={refetchUser} />;
-      }
-      if (isLoadingForm || isUndefined(currentFormUserData)) {
-        return <FeedBackLoading />;
-      }
-    }
     return (
       <form
         onSubmit={handleSubmit(handleSubmitUser)}
@@ -167,7 +144,7 @@ export function UserForm({ userId }: IUserFormProps) {
         <div className="grid grid-cols-12 gap-x-8 gap-y-4">
           <Controller
             name="name"
-            control={control}
+            control={userFormControl}
             render={({ field, fieldState }) => (
               <Input
                 formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
@@ -181,12 +158,12 @@ export function UserForm({ userId }: IUserFormProps) {
           />
           <Controller
             name="email"
-            control={control}
+            control={userFormControl}
             // disabled={isEditUser}
             render={({ field, fieldState }) => (
               <Input
                 {...field}
-                disabled={isEditUser}
+                disabled
                 formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
                 required
                 label="Email"
@@ -198,7 +175,7 @@ export function UserForm({ userId }: IUserFormProps) {
           />
           <Controller
             name="dateOfBirth"
-            control={control}
+            control={userFormControl}
             // disabled={isEditUser}
             render={({ field: { value, ...restField }, fieldState }) => {
               return (
@@ -217,7 +194,7 @@ export function UserForm({ userId }: IUserFormProps) {
           />
           <Controller
             name="genderOption"
-            control={control}
+            control={userFormControl}
             // disabled={isEditUser}
             render={({
               field: { onChange, value, ...restField },
@@ -240,11 +217,11 @@ export function UserForm({ userId }: IUserFormProps) {
             }}
           />
 
-          {!isEditUser && (
+          {/* {!isEditUser && (
             <>
               <Controller
                 name="password"
-                control={control}
+                control={userFormControl}
                 render={({ field, fieldState }) => (
                   <Input
                     formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
@@ -259,7 +236,7 @@ export function UserForm({ userId }: IUserFormProps) {
               />
               <Controller
                 name="confirmPassword"
-                control={control}
+                control={userFormControl}
                 render={({ field, fieldState }) => (
                   <Input
                     formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
@@ -273,31 +250,33 @@ export function UserForm({ userId }: IUserFormProps) {
                 )}
               />
             </>
-          )}
+          )} */}
           <div className="flex items-end gap-4 sm:gap-6 col-span-12">
             <Controller
               name="isTeacher"
-              control={control}
+              control={userFormControl}
               render={({ field: { value, onChange, ...restField } }) => (
                 <Checkbox
+                  {...restField}
                   id={restField.name}
+                  disabled
                   label="É Professor?"
                   onCheckedChange={(checked) => onChange(checked)}
                   checked={value}
-                  {...restField}
                 />
               )}
             />
             <Controller
               name="isAdmin"
-              control={control}
+              control={userFormControl}
               render={({ field: { value, onChange, ...restField } }) => (
                 <Checkbox
+                  {...restField}
                   id={restField.name}
+                  disabled
                   label="É Administrador?"
                   onCheckedChange={(checked) => onChange(checked)}
                   checked={value}
-                  {...restField}
                 />
               )}
             />
@@ -309,27 +288,22 @@ export function UserForm({ userId }: IUserFormProps) {
           disabled={!formState.isDirty}
           isLoading={isSubmitingUser}
         >
-          {isEditUser ? "Editar" : "Criar"}
+          Editar
         </Button>
       </form>
     );
   }, [
-    control,
-    userError,
+    userFormControl,
     formState.isDirty,
-    currentFormUserData,
-    isLoadingForm,
-    isEditUser,
     isSubmitingUser,
     handleSubmit,
     handleSubmitUser,
-    refetchUser,
   ]);
 
   return (
     <Card.Root>
       <Card.Header>
-        <Card.Title>{isEditUser ? "Editar" : "Criar"} Usuário</Card.Title>
+        <Card.Title>Editar Perfil</Card.Title>
       </Card.Header>
       <Card.Body>{handleFormContent}</Card.Body>
     </Card.Root>

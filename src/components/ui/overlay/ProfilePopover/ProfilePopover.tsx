@@ -50,7 +50,7 @@ export function ProfilePopover() {
             )}
           >
             <Menu.Item asChild>
-              <Link href="#">
+              <Link href="/profile">
                 <FiUser color={assets.colors.primary} size={20} /> Perfil
               </Link>
             </Menu.Item>

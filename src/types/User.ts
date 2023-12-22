@@ -1,4 +1,4 @@
-import { User, Gender, Prisma } from "@prisma/client";
+import { User, Gender } from "@prisma/client";
 import { TrainingPlanWithComputedFields } from "./TrainingPlans";
 import { differenceInYears } from "date-fns";
 import { IPaginateArgs } from "@/lib/prismaHelpers";

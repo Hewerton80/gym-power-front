@@ -46,3 +46,12 @@ export const createUserSchema = z.object<
 export const updateUserSchema = createUserSchema
   .omit({ email: true })
   .partial();
+
+export const updateMeSchema = createUserSchema
+  .omit({
+    email: true,
+    password: true,
+    isAdmin: true,
+    isTeacher: true,
+  })
+  .partial();
