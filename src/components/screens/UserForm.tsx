@@ -6,7 +6,8 @@ import {
   IUserForm,
   useGetUser,
   useMutateUser,
-  userFormSchema,
+  createFormSchema,
+  updateUserFormSchema,
 } from "@/hooks/api/useUser";
 import { Controller } from "react-hook-form";
 import { useCallback, useEffect, useMemo } from "react";
@@ -52,7 +53,7 @@ export function UserForm({ userId }: IUserFormProps) {
         isEditUser: false,
       },
       mode: "onTouched",
-      resolver: zodResolver(userFormSchema),
+      resolver: zodResolver(userId ? updateUserFormSchema : createFormSchema),
     });
 
   const {
@@ -70,6 +71,7 @@ export function UserForm({ userId }: IUserFormProps) {
 
   useEffect(() => {
     if (isEditUser && currentFormUserData) {
+      console.log({ currentFormUserData });
       reset({
         id: currentFormUserData?.id,
         name: currentFormUserData?.name,
@@ -94,10 +96,6 @@ export function UserForm({ userId }: IUserFormProps) {
 
   const handleUserDataForm = useCallback(
     ({ ...userDataForm }: IUserForm) => {
-      console.log({ userDataForm });
-      // userDataForm.roles = userDataForm?.userRolesOptions?.map(
-      //   (role) => role.value
-      // ) as UserRolesNamesType[];
       userDataForm.gender = userDataForm.genderOption?.value as Gender;
       if (isEditUser) {
         delete userDataForm?.password;
@@ -105,7 +103,7 @@ export function UserForm({ userId }: IUserFormProps) {
       }
       delete userDataForm?.confirmPassword;
       delete userDataForm?.isEditUser;
-      delete userDataForm?.genderOption;
+      delete (userDataForm as any)?.genderOption;
 
       return userDataForm;
     },

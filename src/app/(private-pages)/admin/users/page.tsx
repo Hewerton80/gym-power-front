@@ -90,7 +90,7 @@ export default function UsersPage() {
       refetchUsers({ ...usersQueryParams, ...newStudentsQueryParams });
       setIsSearching(false);
     },
-    0
+    1000
   );
 
   const handleChangeSearch = useCallback(

@@ -6,7 +6,7 @@ export const CONSTANTS = {
     INVALID_TIME: "Hora inválida",
     INVALID_MAX_FILE: "A imagem deve possuir no máximo 2 mb.",
     INVALID_PASSWORD: "Senha inválida",
-    PASSWORDS_NOT_MATCH: "As senhas não coincidem. Por favor, tente novamente",
+    PASSWORDS_NOT_MATCH: "As senhas não coincidem",
     INVALID_EMAIL: "E-mail inválido",
     MUST_BE_BOOLEAN: "Deve ser um valor booleano",
     PASSWORD_MIN_LENGTH: "Senha deve ter no mínimo 6 caracteres",

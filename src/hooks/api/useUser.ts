@@ -2,7 +2,7 @@ import { IGetStudentsQueryParams, UserWithComputedFields } from "@/types/User";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { use, useCallback, useEffect, useMemo, useState } from "react";
 import { useAxios } from "../utils/useAxios";
-import { Prisma } from "@prisma/client";
+import { Gender, Prisma } from "@prisma/client";
 import { SingleValue } from "react-select";
 import { SelectOption } from "@/components/ui/forms/Select";
 import { REGEX } from "@/shared/regex";
@@ -15,62 +15,85 @@ import { orderByUserOptions } from "@/shared/pickerOptions";
 
 const { VALIDATION_ERROR_MESSAGES } = CONSTANTS;
 
-export interface IUserForm extends Prisma.UserCreateInput {
-  isEditUser?: boolean;
-  confirmPassword?: string;
-  genderOption?: SingleValue<SelectOption> | null;
-}
+const baseUserFormSchema = z.object({
+  name: z.string().min(1, VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS),
+  email: z.string().min(1, VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS),
+  dateOfBirth: z
+    .string()
+    .min(1, VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS)
+    .refine(
+      (dateOfBirth) =>
+        dateOfBirth.match(REGEX.isoDate) && isValidDate(new Date(dateOfBirth)),
+      VALIDATION_ERROR_MESSAGES.INVALID_DATE
+    ),
+  genderOption: z.object({ label: z.string(), value: z.string() }).nullable(),
 
-export const userFormSchema = z
-  .object<ToZodObjectSchema<IUserForm>>({
-    id: z.string().optional(),
-    name: z.string().min(1, VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS),
-    email: z.string().optional(),
-    dateOfBirth: z
-      .string()
-      .min(1, VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS)
-      .refine(
-        (dateOfBirth) =>
-          dateOfBirth.match(REGEX.isoDate) &&
-          isValidDate(new Date(dateOfBirth)),
-        VALIDATION_ERROR_MESSAGES.INVALID_DATE
-      ),
-    genderOption: z
-      .object<ToZodObjectSchema<SelectOption>>({
-        label: z.string(),
-        value: z.string(),
-      })
-      .nullable(),
+  id: z.string().optional(),
+  isAdmin: z.boolean().optional(),
+  isTeacher: z.boolean().optional(),
+  currentPassword: z.string().optional(),
+  password: z.string().optional(),
+  confirmPassword: z.string().optional(),
+  isEditUser: z.boolean().optional(),
+  showEditPassord: z.boolean().optional(),
+});
 
-    isAdmin: z.boolean().optional(),
-    isTeacher: z.boolean().optional(),
-    password: z.string().optional(),
-    confirmPassword: z.string().optional(),
-    isEditUser: z.boolean().optional(),
+export const createFormSchema = baseUserFormSchema
+  .refine(({ password }) => Boolean(String(password)?.trim()), {
+    message: VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS,
+    path: ["password"],
   })
+  .refine(({ confirmPassword }) => Boolean(String(confirmPassword)?.trim()), {
+    message: VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS,
+    path: ["confirmPassword"],
+  })
+  .refine(({ password, confirmPassword }) => password === confirmPassword, {
+    message: VALIDATION_ERROR_MESSAGES.PASSWORDS_NOT_MATCH,
+    path: ["confirmPassword"],
+  });
+
+export const updateUserFormSchema = baseUserFormSchema;
+export const updateMeFormSchema = baseUserFormSchema
   .refine(
-    ({ email, isEditUser }) =>
-      isEditUser ? true : Boolean(String(email)?.trim()),
-    { message: VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS, path: ["email"] }
+    ({ currentPassword, showEditPassord }) =>
+      showEditPassord ? Boolean(String(currentPassword)?.trim()) : true,
+    {
+      message: VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS,
+      path: ["currentPassword"],
+    }
   )
   .refine(
-    ({ password, isEditUser }) =>
-      isEditUser ? true : Boolean(String(password)?.trim()),
-    { message: VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS, path: ["password"] }
+    ({ password, showEditPassord }) =>
+      showEditPassord ? Boolean(String(password)?.trim()) : true,
+    {
+      message: VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS,
+      path: ["password"],
+    }
   )
   .refine(
-    ({ confirmPassword, isEditUser }) =>
-      isEditUser ? true : Boolean(String(confirmPassword)?.trim()),
+    ({ confirmPassword, showEditPassord }) =>
+      showEditPassord ? Boolean(String(confirmPassword)?.trim()) : true,
     {
       message: VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS,
       path: ["confirmPassword"],
     }
   )
   .refine(
-    ({ password, confirmPassword, isEditUser }) =>
-      isEditUser ? true : password === confirmPassword,
-    { message: "As senhas não coincidem", path: ["confirmPassword"] }
+    ({ password, confirmPassword, showEditPassord }) =>
+      showEditPassord ? password === confirmPassword : true,
+    {
+      message: VALIDATION_ERROR_MESSAGES.PASSWORDS_NOT_MATCH,
+      path: ["confirmPassword"],
+    }
   );
+
+export interface IUserForm extends z.infer<typeof baseUserFormSchema> {
+  gender?: Gender;
+  // isEditUser?: boolean;
+  // confirmPassword?: string;
+  // genderOption?: SingleValue<SelectOption> | null;
+}
+
 export function useGetMe() {
   const { apiBase } = useAxios();
 
@@ -291,4 +314,17 @@ export function useMutateUser() {
   );
 
   return { createUser, updateUser, isSubmitingUser };
+}
+
+export function useMutateMe() {
+  const { apiBase } = useAxios();
+
+  const { mutate: updateMe, isPending: isSubmitingUserMe } = useMutation({
+    mutationFn: (userFormData: IUserForm) =>
+      apiBase
+        .patch<UserWithComputedFields>(`/me/user`, userFormData)
+        .then((res) => res.data),
+  });
+
+  return { updateMe, isSubmitingUserMe };
 }

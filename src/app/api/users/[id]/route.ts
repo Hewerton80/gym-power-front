@@ -5,6 +5,7 @@ import { CONSTANTS } from "@/shared/constants";
 import { Prisma } from "@prisma/client";
 import { updateUserSchema } from "@/lib/apiZodSchemas/userSchemas";
 import { handleZodValidationError } from "@/lib/zodHelpers";
+import { getUserWithComputedFields } from "@/types/User";
 
 const { USER_HAS_NO_PERMISSION, INTERNAL_SERVER_ERROR, USER_NOT_FOUND } =
   CONSTANTS.API_RESPONSE_MENSSAGES;
@@ -74,6 +75,7 @@ export async function GET(
   if (!foundUser) {
     return NextResponse.json({ message: USER_NOT_FOUND }, { status: 404 });
   }
+  const userWithComputedFields = getUserWithComputedFields(foundUser);
 
-  return NextResponse.json(foundUser, { status: 200 });
+  return NextResponse.json(userWithComputedFields, { status: 200 });
 }

@@ -48,10 +48,5 @@ export const updateUserSchema = createUserSchema
   .partial();
 
 export const updateMeSchema = createUserSchema
-  .omit({
-    email: true,
-    password: true,
-    isAdmin: true,
-    isTeacher: true,
-  })
+  .omit({ email: true, isAdmin: true, isTeacher: true })
   .partial();

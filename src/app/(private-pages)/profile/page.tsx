@@ -4,20 +4,16 @@ import { Card } from "@/components/ui/cards/Card";
 import { Input } from "@/components/ui/forms/Input";
 import {
   IUserForm,
-  useGetUser,
-  useMutateUser,
-  userFormSchema,
+  updateMeFormSchema,
+  useMutateMe,
 } from "@/hooks/api/useUser";
 import { Controller } from "react-hook-form";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { useAlertModal } from "@/hooks/utils/useAlertModal";
 import { useRouter } from "next/navigation";
-import { FeedBackLoading } from "@/components/ui/feedback/FeedBackLoading";
-import { isUndefined } from "@/shared/isType";
-import { FeedBackError } from "@/components/ui/feedback/FeedBackError";
 import { Checkbox } from "@/components/ui/forms/Checkbox";
-import { Select, SelectOption } from "@/components/ui/forms/Select";
+import { Select } from "@/components/ui/forms/Select";
 import { Gender } from "@prisma/client";
 import { genderOptions } from "@/shared/pickerOptions";
 import { format as formatDate } from "date-fns";
@@ -27,18 +23,22 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/hooks/api/useAuth";
 import { CONSTANTS } from "@/shared/constants";
+import { Switch } from "@/components/ui/forms/Switch";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { showAlert } = useAlertModal();
   const { loggedUser: currentFormUserData } = useAuth();
 
-  const { updateUser, isSubmitingUser } = useMutateUser();
+  const { updateMe, isSubmitingUserMe } = useMutateMe();
 
   const {
     control: userFormControl,
     reset: resetUserForm,
     setError: setUserError,
+    getValues: getUserFormValues,
+    setValue: setUserFormValue,
+    watch: watchUserForm,
     handleSubmit,
     formState,
   } = useForm<IUserForm>({
@@ -48,26 +48,31 @@ export default function ProfilePage() {
       email: "",
       dateOfBirth: "",
       genderOption: null,
+      currentPassword: "",
       password: "",
       confirmPassword: "",
-      isAdmin: false,
-      isTeacher: false,
+      showEditPassord: false,
     },
     mode: "onTouched",
-    resolver: zodResolver(userFormSchema),
+    resolver: zodResolver(updateMeFormSchema),
   });
 
-  //   const {
-  //     isLoadingUser,
-  //     userError,
-  //     refetchUser,
-  //     user: currentFormUserData,
-  //   } = useGetUser(userId);
+  const [showEditPassord, setShowEditPassord] = useState(false);
 
-  //   const isLoadingForm = useMemo(
-  //     () => isEditUser && isLoadingUser,
-  //     [isEditUser, isLoadingUser]
-  //   );
+  useEffect(() => {
+    const subscription = watchUserForm((value, { name }) => {
+      if (name === "showEditPassord") {
+        const showEditPassordValue = Boolean(value.showEditPassord);
+        if (!showEditPassordValue) {
+          setUserFormValue("currentPassword", "", { shouldValidate: true });
+          setUserFormValue("password", "", { shouldValidate: true });
+          setUserFormValue("confirmPassword", "", { shouldValidate: true });
+        }
+        setShowEditPassord(showEditPassordValue);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watchUserForm, setUserFormValue]);
 
   useEffect(() => {
     if (currentFormUserData) {
@@ -85,7 +90,10 @@ export default function ProfilePage() {
           label: GenderPtBr?.[currentFormUserData?.gender as Gender],
           value: currentFormUserData?.gender,
         },
-
+        showEditPassord: false,
+        currentPassword: "",
+        password: "",
+        confirmPassword: "",
         isAdmin: currentFormUserData?.roles?.includes("ADMIN"),
         isTeacher: currentFormUserData?.roles?.includes("TEACHER"),
         isEditUser: true,
@@ -95,24 +103,22 @@ export default function ProfilePage() {
 
   const handleUserDataForm = useCallback(({ ...userDataForm }: IUserForm) => {
     console.log({ userDataForm });
-    // userDataForm.roles = userDataForm?.userRolesOptions?.map(
-    //   (role) => role.value
-    // ) as UserRolesNamesType[];
     userDataForm.gender = userDataForm.genderOption?.value as Gender;
-    delete userDataForm?.password;
+    delete userDataForm.id;
     delete (userDataForm as any)?.email;
-
+    delete (userDataForm as any)?.genderOption;
+    delete userDataForm?.password;
     delete userDataForm?.confirmPassword;
     delete userDataForm?.isEditUser;
-    delete userDataForm?.genderOption;
-
+    delete userDataForm.isAdmin;
+    delete userDataForm.isTeacher;
     return userDataForm;
   }, []);
 
   const handleSubmitUser = useCallback(
     (userDataForm: IUserForm) => {
       const onSuccess = () => {
-        toast(`Usuário editado com sucesso!`);
+        toast.success(`Perfil editado com sucesso!`);
         // router.push("/admin/users");
       };
       const onError = (error: any) => {
@@ -122,7 +128,7 @@ export default function ProfilePage() {
           });
         } else {
           showAlert({
-            title: `Erro ao "editar" usuário`,
+            title: `Erro ao editar perfil`,
             description: handleErrorMessage(error),
             variant: "danger",
           });
@@ -130,9 +136,9 @@ export default function ProfilePage() {
       };
       console.log({ handleSubmitUser: userDataForm });
       const handledUserDataForm = handleUserDataForm(userDataForm);
-      updateUser(handledUserDataForm, { onSuccess, onError });
+      updateMe(handledUserDataForm, { onSuccess, onError });
     },
-    [updateUser, showAlert, handleUserDataForm, setUserError]
+    [updateMe, showAlert, handleUserDataForm, setUserError]
   );
 
   const handleFormContent = useMemo(() => {
@@ -216,9 +222,72 @@ export default function ProfilePage() {
               );
             }}
           />
-
-          {/* {!isEditUser && (
+          <div className="flex items-end gap-4 sm:gap-6 col-span-12">
+            <Controller
+              name="isTeacher"
+              control={userFormControl}
+              render={({ field: { value, onChange, ...restField } }) => (
+                <Checkbox
+                  {...restField}
+                  id={restField.name}
+                  disabled
+                  label="É Professor?"
+                  onCheckedChange={onChange}
+                  checked={value}
+                />
+              )}
+            />
+            <Controller
+              name="isAdmin"
+              control={userFormControl}
+              render={({ field: { value, onChange, ...restField } }) => (
+                <Checkbox
+                  {...restField}
+                  id={restField.name}
+                  disabled
+                  label="É Administrador?"
+                  onCheckedChange={onChange}
+                  checked={value}
+                />
+              )}
+            />
+          </div>
+          <div className="flex col-span-12">
+            <Controller
+              name="showEditPassord"
+              control={userFormControl}
+              render={({ field: { value, onChange, ...restField } }) => {
+                console.log({ value });
+                return (
+                  <Switch
+                    {...restField}
+                    formControlClassName="mt-8 mb-4"
+                    id={restField.name}
+                    label="Editar Senha?"
+                    onCheckedChange={onChange}
+                    checked={value}
+                  />
+                );
+              }}
+            />
+          </div>
+          {showEditPassord && (
             <>
+              <Controller
+                name="currentPassword"
+                control={userFormControl}
+                render={({ field, fieldState }) => (
+                  <Input
+                    formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
+                    required
+                    label="Senha atual"
+                    placeholder="********"
+                    type="password"
+                    error={fieldState?.error?.message}
+                    {...field}
+                  />
+                )}
+              />
               <Controller
                 name="password"
                 control={userFormControl}
@@ -226,7 +295,7 @@ export default function ProfilePage() {
                   <Input
                     formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
                     required
-                    label="Senha"
+                    label="Nova senha"
                     placeholder="********"
                     type="password"
                     error={fieldState?.error?.message}
@@ -241,7 +310,7 @@ export default function ProfilePage() {
                   <Input
                     formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
                     required
-                    label="Confirmar senha"
+                    label="Confirmação da nova senha"
                     placeholder="********"
                     type="password"
                     error={fieldState?.error?.message}
@@ -250,43 +319,13 @@ export default function ProfilePage() {
                 )}
               />
             </>
-          )} */}
-          <div className="flex items-end gap-4 sm:gap-6 col-span-12">
-            <Controller
-              name="isTeacher"
-              control={userFormControl}
-              render={({ field: { value, onChange, ...restField } }) => (
-                <Checkbox
-                  {...restField}
-                  id={restField.name}
-                  disabled
-                  label="É Professor?"
-                  onCheckedChange={(checked) => onChange(checked)}
-                  checked={value}
-                />
-              )}
-            />
-            <Controller
-              name="isAdmin"
-              control={userFormControl}
-              render={({ field: { value, onChange, ...restField } }) => (
-                <Checkbox
-                  {...restField}
-                  id={restField.name}
-                  disabled
-                  label="É Administrador?"
-                  onCheckedChange={(checked) => onChange(checked)}
-                  checked={value}
-                />
-              )}
-            />
-          </div>
+          )}
         </div>
         <Button
           type="submit"
           className="ml-auto"
           disabled={!formState.isDirty}
-          isLoading={isSubmitingUser}
+          isLoading={isSubmitingUserMe}
         >
           Editar
         </Button>
@@ -295,7 +334,8 @@ export default function ProfilePage() {
   }, [
     userFormControl,
     formState.isDirty,
-    isSubmitingUser,
+    isSubmitingUserMe,
+    showEditPassord,
     handleSubmit,
     handleSubmitUser,
   ]);

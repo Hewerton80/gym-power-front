@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { verifyJWT } from "@/lib/auth";
 import { getUserWithComputedFields } from "@/types/User";
 import { CONSTANTS } from "@/shared/constants";
-import { createUserSchema } from "@/lib/apiZodSchemas/userSchemas";
+import { updateMeSchema } from "@/lib/apiZodSchemas/userSchemas";
 import { Prisma } from "@prisma/client";
 import { handleZodValidationError } from "@/lib/zodHelpers";
 
@@ -44,13 +44,11 @@ export async function PATCH(request: NextRequest) {
 
   let userDateToCrate = {};
   try {
-    userDateToCrate = createUserSchema.parse({
+    userDateToCrate = updateMeSchema.parse({
       name: userDate?.name,
       gender: userDate?.gender,
       dateOfBirth: userDate?.dateOfBirth,
       password: userDate?.password,
-      isAdmin: userDate?.isAdmin,
-      isTeacher: userDate?.isTeacher,
     });
   } catch (error: any) {
     return NextResponse.json(handleZodValidationError(error), { status: 400 });
