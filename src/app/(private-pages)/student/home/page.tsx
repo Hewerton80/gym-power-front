@@ -12,7 +12,7 @@ import {
   IColmunDataTable,
   IRowDataTable,
 } from "@/components/ui/dataDisplay/DataTable";
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { statusTrainingBadge } from "@/shared/statusTrainingBadge";
 import { useAuth } from "@/hooks/api/useAuth";
@@ -21,8 +21,13 @@ import { TrainingCard } from "@/components/ui/cards/TrainingCard";
 import { isUndefined } from "@/shared/isType";
 import { FeedBackError } from "@/components/ui/feedback/FeedBackError";
 import { FeedBackLoading } from "@/components/ui/feedback/FeedBackLoading";
+import { Callout } from "@/components/ui/feedback/Callout";
+import { useAlertModal } from "@/hooks/utils/useAlertModal";
+import { useRouter } from "next/navigation";
 
 export default function StudentPage() {
+  const router = useRouter();
+  const { showAlert } = useAlertModal();
   const { loggedUser } = useAuth();
   const { trainings, isloadingTrainings, trainingsError, refetchTrainings } =
     useGetMyTrainings();
@@ -105,6 +110,27 @@ export default function StudentPage() {
   // useEffect(() => {
   //   console.log({ trainings });
   // }, [trainings]);
+  const goToProfilePage = useCallback(() => {
+    router.push("/profile");
+  }, [router]);
+
+  useEffect(() => {
+    if (!loggedUser?.heightInMt || !loggedUser?.weightInKg) {
+      showAlert({
+        title: "Quase lá! ✨ ",
+        description:
+          "Por favor, complete seus dados para que possamos gerar planos de treino adequados a você. 💪",
+        confirmButtonText: "Ok",
+        onClickConfirmButton: goToProfilePage,
+        onClose: goToProfilePage,
+      });
+    }
+  }, [
+    loggedUser?.heightInMt,
+    loggedUser?.weightInKg,
+    goToProfilePage,
+    showAlert,
+  ]);
 
   const handleTrainingsContent = useMemo(() => {
     if (trainingsError) {
@@ -116,6 +142,11 @@ export default function StudentPage() {
     const hasSomeTrainingInProgress = trainings?.some(
       (training) => training?.isInProgress
     );
+    if (!trainings?.length) {
+      return (
+        <Callout variant="info">Não há plano de treino cadastrado</Callout>
+      );
+    }
     return trainings?.map((training) => (
       <TrainingCard
         hideStartTrainingButton={hasSomeTrainingInProgress}
@@ -130,14 +161,18 @@ export default function StudentPage() {
       <WidgetCard
         className="col-span-6"
         title="Altura"
-        description={`${loggedUser?.heightInMt}m`}
+        description={
+          loggedUser?.heightInMt ? `${loggedUser?.heightInMt}m` : "-"
+        }
         icon={<VscSymbolRuler />}
       />
       <WidgetCard
         className="col-span-6"
         variant="info"
         title="Peso"
-        description={`${loggedUser?.weightInKg}kg`}
+        description={
+          loggedUser?.weightInKg ? `${loggedUser?.weightInKg}kg` : "-"
+        }
         icon={<FaWeight />}
       />
       <Card.Root className="col-span-12">

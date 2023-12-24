@@ -49,6 +49,8 @@ export default function ProfilePage() {
       email: "",
       dateOfBirth: "",
       genderOption: null,
+      heightInMt: 0,
+      weightInKg: 0,
       currentPassword: "",
       password: "",
       confirmPassword: "",
@@ -101,6 +103,12 @@ export default function ProfilePage() {
           label: GenderPtBr?.[currentFormUserData?.gender as Gender],
           value: currentFormUserData?.gender,
         },
+        heightInMt: currentFormUserData?.heightInMt
+          ? currentFormUserData?.heightInMt
+          : 0,
+        weightInKg: currentFormUserData?.weightInKg
+          ? currentFormUserData?.weightInKg
+          : 0,
         showEditPassord: false,
         currentPassword: "",
         password: "",
@@ -140,6 +148,8 @@ export default function ProfilePage() {
           name: userDataForm.name,
           gender: userDataForm?.genderOption?.value as Gender,
           dateOfBirth: userDataForm.dateOfBirth,
+          heightInMt: userDataForm.heightInMt,
+          weightInKg: userDataForm.weightInKg,
         });
       };
       const onError = (error: any) => {
@@ -228,7 +238,6 @@ export default function ProfilePage() {
           <Controller
             name="genderOption"
             control={userFormControl}
-            // disabled={isEditUser}
             render={({
               field: { onChange, value, ...restField },
               fieldState,
@@ -248,6 +257,46 @@ export default function ProfilePage() {
                 />
               );
             }}
+          />
+          <Controller
+            control={userFormControl}
+            name="heightInMt"
+            render={({
+              field: { value, onChange, ...restField },
+              fieldState,
+            }) => (
+              <Input
+                formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
+                value={value === 0 ? "" : String(value)}
+                step={0.01}
+                onChange={(e) => onChange(Number(e.target.value))}
+                required
+                label="Altura (m)"
+                error={fieldState.error?.message}
+                type="number"
+                {...restField}
+              />
+            )}
+          />
+          <Controller
+            control={userFormControl}
+            name="weightInKg"
+            render={({
+              field: { value, onChange, ...restField },
+              fieldState,
+            }) => (
+              <Input
+                formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
+                value={value === 0 ? "" : String(value)}
+                step={0.1}
+                onChange={(e) => onChange(Number(e.target.value))}
+                required
+                label="Peso (kg)"
+                error={fieldState.error?.message}
+                type="number"
+                {...restField}
+              />
+            )}
           />
           <div className="flex items-end gap-4 sm:gap-6 col-span-12">
             <Controller
@@ -300,20 +349,17 @@ export default function ProfilePage() {
               <Controller
                 name="currentPassword"
                 control={userFormControl}
-                render={({ field, fieldState }) => {
-                  console.log({ fieldStateError: fieldState?.error?.message });
-                  return (
-                    <Input
-                      formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
-                      required
-                      label="Senha atual"
-                      placeholder="********"
-                      type="password"
-                      error={fieldState?.error?.message}
-                      {...field}
-                    />
-                  );
-                }}
+                render={({ field, fieldState }) => (
+                  <Input
+                    formControlClassName="col-span-12 md:col-span-6 xl:col-span-4"
+                    required
+                    label="Senha atual"
+                    placeholder="********"
+                    type="password"
+                    error={fieldState?.error?.message}
+                    {...field}
+                  />
+                )}
               />
               <Controller
                 name="password"

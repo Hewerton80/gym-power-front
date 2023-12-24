@@ -1,7 +1,72 @@
-import { useContext } from "react";
+import { useCallback, useContext, useMemo, useState } from "react";
 import { AlertContext, IAlertContext } from "@/contexts/alertContext";
+import {
+  AlertArgs,
+  alertInitialValues,
+  useAlertModalStore,
+} from "@/stores/useAlertModalStore";
 
 export function useAlertModal(): Omit<IAlertContext, "alertArgs"> {
   const { showAlert, closeAlert } = useContext(AlertContext);
+  // const { alertArgs: alertModalValues, setAlertArgs: setAlertModalValues } =
+  //   useAlertModalStore();
+  // const [isSubmiting, setIsSubmiting] = useState(false);
+  // const [show, setShow] = useState(false);
+
+  // const {
+  //   onClose,
+  //   onClickCancelButton,
+  //   onClickConfirmButton,
+  //   isAsync,
+  //   ...restAlertModalValues
+  // } = useMemo(() => alertModalValues, [alertModalValues]);
+
+  // const showAlert = useCallback(
+  //   (alertModalProps: AlertArgs) => {
+  //     setShow(true);
+  //     setAlertModalValues(alertModalProps);
+  //   },
+  //   [setAlertModalValues]
+  // );
+
+  // const closeAlert = useCallback(() => {
+  //   console.log("closeAlert");
+  //   setShow(false);
+  //   setIsSubmiting(false);
+  //   setAlertModalValues(alertInitialValues);
+  // }, [setAlertModalValues]);
+
+  // const handleCloseAlert = useCallback(() => {
+  //   console.log("handleCloseAlert");
+  //   closeAlert();
+  //   onClose?.();
+  // }, [closeAlert, onClose]);
+
+  // const handleClickCancelButton = useCallback(() => {
+  //   handleCloseAlert();
+  //   onClickCancelButton?.();
+  // }, [handleCloseAlert, onClickCancelButton]);
+
+  // const handleClickConfirmButton = useCallback(() => {
+  //   if (isAsync) {
+  //     setIsSubmiting(true);
+  //   } else {
+  //     handleCloseAlert();
+  //   }
+  //   onClickConfirmButton?.();
+  // }, [isAsync, onClickConfirmButton, handleCloseAlert]);
+
+  // return {
+  //   showAlert,
+  //   closeAlert,
+  //   alertArgs: {
+  //     show,
+  //     isSubmiting,
+  //     onClose: handleCloseAlert,
+  //     onClickCancelButton: handleClickCancelButton,
+  //     onClickConfirmButton: handleClickConfirmButton,
+  //     ...restAlertModalValues,
+  //   },
+  // };
   return { showAlert, closeAlert };
 }

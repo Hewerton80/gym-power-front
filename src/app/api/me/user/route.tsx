@@ -50,6 +50,8 @@ export async function PATCH(request: NextRequest) {
       name: userDate?.name,
       gender: userDate?.gender,
       dateOfBirth: userDate?.dateOfBirth,
+      weightInKg: userDate?.weightInKg,
+      heightInMt: userDate?.heightInMt,
       currentPassword: userDate?.currentPassword,
       password: userDate?.password,
     });

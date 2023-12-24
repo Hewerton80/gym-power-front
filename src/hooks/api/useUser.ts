@@ -60,7 +60,6 @@ const baseUserFormSchema = z.object({
     )
     .optional(),
   isEditUser: z.boolean().optional(),
-  showEditPassord: z.boolean().optional(),
 });
 
 export const createFormSchema = baseUserFormSchema
@@ -80,6 +79,17 @@ export const createFormSchema = baseUserFormSchema
 export const updateUserFormSchema = baseUserFormSchema;
 
 export const updateMeFormSchema = baseUserFormSchema
+  .merge(
+    z.object({
+      showEditPassord: z.boolean().optional(),
+      heightInMt: z
+        .number()
+        .min(0.1, VALIDATION_ERROR_MESSAGES.MUST_BE_GREATER_THAN_ZERO),
+      weightInKg: z
+        .number()
+        .min(0.1, VALIDATION_ERROR_MESSAGES.MUST_BE_GREATER_THAN_ZERO),
+    })
+  )
   .refine(
     ({ currentPassword, showEditPassord }) =>
       showEditPassord ? Boolean(String(currentPassword)?.trim()) : true,
@@ -113,12 +123,20 @@ export const updateMeFormSchema = baseUserFormSchema
     }
   );
 
-export interface IUserForm extends z.infer<typeof baseUserFormSchema> {
-  gender?: Gender;
-  // isEditUser?: boolean;
-  // confirmPassword?: string;
-  // genderOption?: SingleValue<SelectOption> | null;
-}
+type InferBaseUserFormSchema = z.infer<typeof baseUserFormSchema>;
+type InferUpdateUserFormSchema = z.infer<typeof updateUserFormSchema>;
+type InferUpdateMeFormSchema = z.infer<typeof updateMeFormSchema>;
+
+export type IUserForm = InferBaseUserFormSchema &
+  InferUpdateUserFormSchema &
+  InferUpdateMeFormSchema & {
+    gender?: Gender;
+  };
+
+// export interface IUserForm extends z.infer<typeof baseUserFormSchema> {
+//   gender?: Gender;
+
+// }
 
 export function useGetMe() {
   const { apiBase } = useAxios();

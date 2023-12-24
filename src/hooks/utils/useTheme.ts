@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { CONSTANTS } from "@/shared/constants";
+
 export function useTheme() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
 

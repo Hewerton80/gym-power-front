@@ -5,7 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { CONSTANTS } from "@/shared/constants";
 
-const { REQUIRED_FIELDS, MUST_BE_NUMBER, MUST_BE_POSITIVE, MUST_BE_ARRAY } =
+const { REQUIRED_FIELDS, MUST_BE_POSITIVE } =
   CONSTANTS.VALIDATION_ERROR_MESSAGES;
 
 export const trainingSchema = z.object({

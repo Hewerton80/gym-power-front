@@ -13,6 +13,8 @@ export const CONSTANTS = {
     MUST_BE_VALID: "Deve ser um valor válido",
     MUST_BE_NUMBER: "Deve ser um número",
     MUST_BE_POSITIVE: "Deve ser um número positivo",
+    // deve ser maior que 0
+    MUST_BE_GREATER_THAN_ZERO: "Deve ser maior que 0",
     MUST_BE_ARRAY: "Deve ser um array",
   },
   API_RESPONSE_MENSSAGES: {

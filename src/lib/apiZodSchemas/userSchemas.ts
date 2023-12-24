@@ -11,7 +11,7 @@ const {
   PASSWORD_MIN_LENGTH,
   MUST_BE_VALID,
   MUST_BE_NUMBER,
-  MUST_BE_POSITIVE,
+  MUST_BE_GREATER_THAN_ZERO,
 } = CONSTANTS.VALIDATION_ERROR_MESSAGES;
 
 export const createUserSchema = z.object({
@@ -57,14 +57,14 @@ export const updateMeSchema = createUserSchema
           required_error: REQUIRED_FIELDS,
           invalid_type_error: MUST_BE_NUMBER,
         })
-        .min(1, MUST_BE_POSITIVE)
+        .min(0.1, MUST_BE_GREATER_THAN_ZERO)
         .optional(),
       weightInKg: z
         .number({
           required_error: REQUIRED_FIELDS,
           invalid_type_error: MUST_BE_NUMBER,
         })
-        .min(1, MUST_BE_POSITIVE)
+        .min(0.1, MUST_BE_GREATER_THAN_ZERO)
         .optional(),
     })
   )
