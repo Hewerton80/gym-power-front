@@ -3,7 +3,11 @@ import { Poppins } from "next/font/google";
 import { Providers } from "@/contexts";
 import { AlertModal } from "@/components/ui/overlay/AlertModal";
 import { Toast } from "@/components/ui/feedback/Toast";
+import ptBR from "date-fns/locale/pt-BR";
+import setDefaultOptions from "date-fns/setDefaultOptions";
 import "./globals.css";
+
+setDefaultOptions({ locale: ptBR });
 
 const poppins = Poppins({
   subsets: ["latin"],

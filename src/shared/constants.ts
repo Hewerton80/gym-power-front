@@ -36,6 +36,8 @@ export const CONSTANTS = {
     STUDENT_ALREADY_HAS_TRAINING_PLAN:
       "O aluno já possui um plano de treino ativo",
     PLAN_NOT_FOUND: "Plano de treino não encontrado",
+    // invalid password
+    INVALID_PASSWORD: "Senha inválida",
   },
   COOKIES_KEYS: {
     TOKEN: "TOKEN",

@@ -6,6 +6,8 @@ import { CONSTANTS } from "@/shared/constants";
 import { updateMeSchema } from "@/lib/apiZodSchemas/userSchemas";
 import { Prisma } from "@prisma/client";
 import { handleZodValidationError } from "@/lib/zodHelpers";
+import { z } from "zod";
+import { compareSync } from "bcrypt";
 
 const { INTERNAL_SERVER_ERROR, USER_NOT_FOUND } =
   CONSTANTS.API_RESPONSE_MENSSAGES;
@@ -40,24 +42,41 @@ export async function PATCH(request: NextRequest) {
 
   //   console.log({ data: await request.json() });
 
-  const userDate = (await request.json()) as Prisma.UserUpdateInput;
+  const userDate = (await request.json()) as z.infer<typeof updateMeSchema>;
 
-  let userDateToCrate = {};
+  let userDateToUpdate: z.infer<typeof updateMeSchema> = {};
   try {
-    userDateToCrate = updateMeSchema.parse({
+    userDateToUpdate = updateMeSchema.parse({
       name: userDate?.name,
       gender: userDate?.gender,
       dateOfBirth: userDate?.dateOfBirth,
+      currentPassword: userDate?.currentPassword,
       password: userDate?.password,
     });
   } catch (error: any) {
     return NextResponse.json(handleZodValidationError(error), { status: 400 });
   }
+  // console.log({ userDateToUpdate });
 
+  const foundUser = await prisma.user.findUnique({ where: { id } });
+
+  if (userDateToUpdate?.currentPassword) {
+    const passwordIsMatch = foundUser?.password
+      ? compareSync(userDateToUpdate?.currentPassword, foundUser?.password)
+      : false;
+    if (!foundUser || !passwordIsMatch) {
+      return NextResponse.json(
+        { message: CONSTANTS.API_RESPONSE_MENSSAGES.INVALID_PASSWORD },
+        { status: 409 }
+      );
+    }
+  }
+
+  delete userDateToUpdate?.currentPassword;
   try {
     await prisma.user.update({
       where: { id },
-      data: userDateToCrate as Prisma.UserUpdateInput,
+      data: userDateToUpdate as Prisma.UserUpdateInput,
     });
     return NextResponse.json({ message: "ok" }, { status: 201 });
   } catch (error: any) {

@@ -188,7 +188,7 @@ export default function UsersPage() {
             currentPage: users?.currentPage || 1,
             totalPages: users?.lastPage || 1,
             perPage: users?.perPage || 25,
-            totalRecords: users?.docs?.length || 1,
+            totalRecords: users?.total || 1,
             onChangePage: goToPage,
           }}
         />

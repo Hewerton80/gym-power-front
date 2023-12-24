@@ -1,14 +1,11 @@
 import { IGetStudentsQueryParams, UserWithComputedFields } from "@/types/User";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { use, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAxios } from "../utils/useAxios";
-import { Gender, Prisma } from "@prisma/client";
-import { SingleValue } from "react-select";
-import { SelectOption } from "@/components/ui/forms/Select";
+import { Gender } from "@prisma/client";
 import { REGEX } from "@/shared/regex";
 import { isValid as isValidDate } from "date-fns";
 import { CONSTANTS } from "@/shared/constants";
-import { ToZodObjectSchema } from "@/lib/zodHelpers";
 import { z } from "zod";
 import { IPaginatedDocs } from "@/lib/prismaHelpers";
 import { orderByUserOptions } from "@/shared/pickerOptions";
@@ -25,15 +22,43 @@ const baseUserFormSchema = z.object({
       (dateOfBirth) =>
         dateOfBirth.match(REGEX.isoDate) && isValidDate(new Date(dateOfBirth)),
       VALIDATION_ERROR_MESSAGES.INVALID_DATE
-    ),
+    )
+    .transform((dateOfBirth) => `${dateOfBirth} 00:00:00`),
   genderOption: z.object({ label: z.string(), value: z.string() }).nullable(),
-
   id: z.string().optional(),
   isAdmin: z.boolean().optional(),
   isTeacher: z.boolean().optional(),
-  currentPassword: z.string().optional(),
-  password: z.string().optional(),
-  confirmPassword: z.string().optional(),
+  currentPassword: z
+    .string()
+    .refine(
+      (currentPassword) =>
+        Boolean(String(currentPassword)?.trim())
+          ? String(currentPassword)?.trim()?.length >= 6
+          : true,
+
+      VALIDATION_ERROR_MESSAGES.PASSWORD_MIN_LENGTH
+    )
+    .optional(),
+  password: z
+    .string()
+    .refine(
+      (password) =>
+        Boolean(String(password)?.trim())
+          ? String(password)?.trim()?.length >= 6
+          : true,
+      VALIDATION_ERROR_MESSAGES.PASSWORD_MIN_LENGTH
+    )
+    .optional(),
+  confirmPassword: z
+    .string()
+    .refine(
+      (confirmPassword) =>
+        Boolean(String(confirmPassword)?.trim())
+          ? String(confirmPassword)?.trim()?.length >= 6
+          : true,
+      VALIDATION_ERROR_MESSAGES.PASSWORD_MIN_LENGTH
+    )
+    .optional(),
   isEditUser: z.boolean().optional(),
   showEditPassord: z.boolean().optional(),
 });
@@ -53,6 +78,7 @@ export const createFormSchema = baseUserFormSchema
   });
 
 export const updateUserFormSchema = baseUserFormSchema;
+
 export const updateMeFormSchema = baseUserFormSchema
   .refine(
     ({ currentPassword, showEditPassord }) =>
@@ -136,7 +162,6 @@ export function useGetUsers() {
 
   useEffect(() => {
     refetch();
-    console.log({ usersQueryParams });
   }, [usersQueryParams, refetch]);
 
   const refetchUsers = useCallback(

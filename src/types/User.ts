@@ -21,11 +21,13 @@ export const GenderPtBr: GenderMap = {
 
 export type UserRolesNamesType = keyof typeof UserRole;
 
-export interface UserWithComputedFields extends Partial<User> {
+export interface UserWithComputedFields
+  extends Partial<Omit<User, "dateOfBirth">> {
   title?: string;
   age?: number;
   trainingPlan?: TrainingPlanWithComputedFields;
   roles: UserRolesNamesType[];
+  dateOfBirth?: Date | string;
 }
 
 export interface IGetStudentsQueryParams extends IPaginateArgs {

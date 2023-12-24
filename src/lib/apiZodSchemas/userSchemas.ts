@@ -1,8 +1,7 @@
-import { Gender, Prisma } from "@prisma/client";
-import { ToZodObjectSchema } from "../zodHelpers";
+import { Gender } from "@prisma/client";
 import { z } from "zod";
 import { CONSTANTS } from "@/shared/constants";
-import { isValid as isValidDate, startOfDay } from "date-fns";
+import { isValid as isValidDate } from "date-fns";
 import { hashSync } from "bcrypt";
 
 const {
@@ -11,11 +10,11 @@ const {
   INVALID_DATE,
   PASSWORD_MIN_LENGTH,
   MUST_BE_VALID,
+  MUST_BE_NUMBER,
+  MUST_BE_POSITIVE,
 } = CONSTANTS.VALIDATION_ERROR_MESSAGES;
 
-export const createUserSchema = z.object<
-  ToZodObjectSchema<Prisma.UserCreateInput>
->({
+export const createUserSchema = z.object({
   name: z
     .string({ required_error: REQUIRED_FIELDS })
     .min(1, REQUIRED_FIELDS)
@@ -38,7 +37,7 @@ export const createUserSchema = z.object<
   dateOfBirth: z
     .string({ required_error: REQUIRED_FIELDS })
     .refine((dateOfBirth) => isValidDate(new Date(dateOfBirth)), INVALID_DATE)
-    .transform((dateOfBirth) => startOfDay(new Date(dateOfBirth))),
+    .transform((dateOfBirth) => new Date(dateOfBirth)),
   isAdmin: z.boolean({ required_error: REQUIRED_FIELDS }),
   isTeacher: z.boolean({ required_error: REQUIRED_FIELDS }),
 });
@@ -49,4 +48,39 @@ export const updateUserSchema = createUserSchema
 
 export const updateMeSchema = createUserSchema
   .omit({ email: true, isAdmin: true, isTeacher: true })
-  .partial();
+  .partial()
+  .merge(
+    z.object({
+      currentPassword: z.string().optional(),
+      heightInMt: z
+        .number({
+          required_error: REQUIRED_FIELDS,
+          invalid_type_error: MUST_BE_NUMBER,
+        })
+        .min(1, MUST_BE_POSITIVE)
+        .optional(),
+      weightInKg: z
+        .number({
+          required_error: REQUIRED_FIELDS,
+          invalid_type_error: MUST_BE_NUMBER,
+        })
+        .min(1, MUST_BE_POSITIVE)
+        .optional(),
+    })
+  )
+  .refine(
+    ({ password, currentPassword }) =>
+      password && !currentPassword ? false : true,
+    {
+      path: ["currentPassword"],
+      message: REQUIRED_FIELDS,
+    }
+  )
+  .refine(
+    ({ password, currentPassword }) =>
+      !password && currentPassword ? false : true,
+    {
+      path: ["password"],
+      message: REQUIRED_FIELDS,
+    }
+  );
