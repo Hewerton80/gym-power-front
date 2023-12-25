@@ -58,14 +58,14 @@ export function PrivatePagesTamplate({ children }: IPrivatePagesTamplateProps) {
     return (
       <aside
         className={twMerge(
-          "bg-card dark:bg-dark-card shadow-sm",
+          "bg-card dark:bg-dark-card/70 shadow-sm",
           "duration-100 ease-linear overflow-hidden"
         )}
       >
         <Resizable
           className={twMerge(
             "flex flex-col duration-100 ease-linear overflow-hidden",
-            " border-card dark:border-dark-card"
+            "border-card dark:border-dark-card/70"
           )}
           enable={{ right: !showOnlyIcons }}
           size={{ width: showOnlyIcons ? 80 : sideBarWidth, height: "100vh" }}
@@ -77,7 +77,7 @@ export function PrivatePagesTamplate({ children }: IPrivatePagesTamplateProps) {
           }}
           handleWrapperClass={twMerge(
             "[&>div]:duration-100 [&>div]:ease-linear",
-            "[&>div]:border-r-8 [&>div]:border-r-white [&>div]:dark:border-r-dark-card",
+            "[&>div]:border-r-8 [&>div]:border-r-card [&>div]:dark:border-r-dark-card/70",
             "[&>div]:hover:border-r-primary",
             resizingSideBar && "[&>div]:border-r-primary"
           )}
@@ -167,7 +167,13 @@ export function PrivatePagesTamplate({ children }: IPrivatePagesTamplateProps) {
           onClick={() => setShowSideBar(false)}
         />
       )}
-      <div className="flex h-screen overflow-y-hidden">
+      <div
+        className={twMerge(
+          "flex h-screen overflow-y-hidden",
+          // "bg-[url('/images/bg.svg')]",
+          "dark:bg-[url('/images/bg-dark.svg')] bg-cover bg-no-repeat"
+        )}
+      >
         <Slot className="hidden md:flex">{sideBarElement}</Slot>
         <Slot
           className={twMerge(
@@ -178,7 +184,7 @@ export function PrivatePagesTamplate({ children }: IPrivatePagesTamplateProps) {
           {sideBarElement}
         </Slot>
         <div className="flex flex-col flex-1 overflow-x-hidden">
-          <header className="bg-card dark:bg-dark-card h-20 shadow-sm">
+          <header className="bg-card dark:bg-dark-card/70 h-20 shadow-sm">
             <div className="flex items-center h-full px-4 sm:px-8">
               <Slot
                 className="flex md:hidden"
@@ -208,7 +214,7 @@ export function PrivatePagesTamplate({ children }: IPrivatePagesTamplateProps) {
               </div>
             </div>
           </header>
-          <div className="h-full p-4 sm:p-8 overflow-y-auto flex-1">
+          <div className={twMerge("h-full p-4 sm:p-8 overflow-y-auto flex-1")}>
             {children}
           </div>
         </div>

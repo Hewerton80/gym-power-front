@@ -35,10 +35,15 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     return <></>;
   }
 
+  if (!isLogged) {
+    return <SplashScreen />;
+  }
+
   return (
     <>
-      <PrivatePagesTamplate>{children}</PrivatePagesTamplate>
-      {!isLogged && <SplashScreen />}
+      <PrivatePagesTamplate>
+        {isLogged ? children : <SplashScreen />}
+      </PrivatePagesTamplate>
     </>
   );
 }

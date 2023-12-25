@@ -1,5 +1,4 @@
-import { useCallback, useContext, useMemo, useState } from "react";
-import { AlertContext, IAlertContext } from "@/contexts/alertContext";
+import { useCallback, useMemo } from "react";
 import {
   AlertArgs,
   alertInitialValues,
@@ -7,7 +6,7 @@ import {
 } from "@/stores/useAlertModalStore";
 import { useShallow } from "zustand/react/shallow";
 
-export function useAlertModal(): Omit<IAlertContext, "alertArgs"> {
+export function useAlertModal() {
   // const { showAlert, closeAlert } = useContext(AlertContext);
   const {
     alertModalValues,
@@ -43,7 +42,6 @@ export function useAlertModal(): Omit<IAlertContext, "alertArgs"> {
   // }, [setAlertModalValues]);
 
   const handleCloseAlert = useCallback(() => {
-    console.log("handleCloseAlert");
     closeAlert();
     onClose?.();
   }, [closeAlert, onClose]);

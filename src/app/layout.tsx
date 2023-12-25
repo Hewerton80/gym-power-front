@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
-import { Providers } from "@/contexts";
+import { Providers } from "@/providers";
 import { AlertModal } from "@/components/ui/overlay/AlertModal";
 import { Toast } from "@/components/ui/feedback/Toast";
 import ptBR from "date-fns/locale/pt-BR";
 import setDefaultOptions from "date-fns/setDefaultOptions";
 import "./globals.css";
+import { ThemeTamplate } from "@/components/templates/ThemeTamplate";
 
 setDefaultOptions({ locale: ptBR });
 
@@ -24,14 +25,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-bt">
-      <body className={poppins.className}>
-        <Providers>
-          {children}
-          <AlertModal />
-          <Toast />
-        </Providers>
-      </body>
-    </html>
+    <ThemeTamplate>
+      <html lang="pt-bt">
+        <body className={poppins.className}>
+          <Providers>
+            {children}
+            <AlertModal />
+            <Toast />
+          </Providers>
+        </body>
+      </html>
+    </ThemeTamplate>
   );
 }

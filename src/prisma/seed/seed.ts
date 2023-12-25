@@ -1,4 +1,4 @@
-import prisma from "../../src/lib/prisma";
+import prisma from "../../lib/prisma";
 import { seedExercisesAndMuscles } from "./exercises-muscles.seed";
 import { seedTrainings } from "./trainings.seed";
 import { seedUser } from "./users.seed";

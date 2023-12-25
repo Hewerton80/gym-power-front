@@ -4,8 +4,8 @@ import { Modal, ModalProps } from "@/components/ui/overlay/Modal";
 import { twMerge } from "tailwind-merge";
 import { Button, ButtonVariantStyle } from "@/components/ui/buttons/Button";
 import { isString } from "@/shared/isType";
-import { AlertContext } from "@/contexts/alertContext";
 import { Spinner } from "../../feedback/Spinner";
+import { useAlertModal } from "@/hooks/utils/useAlertModal";
 
 // type VariantsMap = {
 //   [Property in Variant]: { icon: JSX.Element };
@@ -38,6 +38,25 @@ export interface AlertModalProps
 }
 
 const AlertModal = forwardRef(() => {
+  // const {
+  //   alertArgs: {
+  //     show,
+  //     title,
+  //     description,
+  //     variant = "default",
+  //     isLoading,
+  //     isSubmiting,
+  //     confirmButtonText = "Ok",
+  //     cancelButtonText = "Voltar",
+  //     confirmButtonVariantStyle = "primary",
+  //     cancelButtonVariantStyle = "light",
+  //     showCancelButton,
+  //     onClose,
+  //     onClickConfirmButton,
+  //     onClickCancelButton,
+  //     ...restProps
+  //   },
+  // } = useContext(AlertContext);
   const {
     alertArgs: {
       show,
@@ -56,7 +75,8 @@ const AlertModal = forwardRef(() => {
       onClickCancelButton,
       ...restProps
     },
-  } = useContext(AlertContext);
+  } = useAlertModal();
+
   return (
     <Modal.Root
       show={show}

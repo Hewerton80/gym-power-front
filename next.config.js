@@ -10,7 +10,9 @@ const nextConfig = {
       },
     ];
   },
-  remotePattern: ["raw.githubusercontent.com"],
+  images: {
+    remotePatterns: [{ hostname: "raw.githubusercontent.com" }],
+  },
 };
 
 module.exports = nextConfig;

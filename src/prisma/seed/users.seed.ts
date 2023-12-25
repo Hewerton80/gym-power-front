@@ -1,9 +1,9 @@
-import prisma from "../../src/lib/prisma";
+import prisma from "../../lib/prisma";
 import { Gender } from "@prisma/client";
 import { faker } from "@faker-js/faker";
 import { hash } from "bcrypt";
-import { getRange } from "../../src/shared/getRange";
-import { getRandomRGBColor } from "../../src/shared/colors";
+import { getRange } from "../../shared/getRange";
+import { getRandomRGBColor } from "../../shared/colors";
 
 export async function seedUser() {
   const countUsers = await prisma.user.count();

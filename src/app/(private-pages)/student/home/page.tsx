@@ -115,7 +115,7 @@ export default function StudentPage() {
   }, [router]);
 
   useEffect(() => {
-    if (!loggedUser?.heightInMt || !loggedUser?.weightInKg) {
+    if ((loggedUser && !loggedUser?.heightInMt) || !loggedUser?.weightInKg) {
       showAlert({
         title: "Quase lá! ✨ ",
         description:
@@ -125,12 +125,7 @@ export default function StudentPage() {
         onClose: goToProfilePage,
       });
     }
-  }, [
-    loggedUser?.heightInMt,
-    loggedUser?.weightInKg,
-    goToProfilePage,
-    showAlert,
-  ]);
+  }, [loggedUser, goToProfilePage, showAlert]);
 
   const handleTrainingsContent = useMemo(() => {
     if (trainingsError) {
