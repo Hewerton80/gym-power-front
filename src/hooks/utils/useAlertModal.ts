@@ -5,29 +5,35 @@ import {
   alertInitialValues,
   useAlertModalStore,
 } from "@/stores/useAlertModalStore";
+import { useShallow } from "zustand/react/shallow";
 
 export function useAlertModal(): Omit<IAlertContext, "alertArgs"> {
-  const { showAlert, closeAlert } = useContext(AlertContext);
-  // const { alertArgs: alertModalValues, setAlertArgs: setAlertModalValues } =
-  //   useAlertModalStore();
+  // const { showAlert, closeAlert } = useContext(AlertContext);
+  const {
+    alertModalValues,
+    closeAlert,
+    isSubmiting,
+    setAlertModalValues,
+    setShow,
+    show,
+  } = useAlertModalStore(useShallow((state) => state));
   // const [isSubmiting, setIsSubmiting] = useState(false);
   // const [show, setShow] = useState(false);
+  const {
+    onClose,
+    onClickCancelButton,
+    onClickConfirmButton,
+    isAsync,
+    ...restAlertModalValues
+  } = useMemo(() => alertModalValues, [alertModalValues]);
 
-  // const {
-  //   onClose,
-  //   onClickCancelButton,
-  //   onClickConfirmButton,
-  //   isAsync,
-  //   ...restAlertModalValues
-  // } = useMemo(() => alertModalValues, [alertModalValues]);
-
-  // const showAlert = useCallback(
-  //   (alertModalProps: AlertArgs) => {
-  //     setShow(true);
-  //     setAlertModalValues(alertModalProps);
-  //   },
-  //   [setAlertModalValues]
-  // );
+  const showAlert = useCallback(
+    (alertModalProps: AlertArgs) => {
+      setShow(true);
+      setAlertModalValues(alertModalProps);
+    },
+    [setAlertModalValues, setShow]
+  );
 
   // const closeAlert = useCallback(() => {
   //   console.log("closeAlert");
@@ -36,37 +42,37 @@ export function useAlertModal(): Omit<IAlertContext, "alertArgs"> {
   //   setAlertModalValues(alertInitialValues);
   // }, [setAlertModalValues]);
 
-  // const handleCloseAlert = useCallback(() => {
-  //   console.log("handleCloseAlert");
-  //   closeAlert();
-  //   onClose?.();
-  // }, [closeAlert, onClose]);
+  const handleCloseAlert = useCallback(() => {
+    console.log("handleCloseAlert");
+    closeAlert();
+    onClose?.();
+  }, [closeAlert, onClose]);
 
-  // const handleClickCancelButton = useCallback(() => {
-  //   handleCloseAlert();
-  //   onClickCancelButton?.();
-  // }, [handleCloseAlert, onClickCancelButton]);
+  const handleClickCancelButton = useCallback(() => {
+    handleCloseAlert();
+    onClickCancelButton?.();
+  }, [handleCloseAlert, onClickCancelButton]);
 
-  // const handleClickConfirmButton = useCallback(() => {
-  //   if (isAsync) {
-  //     setIsSubmiting(true);
-  //   } else {
-  //     handleCloseAlert();
-  //   }
-  //   onClickConfirmButton?.();
-  // }, [isAsync, onClickConfirmButton, handleCloseAlert]);
+  const handleClickConfirmButton = useCallback(() => {
+    if (isAsync) {
+      useAlertModalStore.setState({ isSubmiting: true });
+    } else {
+      handleCloseAlert();
+    }
+    onClickConfirmButton?.();
+  }, [isAsync, onClickConfirmButton, handleCloseAlert]);
 
-  // return {
-  //   showAlert,
-  //   closeAlert,
-  //   alertArgs: {
-  //     show,
-  //     isSubmiting,
-  //     onClose: handleCloseAlert,
-  //     onClickCancelButton: handleClickCancelButton,
-  //     onClickConfirmButton: handleClickConfirmButton,
-  //     ...restAlertModalValues,
-  //   },
-  // };
-  return { showAlert, closeAlert };
+  return {
+    showAlert,
+    closeAlert,
+    alertArgs: {
+      show,
+      isSubmiting,
+      onClose: handleCloseAlert,
+      onClickCancelButton: handleClickCancelButton,
+      onClickConfirmButton: handleClickConfirmButton,
+      ...restAlertModalValues,
+    },
+  };
+  // return { showAlert, closeAlert };
 }

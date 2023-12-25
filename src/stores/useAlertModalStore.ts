@@ -20,16 +20,48 @@ export interface AlertArgs
 }
 
 interface State {
-  alertArgs: AlertArgs;
+  show: boolean;
+  alertModalValues: AlertArgs;
+  isSubmiting: boolean;
 }
 
 interface Actions {
-  setAlertArgs: (alertArgs: AlertArgs) => void;
+  // setAlertArgs: (alertArgs: AlertArgs) => void;
+  // showAlert: (alertModalProps: AlertArgs) => void
+  closeAlert: () => void;
+  setShow: (value: boolean) => void;
+  setAlertModalValues: (values: AlertArgs) => void;
 }
 
+// export const useAlertModalStore = create<State & Actions>((set) => ({
+//   alertArgs: alertInitialValues,
+//   setAlertArgs: (alertArgs: AlertArgs) => {
+//     set({ alertArgs });
+//   },
+//   showAlert: (alertModalProps: AlertArgs) => {
+//     set({isSubimiting: false, alertArgs: alertModalProps})
+//   },
+//   closeAlert: () => {
+//     set({isSubimiting: false, alertArgs: alertInitialValues})
+//   }
+// }));
+
 export const useAlertModalStore = create<State & Actions>((set) => ({
-  alertArgs: alertInitialValues,
-  setAlertArgs: (alertArgs: AlertArgs) => {
-    set({ alertArgs });
+  isSubmiting: false,
+  show: false,
+  alertModalValues: alertInitialValues,
+  setShow: (value: boolean) => {
+    set(() => ({ show: value }));
+  },
+  setAlertModalValues: (values: AlertArgs) => {
+    set(() => ({ alertModalValues: values }));
+  },
+  closeAlert: () => {
+    console.log("closeAlert");
+    set(() => ({
+      show: false,
+      isSubmiting: false,
+      alertModalValues: alertInitialValues,
+    }));
   },
 }));

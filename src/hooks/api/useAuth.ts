@@ -1,13 +1,5 @@
-"use client";
-import { AuthContext } from "@/contexts/authContext";
-import {
-  createContext,
-  ReactNode,
-  useCallback,
-  useMemo,
-  useState,
-  useContext,
-} from "react";
+import { useCallback, useMemo } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { z } from "zod";
 import { ToZodObjectSchema } from "@/lib/zodHelpers";
 import { LoginCredentials } from "@/dtos/loginCredentials";
@@ -31,55 +23,63 @@ export const loginFormSchema = z.object<ToZodObjectSchema<LoginCredentials>>({
 });
 
 export function useAuth() {
-  const authContext = useContext(AuthContext);
-  // const router = useRouter();
-  // const { apiBase } = useAxios();
-  // const { loggedUser, setContextLoggedUser } = useAuthStore();
+  const router = useRouter();
+  const { apiBase } = useAxios();
 
-  // const isLogged = useMemo(() => Boolean(loggedUser), [loggedUser]);
+  const { loggedUser, setContextLoggedUser } = useAuthStore(
+    useShallow((state) => state)
+  );
 
-  // const onLoginSuccess = useCallback(
-  //   async ({ user, token }: IResponseLogin) => {
-  //     Cookies.set(CONSTANTS.COOKIES_KEYS.TOKEN, token);
-  //     if (user?.roles?.includes("ADMIN")) {
-  //       router.replace("/admin/users");
-  //     } else if (user?.roles?.includes("TEACHER")) {
-  //       router.replace("/teacher/students");
-  //     } else {
-  //       router.replace("/student/home");
-  //     }
-  //   },
-  //   [router]
-  // );
+  const isLogged = useMemo(() => Boolean(loggedUser), [loggedUser]);
 
-  // const {
-  //   isPending: isLoging,
-  //   error: error,
-  //   mutate: login,
-  // } = useMutation({
-  //   mutationFn: (loginCrentials: LoginCredentials) =>
-  //     apiBase
-  //       .post<IResponseLogin>("/auth/login", loginCrentials)
-  //       .then((res) => res.data),
-  //   onSuccess: onLoginSuccess,
-  // });
+  const onLoginSuccess = useCallback(
+    async ({ user, token }: IResponseLogin) => {
+      Cookies.set(CONSTANTS.COOKIES_KEYS.TOKEN, token);
+      if (user?.roles?.includes("ADMIN")) {
+        router.replace("/admin/users");
+      } else if (user?.roles?.includes("TEACHER")) {
+        router.replace("/teacher/students");
+      } else {
+        router.replace("/student/home");
+      }
+    },
+    [router]
+  );
 
-  // const loginError = useMemo<any>(() => error, [error]);
+  const {
+    isPending: isLoging,
+    error: error,
+    mutate: login,
+  } = useMutation({
+    mutationFn: (loginCrentials: LoginCredentials) =>
+      apiBase
+        .post<IResponseLogin>("/auth/login", loginCrentials)
+        .then((res) => res.data),
+    onSuccess: onLoginSuccess,
+  });
 
-  // const logout = useCallback(() => {
-  //   setContextLoggedUser(null);
-  //   removeAllCookies();
-  //   router.replace("/auth/login");
-  // }, [router, setContextLoggedUser]);
+  const loginError = useMemo<any>(() => error, [error]);
 
-  // return {
-  //   loggedUser,
-  //   isLogged,
-  //   isLoging,
-  //   loginError,
-  //   handleSetContextLoggedUser: setContextLoggedUser,
-  //   login,
-  //   logout,
-  // };
-  return authContext;
+  const handleSetContextLoggedUser = useCallback(
+    (user: UserWithComputedFields | null) => {
+      setContextLoggedUser(user);
+    },
+    [setContextLoggedUser]
+  );
+
+  const logout = useCallback(() => {
+    handleSetContextLoggedUser(null);
+    removeAllCookies();
+    router.replace("/auth/login");
+  }, [router, handleSetContextLoggedUser]);
+
+  return {
+    loggedUser,
+    isLogged,
+    isLoging,
+    loginError,
+    handleSetContextLoggedUser,
+    login,
+    logout,
+  };
 }

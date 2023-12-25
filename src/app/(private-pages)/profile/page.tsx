@@ -143,14 +143,14 @@ export default function ProfilePage() {
       console.log({ userDataForm });
       const onSuccess = () => {
         toast.success(`Perfil editado com sucesso!`);
-        handleSetContextLoggedUser({
-          ...(currentFormUserData as UserWithComputedFields),
-          name: userDataForm.name,
-          gender: userDataForm?.genderOption?.value as Gender,
-          dateOfBirth: userDataForm.dateOfBirth,
-          heightInMt: userDataForm.heightInMt,
-          weightInKg: userDataForm.weightInKg,
-        });
+        // handleSetContextLoggedUser({
+        //   ...(currentFormUserData as UserWithComputedFields),
+        //   name: userDataForm.name,
+        //   gender: userDataForm?.genderOption?.value as Gender,
+        //   dateOfBirth: userDataForm.dateOfBirth,
+        //   heightInMt: userDataForm.heightInMt,
+        //   weightInKg: userDataForm.weightInKg,
+        // });
       };
       const onError = (error: any) => {
         if (error?.response?.status === 409) {

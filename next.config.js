@@ -10,9 +10,7 @@ const nextConfig = {
       },
     ];
   },
-  images: {
-    domains: ["raw.githubusercontent.com"],
-  },
+  remotePattern: ["raw.githubusercontent.com"],
 };
 
 module.exports = nextConfig;
