@@ -1,7 +1,7 @@
 import { AlertModalProps } from "@/components/ui/overlay/AlertModal";
 import { create } from "zustand";
 
-export const alertInitialValues: AlertArgs = {
+export const ALERT_INITIAL_VALUES: AlertArgs = {
   title: "",
   description: "",
   variant: "default",
@@ -34,7 +34,7 @@ interface Actions {
 export const useAlertModalStore = create<State & Actions>((set) => ({
   isSubmiting: false,
   show: false,
-  alertModalValues: alertInitialValues,
+  alertModalValues: ALERT_INITIAL_VALUES,
   setShow: (value: boolean) => {
     set(() => ({ show: value }));
   },
@@ -45,7 +45,7 @@ export const useAlertModalStore = create<State & Actions>((set) => ({
     set(() => ({
       show: false,
       isSubmiting: false,
-      alertModalValues: alertInitialValues,
+      alertModalValues: ALERT_INITIAL_VALUES,
     }));
   },
 }));

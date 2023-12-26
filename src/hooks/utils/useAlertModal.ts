@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import {
   AlertArgs,
-  alertInitialValues,
+  ALERT_INITIAL_VALUES,
   useAlertModalStore,
 } from "@/stores/useAlertModalStore";
 import { useShallow } from "zustand/react/shallow";
@@ -38,7 +38,7 @@ export function useAlertModal() {
   //   console.log("closeAlert");
   //   setShow(false);
   //   setIsSubmiting(false);
-  //   setAlertModalValues(alertInitialValues);
+  //   setAlertModalValues(ALERT_INITIAL_VALUES);
   // }, [setAlertModalValues]);
 
   const handleCloseAlert = useCallback(() => {
