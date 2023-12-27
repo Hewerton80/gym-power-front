@@ -169,7 +169,7 @@ export default function UsersPage() {
             hideCloseButton
             options={orderByUserOptions}
           />
-          <div className="ml-auto">
+          <div className="ml-auto w-full sm:w-auto">
             <Input
               value={search}
               onChange={handleChangeSearch}

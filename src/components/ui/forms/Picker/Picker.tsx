@@ -70,7 +70,7 @@ export function Picker({
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
         <Button
-          className="px-1 sm:px-2"
+          className="px-1 sm:px-2 text-sm"
           variantStyle="dark-ghost"
           rightIcon={<FaChevronDown />}
         >
