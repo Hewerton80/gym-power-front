@@ -86,15 +86,15 @@ export function DataTable({
           >
             {row.contents.map((content, j) => (
               <div
-                className="flex flex-col py-1"
+                className="flex justify-between gap-1"
                 key={`${row.value}-${i}-${j}-responsive`}
               >
                 {columns[j].content && (
-                  <div className="text-black font-bold">
+                  <div className="text-black dark:text-light font-bold">
                     {columns[j].content}:
                   </div>
                 )}
-                <div>{content}</div>
+                <div className="text-right">{content}</div>
               </div>
             ))}
           </div>
