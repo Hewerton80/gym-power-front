@@ -12,6 +12,10 @@ import { orderByUserOptions } from "@/shared/pickerOptions";
 
 const { VALIDATION_ERROR_MESSAGES } = CONSTANTS;
 
+export const INITIAL_GET_USERS_QUERY_PARAMS: IGetStudentsQueryParams = {
+  orderBy: orderByUserOptions[0].value,
+};
+
 const baseUserFormSchema = z.object({
   name: z.string().min(1, VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS),
   email: z.string().min(1, VALIDATION_ERROR_MESSAGES.REQUIRED_FIELDS),

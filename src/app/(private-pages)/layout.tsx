@@ -34,16 +34,14 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   if (meError) {
     return <></>;
   }
-
+  // console.log({ isLogged });
   if (!isLogged) {
     return <SplashScreen />;
   }
 
   return (
     <>
-      <PrivatePagesTamplate>
-        {isLogged ? children : <SplashScreen />}
-      </PrivatePagesTamplate>
+      <PrivatePagesTamplate>{children}</PrivatePagesTamplate>
     </>
   );
 }

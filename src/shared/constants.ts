@@ -21,6 +21,7 @@ export const CONSTANTS = {
     VALIDATION_ERROR: "Erro de validação",
     USER_HAS_NO_PERMISSION: "Usuário não tem permissão para realizar esta ação",
     INVALID_TOKEN: "Token inválido",
+    TOKEN_NOT_PROVIDED: "Token não informado",
     INVALID_CREDENTIALS: "Usuário ou senha inválidos",
     USER_NOT_FOUND: "Usuário não encontrado",
     TRAINING_NOT_FOUND: "Treino não encontrado",

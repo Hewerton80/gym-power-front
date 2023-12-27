@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { z } from "zod";
 import { ToZodObjectSchema } from "@/lib/zodHelpers";
@@ -60,25 +60,17 @@ export function useAuth() {
 
   const loginError = useMemo<any>(() => error, [error]);
 
-  const handleSetContextLoggedUser = useCallback(
-    (user: UserWithComputedFields | null) => {
-      setContextLoggedUser(user);
-    },
-    [setContextLoggedUser]
-  );
-
   const logout = useCallback(() => {
-    handleSetContextLoggedUser(null);
+    router.replace("/auth/login?logout=true");
     removeAllCookies();
-    router.replace("/auth/login");
-  }, [router, handleSetContextLoggedUser]);
+  }, [router]);
 
   return {
     loggedUser,
     isLogged,
     isLoging,
     loginError,
-    handleSetContextLoggedUser,
+    handleSetContextLoggedUser: setContextLoggedUser,
     login,
     logout,
   };

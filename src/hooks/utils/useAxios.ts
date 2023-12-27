@@ -1,15 +1,13 @@
-import { getCurretToken } from "@/lib/cookie";
+import { getCurretToken, removeAllCookies } from "@/lib/cookie";
 import axios from "axios";
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useAlertModal } from "./useAlertModal";
 import { useRouter } from "next/navigation";
 import { CONSTANTS } from "@/shared/constants";
-// import { useAuth } from "../api/useAuth";
 
 export const useAxios = () => {
   const { showAlert } = useAlertModal();
   const router = useRouter();
-  // const { logout } = useAuth();
 
   const apiBase = useMemo(
     () =>
@@ -22,6 +20,11 @@ export const useAxios = () => {
     []
   );
 
+  const logout = useCallback(() => {
+    router.replace("/auth/login?logout=true");
+    removeAllCookies();
+  }, [router]);
+
   useEffect(() => {
     apiBase.interceptors.response.use(
       (response) => {
@@ -29,17 +32,8 @@ export const useAxios = () => {
       },
       (error) => {
         const reponseError = error.response;
-        if (
-          reponseError.status === 401 &&
-          reponseError?.data?.message ===
-            CONSTANTS.API_RESPONSE_MENSSAGES.INVALID_TOKEN
-        ) {
-          showAlert({
-            title: "Sua sessão expirou",
-            description: "Faça login novamente",
-            variant: "info",
-            // onClose: logout,
-          });
+        if (reponseError.status === 401) {
+          logout();
         }
         return Promise.reject(error);
       }
@@ -47,11 +41,7 @@ export const useAxios = () => {
     return () => {
       apiBase.interceptors.response.clear();
     };
-  }, [
-    apiBase,
-    showAlert,
-    //  logout
-  ]);
+  }, [apiBase, showAlert, logout]);
 
   return { apiBase };
 };

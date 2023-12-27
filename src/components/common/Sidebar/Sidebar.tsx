@@ -88,15 +88,7 @@ export function Sidebar() {
               {avaliableNavItems.map(({ title, icon, path, basePath }, i) => {
                 const isActive = currentPath.startsWith(`/${basePath}`);
                 return (
-                  <li
-                    key={`${title}-${i}`}
-                    className={twMerge(
-                      "flex w-full",
-                      basePath === BASE_PATHS.BASE_STUDENT_PATH &&
-                        avaliableNavItems.length > 1 &&
-                        "mt-auto"
-                    )}
-                  >
+                  <li key={`${title}-${i}`} className="flex w-full">
                     <Link
                       onClick={() => setShowSideBar(false)}
                       href={path}

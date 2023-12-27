@@ -11,9 +11,11 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginCredentials } from "@/dtos/loginCredentials";
 import { handleErrorMessage } from "@/shared/handleErrorMessage";
+import { useParams, useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
-  const { login, loginError, isLoging } = useAuth();
+  const searchParams = useSearchParams();
+  const { login, loginError, isLoging, handleSetContextLoggedUser } = useAuth();
 
   const { control, handleSubmit, setError, clearErrors } =
     useForm<LoginCredentials>({
@@ -21,6 +23,13 @@ export default function LoginPage() {
       resolver: zodResolver(loginFormSchema),
       mode: "onSubmit",
     });
+
+  useEffect(() => {
+    console.log({ searchParams: searchParams.get("logout") });
+    if (searchParams.get("logout")) {
+      handleSetContextLoggedUser(null);
+    }
+  }, [searchParams, handleSetContextLoggedUser]);
 
   useEffect(() => {
     if (!loginError) return;

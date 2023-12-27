@@ -20,7 +20,6 @@ import { MdEdit } from "react-icons/md";
 import { orderByUserOptions, usersRolesOptions } from "@/shared/pickerOptions";
 import { useDebouncedCallback } from "use-debounce";
 import { Picker } from "@/components/ui/forms/Picker";
-import { genderOptions } from "@/shared/pickerOptions";
 import { Input } from "@/components/ui/forms/Input";
 
 export default function UsersPage() {

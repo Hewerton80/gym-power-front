@@ -40,8 +40,13 @@
 .root :global(.select__placeholder) {
   @apply mx-0 text-sm text-body-text/80;
 }
-.root :is(:global(.select__input), :global(.select__single-value), ) {
+.root :is(:global(.select__input), :global(.select__single-value)) {
   @apply text-sm text-body-text mx-0 p-0;
+}
+:global(.dark)
+  .root
+  :is(:global(.select__input), :global(.select__single-value)) {
+  @apply text-light;
 }
 
 /* .root.error :is(:global(.select__input), :global(.select__single-value), ) {

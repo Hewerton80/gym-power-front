@@ -27,6 +27,9 @@ export const verifyJWT = async (
     const secret = new TextEncoder().encode(String(process.env.TOKEN_SECRET));
     const bearerToken = request.headers.get("Authorization") as string;
     const token = bearerToken?.replace("Bearer ", "");
+    if (!token || token === "null" || token === "undefined") {
+      return { error: CONSTANTS.API_RESPONSE_MENSSAGES.TOKEN_NOT_PROVIDED };
+    }
     const { payload } = await jose.jwtVerify<JwtDto>(token, secret);
 
     return { payload, token };
