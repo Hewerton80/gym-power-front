@@ -21,6 +21,7 @@ import { orderByUserOptions, usersRolesOptions } from "@/shared/pickerOptions";
 import { useDebouncedCallback } from "use-debounce";
 import { Picker } from "@/components/ui/forms/Picker";
 import { Input } from "@/components/ui/forms/Input";
+import { HorizontalScrollView } from "@/components/ui/navigation/HorizontalScrollView";
 
 export default function UsersPage() {
   const {
@@ -143,32 +144,34 @@ export default function UsersPage() {
         </Card.Actions>
       </Card.Header>
       <Card.Body>
-        <div className="flex items-center flex-wrap gap-x-1 sm:gap-x-2">
-          <Picker
-            label="Status"
-            value={isActiveFilter}
-            onChange={handleChangeIsActiveFilter}
-            hideInput
-            options={[
-              { label: "Ativo", value: "true" },
-              { label: "Inativo", value: "false" },
-            ]}
-          />
-          <Picker
-            label="Função"
-            value={roleFilter}
-            onChange={handleChangeRoleFilter}
-            hideInput
-            options={usersRolesOptions}
-          />
-          <Picker
-            label="Ordenar por"
-            value={orderByFilter}
-            onChange={handleChangeOrderByFilter}
-            hideInput
-            hideCloseButton
-            options={orderByUserOptions}
-          />
+        <div className="flex items-center gap-2 sm:gap-2 flex-wrap">
+          <HorizontalScrollView>
+            <Picker
+              label="Status"
+              value={isActiveFilter}
+              onChange={handleChangeIsActiveFilter}
+              hideInput
+              options={[
+                { label: "Ativo", value: "true" },
+                { label: "Inativo", value: "false" },
+              ]}
+            />
+            <Picker
+              label="Função"
+              value={roleFilter}
+              onChange={handleChangeRoleFilter}
+              hideInput
+              options={usersRolesOptions}
+            />
+            <Picker
+              label="Ordenar por"
+              value={orderByFilter}
+              onChange={handleChangeOrderByFilter}
+              hideInput
+              hideCloseButton
+              options={orderByUserOptions}
+            />
+          </HorizontalScrollView>
           <div className="ml-auto w-full sm:w-auto">
             <Input
               value={search}

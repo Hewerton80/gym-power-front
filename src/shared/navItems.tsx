@@ -1,4 +1,4 @@
-import { UserRolesNamesType } from "@/types/User";
+import { UserRolesNamesType, UserWithComputedFields } from "@/types/User";
 import { FaUsers } from "react-icons/fa";
 import { GiMuscleUp } from "react-icons/gi";
 import { CgGym } from "react-icons/cg";
@@ -52,3 +52,12 @@ export const navItems: INavItem[] = [
     avaliablesRoles: { TEACHER: true, STUDENT: true, ADMIN: true },
   },
 ];
+
+export const getAvaliableNavItems = (user: UserWithComputedFields | null) => {
+  if (!user) {
+    return [];
+  }
+  return navItems.filter((navItems) =>
+    user?.roles?.some((role) => navItems.avaliablesRoles[role])
+  );
+};

@@ -76,7 +76,7 @@ export function DataTable({
         )}
       </Table.Container>
       <div
-        className="flex sm:hidden flex-col divide-y-2 divide-black"
+        className="flex sm:hidden flex-col divide-y-2 divide-black dark:divide-white"
         role="table"
       >
         {rows.map((row, i) => (
@@ -86,7 +86,7 @@ export function DataTable({
           >
             {row.contents.map((content, j) => (
               <div
-                className="flex justify-between gap-1"
+                className="flex gap-1 py-1"
                 key={`${row.value}-${i}-${j}-responsive`}
               >
                 {columns[j].content && (
@@ -94,14 +94,14 @@ export function DataTable({
                     {columns[j].content}:
                   </div>
                 )}
-                <div className="text-right">{content}</div>
+                <div className="text-right ml-auto">{content}</div>
               </div>
             ))}
           </div>
         ))}
       </div>
       {paginationConfig && rows.length > 0 && (
-        <div className="flex w-full justify-end mt-8">
+        <div className="flex w-full justify-end mt-4 sm:mt-8">
           <PaginationBar
             currentPage={paginationConfig?.currentPage}
             onChangePage={paginationConfig?.onChangePage}

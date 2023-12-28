@@ -3,7 +3,7 @@ import React, { ComponentPropsWithRef } from "react";
 import * as RadixDropdown from "@radix-ui/react-dropdown-menu";
 import { twMerge } from "tailwind-merge";
 import slideAndFadeANimation from "@/components/sharedStyles/slideAndFade.module.css";
-import { Menu as MenuList } from "@/components/ui/dataDisplay/Menu";
+import menuStyle from "@/components/sharedStyles/menu.module.css";
 
 export interface DropdownProps
   extends ComponentPropsWithRef<typeof RadixDropdown.Root> {}
@@ -27,30 +27,30 @@ function Menu({ children, className, ...restProps }: DropdowMenuProps) {
   return (
     <RadixDropdown.Portal>
       <RadixDropdown.Content
-        asChild
+        className={twMerge(
+          menuStyle.root,
+          "origin-top-right min-w-[13rem]",
+          slideAndFadeANimation.root,
+          className
+        )}
         sideOffset={6}
         alignOffset={8}
         align="end"
         {...restProps}
       >
-        <MenuList.Root
-          className={twMerge(
-            "origin-top-right min-w-[13rem]",
-            slideAndFadeANimation.root,
-            className
-          )}
-        >
-          {children}
-        </MenuList.Root>
+        {children}
       </RadixDropdown.Content>
     </RadixDropdown.Portal>
   );
 }
 
-function Item({ children, ...restProps }: DropdowItemProps) {
+function Item({ children, className, ...restProps }: DropdowItemProps) {
   return (
-    <RadixDropdown.Item asChild {...restProps}>
-      <MenuList.Item>{children}</MenuList.Item>
+    <RadixDropdown.Item
+      className={twMerge(menuStyle.item, className)}
+      {...restProps}
+    >
+      {children}
     </RadixDropdown.Item>
   );
 }

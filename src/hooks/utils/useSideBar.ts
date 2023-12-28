@@ -8,15 +8,12 @@ import { useShallow } from "zustand/react/shallow";
 
 export function useSideBar() {
   const {
-    showSideBar,
     showOnlyIcons,
     sideBarWidth,
     resizingSideBar,
     setResizingSideBar,
     setShowOnlyIcons,
-    setShowSideBar,
     setSideBarWidth,
-    toggleSideBar,
     toggleOnlyIcons,
   } = useSideBarStore(useShallow((state) => state));
 
@@ -30,15 +27,12 @@ export function useSideBar() {
   }, [sideBarWidth, setShowOnlyIcons, setSideBarWidth]);
 
   return {
-    showSideBar,
     showOnlyIcons,
     sideBarWidth,
     resizingSideBar,
     setResizingSideBar,
     setShowOnlyIcons,
-    setShowSideBar,
     setSideBarWidth,
-    toggleSideBar,
     toggleOnlyIcons,
   };
 }

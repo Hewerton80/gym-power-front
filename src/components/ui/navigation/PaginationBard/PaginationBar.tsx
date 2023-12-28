@@ -61,8 +61,8 @@ export function PaginationBar({
   );
 
   return (
-    <div className="flex items-center justify-between w-full">
-      <span className="text-sm">{paginationLabel}</span>
+    <div className="flex flex-col-reverse sm:flex-row items-center justify-between w-full gap-2">
+      <span className="text-xs sm:text-sm">{paginationLabel}</span>
       {totalPages > 0 && (
         <ButtonGroup>
           <Button

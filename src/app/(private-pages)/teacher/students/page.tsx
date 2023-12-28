@@ -17,6 +17,7 @@ import { ChangeEvent, useCallback, useMemo, useState } from "react";
 import { AiOutlineEye } from "react-icons/ai";
 import { useDebouncedCallback } from "use-debounce";
 import { orderByUserOptions } from "@/shared/pickerOptions";
+import { HorizontalScrollView } from "@/components/ui/navigation/HorizontalScrollView";
 
 export default function StudensPage() {
   const {
@@ -143,7 +144,7 @@ export default function StudensPage() {
         </Card.Actions>
       </Card.Header>
       <Card.Body>
-        <div className="flex items-center flex-wrap gap-x-1 sm:gap-x-2">
+        <HorizontalScrollView>
           <Picker
             label="Sexo"
             value={genderFilter}
@@ -169,7 +170,7 @@ export default function StudensPage() {
             hideCloseButton
             options={orderByUserOptions}
           />
-        </div>
+        </HorizontalScrollView>
         <DataTable
           columns={cols}
           rows={rows}

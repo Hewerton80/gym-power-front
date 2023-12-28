@@ -3,13 +3,14 @@ import { Button } from "@/components/ui/buttons/Button";
 import { FaChevronDown } from "react-icons/fa";
 import * as Popover from "@radix-ui/react-popover";
 import { Select, SelectOption } from "@/components/ui/forms/Select";
-import { Menu } from "@/components/ui/dataDisplay/Menu";
 import { Input } from "@/components/ui/forms/Input";
 import { twMerge } from "tailwind-merge";
 import slideAndFade from "@/components/sharedStyles/slideAndFade.module.css";
 import styled from "./Picker.module.css";
 import { useCallback, useMemo, useState } from "react";
 import { CloseButton } from "../../buttons/CloseButton";
+import menuStyle from "@/components/sharedStyles/menu.module.css";
+
 interface PickerProps {
   value?: string;
   label: string;
@@ -83,8 +84,9 @@ export function Picker({
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content sideOffset={4} align="start" asChild>
-          <Menu.Root
+          <div
             className={twMerge(
+              menuStyle.root,
               "origin-top-left border border-border py-2",
               "dark:border-dark-border dark:bg-dark-body",
               slideAndFade.root
@@ -114,7 +116,7 @@ export function Picker({
                 backspaceRemovesValue={false}
               />
             </div>
-          </Menu.Root>
+          </div>
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>
