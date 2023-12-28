@@ -39,7 +39,8 @@ export function Avatar({
     <RadixAvatar.Root
       className={twMerge(
         "inline-flex items-center justify-center",
-        "h-8 w-8 sm:h-10 sm:w-10 overflow-hidden rounded-full select-none align-middle",
+        "overflow-hidden rounded-full select-none align-middle",
+        " h-8 w-8 sm:h-10 sm:w-10 min-w-[2rem] sm:min-w-[2.5rem]",
         className
       )}
       {...restProps}

@@ -27,7 +27,7 @@ export function ProfilePopover() {
     <Menubar.Root>
       <Menubar.Menu>
         <Menubar.Trigger asChild>
-          <div className="flex gap-2 sm:gap-4 items-center cursor-pointer">
+          <div className="flex gap-2 sm:gap-4 items-center cursor-pointer max-w-[220px]">
             <Avatar
               username={loggedUser?.name}
               bgColor={loggedUser?.avatarBgColor}
@@ -38,10 +38,10 @@ export function ProfilePopover() {
               }
             />
             <div className="flex flex-col">
-              <strong className="text-black dark:text-white text-sm sm:text-base">
+              <strong className="text-black dark:text-white text-sm sm:text-base line-clamp-1">
                 {loggedUser?.name}
               </strong>
-              <p className="text-xs text-body-text dark:text-white">
+              <p className="text-xs text-body-text dark:text-white line-clamp-1">
                 {loggedUser?.roles?.map((role) => UserRole[role]).join(", ")}
               </p>
             </div>
