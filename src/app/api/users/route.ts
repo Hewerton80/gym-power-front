@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { verifyIfUserIsAdmin } from "@/lib/auth";
 import { CONSTANTS } from "@/shared/constants";
-import { Gender, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { getRandomRGBColor } from "@/shared/colors";
 import { createUserSchema } from "@/lib/apiZodSchemas/userSchemas";
 import { handleZodValidationError } from "@/lib/zodHelpers";
@@ -10,8 +10,7 @@ import {
   UserWithComputedFields,
   getUsersWithComputedFields,
 } from "@/types/User";
-import { stringToBoolean } from "@/shared/stringToBoolean";
-import { orderByParser, prismaPagination } from "@/lib/prismaHelpers";
+import { parseUserSearchParams, prismaPagination } from "@/lib/prismaHelpers";
 
 const { USER_HAS_NO_PERMISSION, USER_ALREADY_EXISTS, INTERNAL_SERVER_ERROR } =
   CONSTANTS.API_RESPONSE_MENSSAGES;
@@ -24,15 +23,10 @@ export async function GET(request: NextRequest) {
     );
   }
   const { searchParams } = new URL(request.url);
-  const keyword = searchParams.get("keyword") || "";
-  const isActive = stringToBoolean(searchParams.get("isActive"));
-  const isTeacher = stringToBoolean(searchParams.get("isTeacher"));
-  const isAdmin = stringToBoolean(searchParams.get("isAdmin"));
-  const gender = (searchParams.get("gender") as Gender) || undefined;
-  const currentPage = searchParams.get("currentPage") || 1;
-  const perPage = searchParams.get("perPage") || 25;
-  const orderBy = orderByParser(searchParams.get("orderBy") || undefined);
+  const { keyword, isActive, gender, role, currentPage, perPage, orderBy } =
+    parseUserSearchParams(searchParams);
 
+  console.log("request");
   const paginedUsers = await prismaPagination<
     UserWithComputedFields,
     Prisma.UserWhereInput,
@@ -42,8 +36,8 @@ export async function GET(request: NextRequest) {
     paginationArgs: { currentPage, perPage },
     orderBy,
     where: {
-      isAdmin,
-      isTeacher,
+      isTeacher: role === "TEACHER" || undefined,
+      isAdmin: role === "ADMIN" || undefined,
       gender,
       isActive,
       OR: [{ name: { contains: keyword } }, { email: { contains: keyword } }],

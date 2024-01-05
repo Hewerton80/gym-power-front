@@ -1,6 +1,4 @@
-export const parseJsonToSearchParams = (
-  json: { [key: string]: string } = {}
-) => {
+export const parseJsonToSearchParams = (json: any = {}) => {
   const keys = Object.keys(json);
   if (!keys?.length) {
     return "";
@@ -9,7 +7,9 @@ export const parseJsonToSearchParams = (
     "?" +
     keys
       .map((key) => {
-        return encodeURIComponent(key) + "=" + encodeURIComponent(json[key]);
+        return (
+          encodeURIComponent(key) + "=" + encodeURIComponent(String(json[key]))
+        );
       })
       .join("&")
   );

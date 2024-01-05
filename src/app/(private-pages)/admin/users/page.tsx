@@ -8,17 +8,12 @@ import {
   IRowDataTable,
 } from "@/components/ui/dataDisplay/DataTable";
 import { useGetUsers } from "@/hooks/api/useUser";
-import {
-  IGetStudentsQueryParams,
-  UserRole,
-  UserRolesNamesType,
-} from "@/types/User";
+import { UserRole, UserRolesNamesType } from "@/types/User";
 import { isUndefined } from "@/shared/isType";
 import Link from "next/link";
-import { ChangeEvent, useCallback, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { MdEdit } from "react-icons/md";
 import { orderByUserOptions, usersRolesOptions } from "@/shared/pickerOptions";
-import { useDebouncedCallback } from "use-debounce";
 import { Picker } from "@/components/ui/forms/Picker";
 import { Input } from "@/components/ui/forms/Input";
 import { HorizontalScrollView } from "@/components/ui/navigation/HorizontalScrollView";
@@ -30,17 +25,9 @@ export default function UsersPage() {
     usersError,
     usersQueryParams,
     refetchUsers,
+    changeUserFilter,
     goToPage,
   } = useGetUsers();
-
-  const [search, setSearch] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
-
-  const [isActiveFilter, setIsActiveFilter] = useState("");
-  const [roleFilter, setRoleFilter] = useState("");
-  const [orderByFilter, setOrderByFilter] = useState(
-    orderByUserOptions[0].value
-  );
 
   const cols = useMemo<IColmunDataTable[]>(
     () => [
@@ -85,54 +72,6 @@ export default function UsersPage() {
     [users]
   );
 
-  const handleChangeFilterDebounced = useDebouncedCallback(
-    (newStudentsQueryParams: IGetStudentsQueryParams) => {
-      refetchUsers({ ...usersQueryParams, ...newStudentsQueryParams });
-      setIsSearching(false);
-    },
-    1000
-  );
-
-  const handleChangeSearch = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      setIsSearching(true);
-      setSearch(value);
-      handleChangeFilterDebounced({ keyword: value });
-    },
-    [handleChangeFilterDebounced]
-  );
-
-  const handleChangeIsActiveFilter = useCallback(
-    (value: string) => {
-      setIsSearching(true);
-      setIsActiveFilter(value);
-      handleChangeFilterDebounced({ isActive: value });
-    },
-    [handleChangeFilterDebounced]
-  );
-
-  const handleChangeOrderByFilter = useCallback(
-    (value: string) => {
-      setIsSearching(true);
-      setOrderByFilter(value);
-      handleChangeFilterDebounced({ orderBy: value });
-    },
-    [handleChangeFilterDebounced]
-  );
-  const handleChangeRoleFilter = useCallback(
-    (value: string) => {
-      setIsSearching(true);
-      setRoleFilter(value);
-      const roleValue: UserRolesNamesType = value as UserRolesNamesType;
-      handleChangeFilterDebounced({
-        isTeacher: roleValue === "TEACHER" ? "true" : undefined,
-        isAdmin: roleValue === "ADMIN" ? "true" : undefined,
-      });
-    },
-    [handleChangeFilterDebounced]
-  );
-
   return (
     <Card.Root>
       <Card.Header>
@@ -148,8 +87,8 @@ export default function UsersPage() {
           <HorizontalScrollView>
             <Picker
               label="Status"
-              value={isActiveFilter}
-              onChange={handleChangeIsActiveFilter}
+              value={usersQueryParams.isActive}
+              onChange={(value) => changeUserFilter({ isActive: value })}
               hideInput
               options={[
                 { label: "Ativo", value: "true" },
@@ -158,15 +97,15 @@ export default function UsersPage() {
             />
             <Picker
               label="Função"
-              value={roleFilter}
-              onChange={handleChangeRoleFilter}
+              value={usersQueryParams.role}
+              onChange={(value) => changeUserFilter({ role: value })}
               hideInput
               options={usersRolesOptions}
             />
             <Picker
               label="Ordenar por"
-              value={orderByFilter}
-              onChange={handleChangeOrderByFilter}
+              value={usersQueryParams.orderBy}
+              onChange={(value) => changeUserFilter({ orderBy: value })}
               hideInput
               hideCloseButton
               options={orderByUserOptions}
@@ -174,8 +113,8 @@ export default function UsersPage() {
           </HorizontalScrollView>
           <div className="ml-auto w-full sm:w-auto">
             <Input
-              value={search}
-              onChange={handleChangeSearch}
+              value={usersQueryParams.keyword}
+              onChange={(e) => changeUserFilter({ keyword: e.target.value })}
               placeholder="Pesquisar"
             />
           </div>
@@ -185,7 +124,7 @@ export default function UsersPage() {
           rows={rows}
           onTryAgainIfError={refetchUsers}
           isError={Boolean(usersError)}
-          isLoading={isLoadingUsers || isUndefined(users) || isSearching}
+          isLoading={isLoadingUsers || isUndefined(users)}
           paginationConfig={{
             currentPage: users?.currentPage || 1,
             totalPages: users?.lastPage || 1,

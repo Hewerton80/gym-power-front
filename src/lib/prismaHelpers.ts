@@ -1,3 +1,7 @@
+import { stringToBoolean } from "@/shared/stringToBoolean";
+import { UserRolesNamesType } from "@/types/User";
+import { Gender } from "@prisma/client";
+
 export interface IPaginatedDocs<DocsType> {
   docs: DocsType[];
   total: number;
@@ -51,7 +55,7 @@ export const prismaPagination = async <DocsType, WhereInput, OrderInput>({
   return paginatedResult;
 };
 
-export const orderByParser = (orderBy: string | undefined) => {
+export const parseOrderBy = (orderBy: string | undefined) => {
   if (!orderBy) {
     return undefined;
   }
@@ -62,5 +66,17 @@ export const orderByParser = (orderBy: string | undefined) => {
 
   return {
     [field]: order ? order.toLocaleLowerCase() : undefined,
+  };
+};
+
+export const parseUserSearchParams = (searchParams: URLSearchParams) => {
+  return {
+    keyword: searchParams.get("keyword") || "",
+    isActive: stringToBoolean(searchParams.get("isActive")),
+    gender: (searchParams.get("gender") as Gender) || undefined,
+    role: (searchParams.get("role") as UserRolesNamesType) || undefined,
+    currentPage: searchParams.get("currentPage") || 1,
+    perPage: searchParams.get("perPage") || 25,
+    orderBy: parseOrderBy(searchParams.get("orderBy") || undefined),
   };
 };

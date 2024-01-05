@@ -6,7 +6,11 @@ import {
   UserWithComputedFields,
   getUsersWithComputedFields,
 } from "@/types/User";
-import { orderByParser, prismaPagination } from "@/lib/prismaHelpers";
+import {
+  parseOrderBy,
+  parseUserSearchParams,
+  prismaPagination,
+} from "@/lib/prismaHelpers";
 import { Gender, Prisma } from "@prisma/client";
 import { stringToBoolean } from "@/shared/stringToBoolean";
 
@@ -21,12 +25,8 @@ export async function GET(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url);
-  const keyword = searchParams.get("keyword") || "";
-  const isActive = stringToBoolean(searchParams.get("isActive") || undefined);
-  const gender = (searchParams.get("gender") as Gender) || undefined;
-  const currentPage = searchParams.get("currentPage") || 1;
-  const perPage = searchParams.get("perPage") || 25;
-  const orderBy = orderByParser(searchParams.get("orderBy") || undefined);
+  const { keyword, isActive, gender, currentPage, perPage, orderBy } =
+    parseUserSearchParams(searchParams);
 
   const paginedUsers = await prismaPagination<
     UserWithComputedFields,

@@ -9,6 +9,9 @@ import { CONSTANTS } from "@/shared/constants";
 import { z } from "zod";
 import { IPaginatedDocs } from "@/lib/prismaHelpers";
 import { orderByUserOptions } from "@/shared/pickerOptions";
+import { useRouter, useSearchParams } from "next/navigation";
+import { parseJsonToSearchParams } from "@/shared/parseJsonToSearchParams";
+import { useDebouncedCallback } from "use-debounce";
 
 const { VALIDATION_ERROR_MESSAGES } = CONSTANTS;
 
@@ -162,12 +165,21 @@ export function useGetMe() {
 
 export function useGetUsers() {
   const { apiBase } = useAxios();
+  const router = useRouter();
+
+  const searchParams = useSearchParams();
+
   const [usersQueryParams, setStudentsQueryParams] =
     useState<IGetStudentsQueryParams>({ orderBy: orderByUserOptions[0].value });
 
+  const [usersQueryParamsDebounced, setStudentsQueryParamsDebounced] =
+    useState<IGetStudentsQueryParams>({ orderBy: orderByUserOptions[0].value });
+
+  const [isSearching, setIsSearching] = useState(false);
+
   const {
     data: users,
-    isFetching: isLoadingUsers,
+    isFetching,
     error: usersError,
     refetch,
   } = useQuery({
@@ -176,30 +188,58 @@ export function useGetUsers() {
         .get<IPaginatedDocs<UserWithComputedFields>>("/users", {
           params: queryKey[0],
         })
-        .then((res) => res.data || { docs: [] }),
-    queryKey: [usersQueryParams],
+        .then((res) => res.data || { docs: [] })
+        .finally(() => setIsSearching(false)),
+    queryKey: [usersQueryParamsDebounced],
     enabled: false,
     retry: 1,
   });
 
+  const isLoadingUsers = useMemo(
+    () => isFetching || isSearching,
+    [isFetching, isSearching]
+  );
+
   useEffect(() => {
     refetch();
-  }, [usersQueryParams, refetch]);
+    console.log("refetch");
+  }, [usersQueryParamsDebounced, refetch]);
 
-  const refetchUsers = useCallback(
+  const refetchUsersDebounced = useDebouncedCallback(
     (queryParams?: IGetStudentsQueryParams) => {
-      if (!queryParams) {
-        setStudentsQueryParams({ ...usersQueryParams });
-      } else {
-        setStudentsQueryParams({ ...queryParams, currentPage: 1 });
-      }
+      const queryParamsTmp = queryParams
+        ? { ...queryParams, currentPage: 1 }
+        : { ...usersQueryParams };
+      setStudentsQueryParamsDebounced(queryParamsTmp);
+      router.push(parseJsonToSearchParams(queryParamsTmp));
+    },
+    1000
+  );
+
+  const changeUserFilter = useCallback(
+    (newStudentsQueryParams: IGetStudentsQueryParams) => {
+      setIsSearching(true);
+      setStudentsQueryParams((prev) => ({
+        ...prev,
+        ...newStudentsQueryParams,
+      }));
+      refetchUsersDebounced(newStudentsQueryParams);
+    },
+    [refetchUsersDebounced]
+  );
+
+  const refetchUsers = useCallback(() => {
+    setStudentsQueryParamsDebounced({ ...usersQueryParams });
+  }, [usersQueryParams]);
+
+  const goToPage = useCallback(
+    (page: number) => {
+      const newQueryParams = { ...usersQueryParams, currentPage: page };
+      setStudentsQueryParamsDebounced(newQueryParams);
+      setStudentsQueryParams(newQueryParams);
     },
     [usersQueryParams]
   );
-
-  const goToPage = useCallback((page: number) => {
-    setStudentsQueryParams((prev) => ({ ...prev, currentPage: page }));
-  }, []);
 
   return {
     users,
@@ -208,6 +248,7 @@ export function useGetUsers() {
     usersQueryParams,
     refetchUsers,
     goToPage,
+    changeUserFilter,
   };
 }
 
