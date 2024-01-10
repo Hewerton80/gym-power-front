@@ -14,3 +14,13 @@ export const parseJsonToSearchParams = (json: any = {}) => {
       .join("&")
   );
 };
+
+export const removeEmptyKeys = (obj: any) => {
+  const newObj = { ...obj };
+  Object.keys(newObj).forEach((key) => {
+    if (!newObj[key]) {
+      delete newObj[key];
+    }
+  });
+  return newObj;
+};

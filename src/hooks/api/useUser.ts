@@ -10,7 +10,10 @@ import { z } from "zod";
 import { IPaginatedDocs } from "@/lib/prismaHelpers";
 import { orderByUserOptions } from "@/shared/pickerOptions";
 import { useRouter, useSearchParams } from "next/navigation";
-import { parseJsonToSearchParams } from "@/shared/parseJsonToSearchParams";
+import {
+  parseJsonToSearchParams,
+  removeEmptyKeys,
+} from "@/shared/parseJsonToSearchParams";
 import { useDebouncedCallback } from "use-debounce";
 
 const { VALIDATION_ERROR_MESSAGES } = CONSTANTS;
@@ -169,18 +172,31 @@ export function useGetUsers() {
 
   const searchParams = useSearchParams();
 
+  const getInitialQueryParamsFromUrl =
+    useCallback((): IGetStudentsQueryParams => {
+      return {
+        role: searchParams.get("role") || "",
+        gender: searchParams.get("gender") || "",
+        isActive: searchParams.get("isActive") || "",
+        keyword: searchParams.get("keyword") || "",
+        orderBy: searchParams.get("orderBy") || orderByUserOptions[0].value,
+        currentPage: Number(searchParams.get("currentPage")) || 1,
+        perPage: Number(searchParams.get("perPage")) || 10,
+      };
+    }, [searchParams]);
+
   const [usersQueryParams, setStudentsQueryParams] =
-    useState<IGetStudentsQueryParams>({ orderBy: orderByUserOptions[0].value });
+    useState<IGetStudentsQueryParams>(getInitialQueryParamsFromUrl());
 
   const [usersQueryParamsDebounced, setStudentsQueryParamsDebounced] =
-    useState<IGetStudentsQueryParams>({ orderBy: orderByUserOptions[0].value });
+    useState<IGetStudentsQueryParams>(getInitialQueryParamsFromUrl());
 
   const [isSearching, setIsSearching] = useState(false);
 
   const {
     data: users,
-    isFetching,
     error: usersError,
+    isFetching,
     refetch,
   } = useQuery({
     queryFn: ({ queryKey }) =>
@@ -190,7 +206,7 @@ export function useGetUsers() {
         })
         .then((res) => res.data || { docs: [] })
         .finally(() => setIsSearching(false)),
-    queryKey: [usersQueryParamsDebounced],
+    queryKey: [removeEmptyKeys(usersQueryParamsDebounced)],
     enabled: false,
     retry: 1,
   });
@@ -202,7 +218,6 @@ export function useGetUsers() {
 
   useEffect(() => {
     refetch();
-    console.log("refetch");
   }, [usersQueryParamsDebounced, refetch]);
 
   const refetchUsersDebounced = useDebouncedCallback(
@@ -210,20 +225,24 @@ export function useGetUsers() {
       const queryParamsTmp = queryParams
         ? { ...queryParams, currentPage: 1 }
         : { ...usersQueryParams };
+
       setStudentsQueryParamsDebounced(queryParamsTmp);
       router.push(parseJsonToSearchParams(queryParamsTmp));
     },
-    1000
+    500
   );
 
   const changeUserFilter = useCallback(
     (newStudentsQueryParams: IGetStudentsQueryParams) => {
       setIsSearching(true);
-      setStudentsQueryParams((prev) => ({
-        ...prev,
-        ...newStudentsQueryParams,
-      }));
-      refetchUsersDebounced(newStudentsQueryParams);
+      setStudentsQueryParams((prev) => {
+        const newStudentsQueryParamsTmp = {
+          ...prev,
+          ...newStudentsQueryParams,
+        };
+        refetchUsersDebounced(newStudentsQueryParamsTmp);
+        return newStudentsQueryParamsTmp;
+      });
     },
     [refetchUsersDebounced]
   );
