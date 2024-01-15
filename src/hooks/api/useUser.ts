@@ -256,8 +256,9 @@ export function useGetUsers() {
       const newQueryParams = { ...usersQueryParams, currentPage: page };
       setStudentsQueryParamsDebounced(newQueryParams);
       setStudentsQueryParams(newQueryParams);
+      router.push(parseJsonToSearchParams(newQueryParams));
     },
-    [usersQueryParams]
+    [usersQueryParams, router]
   );
 
   return {
@@ -299,13 +300,35 @@ export function useGetUser(userId?: string) {
 
 export function useGetStudents() {
   const { apiBase } = useAxios();
+  const router = useRouter();
+
+  const searchParams = useSearchParams();
+
+  const getInitialQueryParamsFromUrl =
+    useCallback((): IGetStudentsQueryParams => {
+      return {
+        role: searchParams.get("role") || "",
+        gender: searchParams.get("gender") || "",
+        isActive: searchParams.get("isActive") || "",
+        keyword: searchParams.get("keyword") || "",
+        orderBy: searchParams.get("orderBy") || orderByUserOptions[0].value,
+        currentPage: Number(searchParams.get("currentPage")) || 1,
+        perPage: Number(searchParams.get("perPage")) || 10,
+      };
+    }, [searchParams]);
+
   const [studentsQueryParams, setStudentsQueryParams] =
-    useState<IGetStudentsQueryParams>({ orderBy: orderByUserOptions[0].value });
+    useState<IGetStudentsQueryParams>(getInitialQueryParamsFromUrl());
+
+  const [studentsQueryParamsDebounced, setStudentsQueryParamsDebounced] =
+    useState<IGetStudentsQueryParams>(getInitialQueryParamsFromUrl());
+
+  const [isSearching, setIsSearching] = useState(false);
 
   const {
     data: students,
-    isFetching: isLoadingStudents,
     error: studentsError,
+    isFetching,
     refetch,
   } = useQuery({
     queryFn: ({ queryKey }) =>
@@ -313,30 +336,62 @@ export function useGetStudents() {
         .get<IPaginatedDocs<UserWithComputedFields>>("/students", {
           params: queryKey[0],
         })
-        .then((res) => res.data || { docs: [] }),
-    queryKey: [studentsQueryParams],
-    retry: 1,
+        .then((res) => res.data || { docs: [] })
+        .finally(() => setIsSearching(false)),
+    queryKey: [removeEmptyKeys(studentsQueryParamsDebounced)],
     enabled: false,
+    retry: 1,
   });
+
+  const isLoadingStudents = useMemo(
+    () => isFetching || isSearching,
+    [isFetching, isSearching]
+  );
 
   useEffect(() => {
     refetch();
-  }, [studentsQueryParams, refetch]);
+  }, [studentsQueryParamsDebounced, refetch]);
 
-  const refetchStudents = useCallback(
+  const refetchStudentsDebounced = useDebouncedCallback(
     (queryParams?: IGetStudentsQueryParams) => {
-      if (!queryParams) {
-        setStudentsQueryParams({ ...studentsQueryParams });
-      } else {
-        setStudentsQueryParams({ ...queryParams, currentPage: 1 });
-      }
+      const queryParamsTmp = queryParams
+        ? { ...queryParams, currentPage: 1 }
+        : { ...studentsQueryParams };
+
+      setStudentsQueryParamsDebounced(queryParamsTmp);
+      router.push(parseJsonToSearchParams(queryParamsTmp));
     },
-    [studentsQueryParams]
+    500
   );
 
-  const goToPage = useCallback((page: number) => {
-    setStudentsQueryParams((prev) => ({ ...prev, currentPage: page }));
-  }, []);
+  const changeUserFilter = useCallback(
+    (newStudentsQueryParams: IGetStudentsQueryParams) => {
+      setIsSearching(true);
+      setStudentsQueryParams((prev) => {
+        const newStudentsQueryParamsTmp = {
+          ...prev,
+          ...newStudentsQueryParams,
+        };
+        refetchStudentsDebounced(newStudentsQueryParamsTmp);
+        return newStudentsQueryParamsTmp;
+      });
+    },
+    [refetchStudentsDebounced]
+  );
+
+  const refetchStudents = useCallback(() => {
+    setStudentsQueryParamsDebounced({ ...studentsQueryParams });
+  }, [studentsQueryParams]);
+
+  const goToPage = useCallback(
+    (page: number) => {
+      const newQueryParams = { ...studentsQueryParams, currentPage: page };
+      setStudentsQueryParamsDebounced(newQueryParams);
+      setStudentsQueryParams(newQueryParams);
+      router.push(parseJsonToSearchParams(newQueryParams));
+    },
+    [studentsQueryParams, router]
+  );
 
   return {
     students,
@@ -345,6 +400,7 @@ export function useGetStudents() {
     studentsQueryParams,
     refetchStudents,
     goToPage,
+    changeUserFilter,
   };
 }
 

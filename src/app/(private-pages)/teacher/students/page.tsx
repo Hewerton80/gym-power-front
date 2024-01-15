@@ -11,32 +11,22 @@ import { Picker } from "@/components/ui/forms/Picker";
 import { useGetStudents } from "@/hooks/api/useUser";
 import { genderOptions } from "@/shared/pickerOptions";
 import { isUndefined } from "@/shared/isType";
-import { IGetStudentsQueryParams } from "@/types/User";
 import Link from "next/link";
-import { ChangeEvent, useCallback, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { AiOutlineEye } from "react-icons/ai";
-import { useDebouncedCallback } from "use-debounce";
 import { orderByUserOptions } from "@/shared/pickerOptions";
 import { HorizontalScrollView } from "@/components/ui/navigation/HorizontalScrollView";
 
 export default function StudensPage() {
   const {
     students,
-    isLoadingStudents,
     studentsError,
     studentsQueryParams,
+    isLoadingStudents,
     refetchStudents,
+    changeUserFilter,
     goToPage,
   } = useGetStudents();
-
-  const [search, setSearch] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
-
-  const [genderFilter, setGenderFilter] = useState("");
-  const [isActiveFilter, setIsActiveFilter] = useState("");
-  const [orderByFilter, setOrderByFilter] = useState(
-    orderByUserOptions[0].value
-  );
 
   const cols = useMemo<IColmunDataTable[]>(
     () => [
@@ -89,56 +79,14 @@ export default function StudensPage() {
     );
   }, [students]);
 
-  const handleChangeFilterDebounced = useDebouncedCallback(
-    (newStudentsQueryParams: IGetStudentsQueryParams) => {
-      refetchStudents({ ...studentsQueryParams, ...newStudentsQueryParams });
-      setIsSearching(false);
-    },
-    0
-  );
-
-  const handleChangeSearch = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      setIsSearching(true);
-      setSearch(value);
-      handleChangeFilterDebounced({ keyword: value });
-    },
-    [handleChangeFilterDebounced]
-  );
-  const handleChangeGenderFilter = useCallback(
-    (value: string) => {
-      setIsSearching(true);
-      setGenderFilter(value);
-      handleChangeFilterDebounced({ gender: value });
-    },
-    [handleChangeFilterDebounced]
-  );
-  const handleChangeIsActiveFilter = useCallback(
-    (value: string) => {
-      setIsSearching(true);
-      setIsActiveFilter(value);
-      handleChangeFilterDebounced({ isActive: value });
-    },
-    [handleChangeFilterDebounced]
-  );
-  const handleChangeOrderByFilter = useCallback(
-    (value: string) => {
-      setIsSearching(true);
-      setOrderByFilter(value);
-      handleChangeFilterDebounced({ orderBy: value });
-    },
-    [handleChangeFilterDebounced]
-  );
-
   return (
     <Card.Root>
       <Card.Header>
         <Card.Title>Alunos</Card.Title>
         <Card.Actions>
           <Input
-            value={search}
-            onChange={handleChangeSearch}
+            value={studentsQueryParams.keyword}
+            onChange={(e) => changeUserFilter({ keyword: e.target.value })}
             placeholder="Pesquisar"
           />
         </Card.Actions>
@@ -147,15 +95,15 @@ export default function StudensPage() {
         <HorizontalScrollView>
           <Picker
             label="Sexo"
-            value={genderFilter}
-            onChange={handleChangeGenderFilter}
+            value={studentsQueryParams.gender}
+            onChange={(value) => changeUserFilter({ gender: value })}
             hideInput
             options={genderOptions}
           />
           <Picker
             label="Status"
-            value={isActiveFilter}
-            onChange={handleChangeIsActiveFilter}
+            value={studentsQueryParams.isActive}
+            onChange={(value) => changeUserFilter({ isActive: value })}
             hideInput
             options={[
               { label: "Ativo", value: "true" },
@@ -164,8 +112,8 @@ export default function StudensPage() {
           />
           <Picker
             label="Ordenar por"
-            value={orderByFilter}
-            onChange={handleChangeOrderByFilter}
+            value={studentsQueryParams.orderBy}
+            onChange={(value) => changeUserFilter({ orderBy: value })}
             hideInput
             hideCloseButton
             options={orderByUserOptions}
@@ -176,7 +124,7 @@ export default function StudensPage() {
           rows={rows}
           onTryAgainIfError={refetchStudents}
           isError={Boolean(studentsError)}
-          isLoading={isLoadingStudents || isUndefined(students) || isSearching}
+          isLoading={isLoadingStudents || isUndefined(students)}
           paginationConfig={{
             currentPage: students?.currentPage || 1,
             totalPages: students?.lastPage || 1,
