@@ -199,14 +199,14 @@ export function useGetUsers() {
     isFetching,
     refetch,
   } = useQuery({
-    queryFn: ({ queryKey }) =>
+    queryFn: () =>
       apiBase
         .get<IPaginatedDocs<UserWithComputedFields>>("/users", {
-          params: queryKey[0],
+          params: removeEmptyKeys(usersQueryParamsDebounced),
         })
         .then((res) => res.data || { docs: [] })
         .finally(() => setIsSearching(false)),
-    queryKey: [removeEmptyKeys(usersQueryParamsDebounced)],
+    queryKey: ["users"],
     enabled: false,
     retry: 1,
   });
@@ -331,14 +331,14 @@ export function useGetStudents() {
     isFetching,
     refetch,
   } = useQuery({
-    queryFn: ({ queryKey }) =>
+    queryFn: () =>
       apiBase
         .get<IPaginatedDocs<UserWithComputedFields>>("/students", {
-          params: queryKey[0],
+          params: removeEmptyKeys(studentsQueryParamsDebounced),
         })
         .then((res) => res.data || { docs: [] })
         .finally(() => setIsSearching(false)),
-    queryKey: [removeEmptyKeys(studentsQueryParamsDebounced)],
+    queryKey: ["students"],
     enabled: false,
     retry: 1,
   });
